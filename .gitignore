@@ -1,0 +1,7 @@
+# Compiled source #
+*.so
+*.o
+*.a
+*.la
+*.pro
+Makefile
