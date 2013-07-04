@@ -24,3 +24,9 @@
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
+#define base_pix  1
+#define ratio_1_2 2
+#define ratio_1_3 3
+
+#define char_pix_r2 (base_pix*6+base_pix*ratio_1_2*3)
+#define char_pix_r3 (base_pix*6+base_pix*ratio_1_3*3)
