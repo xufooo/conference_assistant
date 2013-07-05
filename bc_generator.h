@@ -84,6 +84,6 @@ private:
 							{'bWbwbWbWb'},\//'+'
 							{'bwbWbWbWb'},\//'%'
 							{'bWbwBwBwb'}};//'*'
-	QVector<QLine> *encode_buf;
+	QVector<QPoint> *encode_buf;
 	uint chksum;
 };
