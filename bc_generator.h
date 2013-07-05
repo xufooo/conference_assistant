@@ -18,37 +18,47 @@
 # Description: 
 # This module is used to generate barcode.
 #
-# Last modified: 2013-07-04 21:14
+# Last modified: 2013-07-05 10:05
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include "bc_generator.h"
+#include <QString>
+#include <QWidget>
+#include <QPixmap>
 
-BC_GEN::BC_GEN(QWidget* parent):chksum(0),encode_buf(NULL){
+#define ENCODER   CODE39
+#define LEAST_CHAR 5
+#define BASE_PIX  1
+#define RATIO_1_2 2
+#define RATIO_1_3 3
 
-}
+#define NARROW_BAR_PIX BASE_PIX
+#define WIDE_BAR_PIX_R2  (BASE_PIX*RATIO_1_2)
+#define WIDE_BAR_PIX_R3  (BASE_PIX*RATIO_1_3)
+#define INTER_GAP_PIX  BASE_PIX
 
-BC_GEN::~BC_GEN(){
-	delete encode_buf;
-}
+#define CHAR_PIX_R2 (NARROW_BAR_PIX*6+WIDE_BAR_PIX_R2*2+INTER_GAP_PIX*8)
+#define CHAR_PIX_R3 (NARROW_BAR_PIX*6+WIDE_BAR_PIX_R3*3+INTER_GAP_PIX*8)
 
-int BC_GEN::encoding(QString input, int type){
-	if(input.size() < LEAST_CHAR)
-		return -1;//too short
-	//enc39 start
-	int codesize = (input.size()+3)*type;
-	encode_buf = new uchar((input.size()+3)*CHAR_PIX_R3);
-	encode_buf[0]='W';//start character
-	for(int i=0; i< input.size(); ++i){
-		for(int j=0; j< 43; ++j){ 
-			if(input.at(i)!= QChar(code39_table[j]))
-				continue;
-			chksum+=j;
-			switch(j){
-				case 0:
-				encode_buf[i+1]=;
-
-
-	
+class BC_GEN: public QPixmap
+{
+	Q_OBJECT;
+public:
+	BC_GEN(QWidget* parent);
+	~BC_GEN();
+	int show_barcode(QString barcode);
+public slots:
+	int encoding(QString input, int type);
+public:
+	int enc39(QString input, int type);
+private:
+	char code39_table={'0','1','2','3','4','5','6','7','8','9',\
+					   'A','B','C','D','E','F','G','H','I','J',\
+					   'K','L','M','N','O','P','Q','R','S','T',\
+					   'U','V','W','X','Y','Z',\
+					   '-','.',' ','$','/','+','%'};
+	char *encode_buf;
+	uint chksum;
+};
