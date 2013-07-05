@@ -30,17 +30,20 @@
 
 #define ENCODER   CODE39
 #define LEAST_CHAR 5
-#define BASE_PIX  1
-#define RATIO_1_2 2
-#define RATIO_1_3 3
+#define CODE39_SIZE 43	  //code table size 43 char
+#define CODE39_CODE_LEN 9 //code lenth 9 char
+#define BASE_LEN   1
+#define RATIO_1_2  2
+#define RATIO_1_3  3
 
-#define NARROW_BAR_PIX BASE_PIX
-#define WIDE_BAR_PIX_R2  (BASE_PIX*RATIO_1_2)
-#define WIDE_BAR_PIX_R3  (BASE_PIX*RATIO_1_3)
-#define INTER_GAP_PIX  BASE_PIX
+#define NARROW_BAR_LEN BASE_LEN
+#define WIDE_BAR_LEN_R2  (BASE_LEN*RATIO_1_2)
+#define WIDE_BAR_LEN_R3  (BASE_LEN*RATIO_1_3)
+#define INTER_GAP_LEN  BASE_LEN
 
-#define CHAR_PIX_R2 (NARROW_BAR_PIX*6+WIDE_BAR_PIX_R2*2+INTER_GAP_PIX*8)
-#define CHAR_PIX_R3 (NARROW_BAR_PIX*6+WIDE_BAR_PIX_R3*3+INTER_GAP_PIX*8)
+#define CHAR_LEN_R2 (NARROW_BAR_LEN*6+WIDE_BAR_LEN_R2*2)
+#define CHAR_LEN_R3 (NARROW_BAR_LEN*6+WIDE_BAR_LEN_R3*3)
+#define CHAR_TOT_LEN_R3 (NARROW_BAR_LEN*6+WIDE_BAR_LEN_R3*3+INTER_GAP_LEN*8)
 
 class BC_GEN: public QPixmap
 {
@@ -54,11 +57,33 @@ public slots:
 public:
 	int enc39(QString input, int type);
 private:
-	char code39_table={'0','1','2','3','4','5','6','7','8','9',\
+	int insertbuf(QChar& char,int Xposition);
+
+	char code39_table[]={'0','1','2','3','4','5','6','7','8','9',\
 					   'A','B','C','D','E','F','G','H','I','J',\
 					   'K','L','M','N','O','P','Q','R','S','T',\
 					   'U','V','W','X','Y','Z',\
 					   '-','.',' ','$','/','+','%'};
-	char *encode_buf;
+	char code39_code_table[][]={{'bwbWBwBwb'},{'BwbWbwbwB'},{'bwBWbwbwB'},\
+							{'BwBWbwbwb'},{'bwbWBwbwB'},{'BwbWBwbwb'},\
+							{'bwbWbwBwB'},{'BwbWbwBwb'},{'bwBWbwBwb'},\//0~9
+							{'BwbwbWbwB'},{'bwBwbWbwB'},{'BwBwbWbwb'},\
+							{'bwbwBWbwB'},{'BwbwBWbwb'},{'bwBwBWbwb'},\
+							{'bwbwbWBwB'},{'BwbwbWBwb'},{'bwBwbWBwb'},\
+							{'bwbwBWBwb'},{'BwbwbwbWB'},{'bwBwbwbWB'},\
+							{'BwBwbwbWb'},{'bwbwBwbWB'},{'BwbwBwbWb'},\
+							{'bwBwBwbWb'},{'bwbwbwBWB'},{'BwbwbwBWb'},\
+							{'bwBwbwBWb'},{'bwbwBwBWb'},{'BWbwbwbwB'},\
+							{'bWBwbwbwB'},{'BWBwbwbwb'},{'bWbwBwbwB'},\
+							{'BWbwBwbwb'},{'bWBwBwbwb'},\//A~Z
+							{'bWbwbwBwB'},\//'-'
+							{'BWbwbwBwb'},\//'.'
+							{'bWBwbwBwb'},\//' '
+							{'bWbWbWbwb'},\//'$'
+							{'bWbWbwbWb'},\//'/'
+							{'bWbwbWbWb'},\//'+'
+							{'bwbWbWbWb'},\//'%'
+							{'bWbwBwBwb'}};//'*'
+	QVector<QLine> *encode_buf;
 	uint chksum;
 };

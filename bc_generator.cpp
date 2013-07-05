@@ -26,7 +26,7 @@
 
 #include "bc_generator.h"
 
-BC_GEN::BC_GEN(QWidget* parent):chksum(0),encode_buf(NULL){
+BC_GEN::BC_GEN(QWidget* parent):chksum(0),encode_buf(QVector<QLine>()){
 
 }
 
@@ -34,9 +34,49 @@ BC_GEN::~BC_GEN(){
 	delete encode_buf;
 }
 
+int BC_GEN::insertbuf(QChar& char,int Xposition)
+{
+	int index;
+	for(index=0;index<CODE39_SIZE;++index){
+		if(char==code39_table[index]){//found char
+			for(int i=0;i<CODE39_CODE_LEN;++i){
+				switch(code39[index][i]){
+					case 'B':
+						for(int j=0;j<WIDE_BAR_LEN_R3;++j){
+							encode_buf->append(QLine(Xposition,0));
+							Xposition+=BASE_LEN;}
+						Xposition+=INTER_GAP_LEN;
+						break;
+					case 'b':
+						encode_buf->append(QLine(Xposition,0));
+						Xposition+=NARROW_BAR_LEN;
+						Xposition+=INTER_GAP_LEN;
+						break;
+					case 'W':
+						Xposition+=WIDE_BAR_LEN_R3;
+						Xposition+=INTER_GAP_LEN;
+						break;
+					case 'w':
+						Xposition+=NARROW_BAR_LEN;
+						Xposition+=INTER_GAP_LEN;
+						break;
+					default:
+						return -2;//code error
+				}
+			}
+			chksum+=index;
+			return 1;//insert successful
+		}
+		++index;
+	}
+	return -3;//not found char
+}
+
+						
 int BC_GEN::encoding(QString input, int type){
 	if(input.size() < LEAST_CHAR)
 		return -1;//too short
+	encode_buf->clear();//clear buf;
 	//enc39 start
 	int codesize = (input.size()+3)*type;
 	encode_buf = new uchar((input.size()+3)*CHAR_PIX_R3);
