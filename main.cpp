@@ -25,15 +25,22 @@
 =============================================================================*/
 
 #include <QApplication>
-//#include "mainframe.h"
-
 #include <QDialog>
+#include <QPixmap>
+#include <QPainter>
+#include "bc_generator.h"
 
 int main(int argc, char** argv)
 {
 	QApplication app(argc, argv);
 	QDialog *diag = new QDialog;
+//	QPixmap pix;
+	BC_GEN bcg;
+	bcg.encode(QString("ABCDEFG12345"));
+	QPainter painter(diag);
+	painter.drawLines(*bcg.get_encode_buf());
 	diag->show();
 	return app.exec();
+//	return 0;
 }	
 	

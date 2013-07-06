@@ -18,15 +18,30 @@
 # Description: 
 # This module is used to generate barcode.
 #
-# Last modified: 2013-07-04 21:14
+# Last modified: 2013-07-06 12:11
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
 #include "bc_generator.h"
+#include <iostream>
 
-BC_GEN::BC_GEN(QWidget* parent):chksum(0),encode_buf(QVector<QPoint>()){
+	char BC_GEN::code39_table[CODE39_SIZE+1]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','-','.',' ','$','/','+','%','*'};
+	char BC_GEN::code39_code_table[CODE39_SIZE+1][CODE39_CODE_LEN+1]={"bwbWBwBwb","BwbWbwbwB","bwBWbwbwB","BwBWbwbwb","bwbWBwbwB",\
+	"BwbWBwbwb","bwBWBwbwb","bwbWbwBwB","BwbWbwBwb","bwBWbwBwb",\
+	"BwbwbWbwB","bwBwbWbwB","BwBwbWbwb","bwbwBWbwB","BwbwBWbwb",\
+	"bwBwBWbwb","bwbwbWBwB","BwbwbWBwb","bwBwbWBwb","bwbwBWBwb",\
+	"BwbwbwbWB","bwBwbwbWB","BwBwbwbWb","bwbwBwbWB","BwbwBwbWb",\
+	"bwBwBwbWb","bwbwbwBWB","BwbwbwBWb","bwBwbwBWb","bwbwBwBWb",\
+	"BWbwbwbwB","bWBwbwbwB","BWBwbwbwb","bWbwBwbwB","BWbwBwbwb",\
+	"bWBwBwbwb",\
+	"bWbwbwBwB","BWbwbwBwb","bWBwbwBwb","bWbWbWbwb","bWbWbwbWb",\
+	"bWbwbWbWb","bwbWbWbWb",\
+	"bWbwBwBwb"};
+
+BC_GEN::BC_GEN(QObject*,int start_Xposition):chksum(0),global_Xposition(start_Xposition){
+	encode_buf = new QVector<QPoint>();
 
 }
 
@@ -34,28 +49,28 @@ BC_GEN::~BC_GEN(){
 	delete encode_buf;
 }
 
-int BC_GEN::insertbuf(QChar& char,int Xposition)
+int BC_GEN::insertbuf(const QChar & bc)
 {
-	for(int index=0;index<CODE39_SIZE;++index){
-		if(char==code39_table[index]){//found char
-			Xposition+=INTER_GAP_LEN;//char gap
+	for(int index=0;index<(CODE39_SIZE+1);++index){//include '*'
+		if(bc.toAscii()==code39_table[index]){//found char
+			global_Xposition+=INTER_GAP_LEN;//char gap
 			for(int i=0;i<CODE39_CODE_LEN;++i){
-				switch(code39[index][i]){
+				switch(code39_code_table[index][i]){
 					case 'B':
 						for(int j=0;j<WIDE_BAR_LEN_R3;++j){
-							encode_buf->append(QPoint(Xposition,0));
-							Xposition+=BASE_LEN;}
+							encode_buf->append(QPoint(global_Xposition,100));
+							global_Xposition+=BASE_LEN;}
 						break;
 					case 'b':
 						for(int j=0;j<NARROW_BAR_LEN;++j){
-							encode_buf->append(QPoint(Xposition,0));
-							Xposition+=BASE_LEN;}
+							encode_buf->append(QPoint(global_Xposition,100));
+							global_Xposition+=BASE_LEN;}
 						break;
 					case 'W':
-						Xposition+=WIDE_BAR_LEN_R3;
+						global_Xposition+=WIDE_BAR_LEN_R3;
 						break;
 					case 'w':
-						Xposition+=NARROW_BAR_LEN;
+						global_Xposition+=NARROW_BAR_LEN;
 						break;
 					default:
 						return -2;//code error
@@ -64,28 +79,27 @@ int BC_GEN::insertbuf(QChar& char,int Xposition)
 			chksum+=index;
 			return 1;//insert successful
 		}
-		++index;
 	}
 	return -3;//not found char
 }
 
 						
-int BC_GEN::encoding(QString input, int type){
+int BC_GEN::encode(QString input, int start_Xposition){
 	if(input.size() < LEAST_CHAR)
-		return -1;//too short
-	encode_buf->clear();//clear buf;
-	//enc39 start
-	int codesize = (input.size()+3)*type;
-	encode_buf = new uchar((input.size()+3)*CHAR_LEN_R3);
-	encode_buf[0]='W';//start character
+		return -4;//too short
+
+	encode_buf->clear();//clean these
+	chksum=0;
+	global_Xposition=start_Xposition-INTER_GAP_LEN;//init position
+
+	//code39 start
+	if(insertbuf(QChar('*'))!=1) return -5;//start character
 	for(int i=0; i< input.size(); ++i){
-		for(int j=0; j< 43; ++j){ 
-			if(input.at(i)!= QChar(code39_table[j]))
-				continue;
-			chksum+=j;
-			switch(j){
-				case 0:
-				encode_buf[i+1]=;
+		if(insertbuf(input.at(i))!=1)
+			return -5;
+	}
+	if(insertbuf(code39_table[chksum%CODE39_SIZE])!=1) return -5;//chksum
+	if(insertbuf(QChar('*'))!=1) return -5;//end character
 
-
-	
+	return 1;//successfully encode
+}

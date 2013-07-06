@@ -18,15 +18,15 @@
 # Description: 
 # This module is used to generate barcode.
 #
-# Last modified: 2013-07-05 10:05
+# Last modified: 2013-07-06 12:12
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include <QString>
-#include <QWidget>
-#include <QPixmap>
+#include <QObject>
+#include <QVector>
+#include <QPoint>
 
 #define ENCODER   CODE39
 #define LEAST_CHAR 5
@@ -45,45 +45,21 @@
 #define CHAR_LEN_R3 (NARROW_BAR_LEN*6+WIDE_BAR_LEN_R3*3)
 #define CHAR_TOT_LEN_R3 (NARROW_BAR_LEN*6+WIDE_BAR_LEN_R3*3+INTER_GAP_LEN*8)
 
-class BC_GEN: public QPixmap
+class BC_GEN: public QObject
 {
 	Q_OBJECT;
 public:
-	BC_GEN(QWidget* parent);
+	BC_GEN(QObject* parent=0,int start_Xposition=0);
 	~BC_GEN();
-	int show_barcode(QString barcode);
+	inline QVector<QPoint>* get_encode_buf(){return encode_buf;}
 public slots:
-	int encoding(QString input, int type);
-public:
-	int enc39(QString input, int type);
+	int encode(QString input,int start_Xposition=0);
 private:
-	int insertbuf(QChar& char,int Xposition);
+	int insertbuf(const QChar & bc);
 
-	char code39_table[]={'0','1','2','3','4','5','6','7','8','9',\
-					   'A','B','C','D','E','F','G','H','I','J',\
-					   'K','L','M','N','O','P','Q','R','S','T',\
-					   'U','V','W','X','Y','Z',\
-					   '-','.',' ','$','/','+','%'};
-	char code39_code_table[][]={{'bwbWBwBwb'},{'BwbWbwbwB'},{'bwBWbwbwB'},\
-							{'BwBWbwbwb'},{'bwbWBwbwB'},{'BwbWBwbwb'},\
-							{'bwbWbwBwB'},{'BwbWbwBwb'},{'bwBWbwBwb'},\//0~9
-							{'BwbwbWbwB'},{'bwBwbWbwB'},{'BwBwbWbwb'},\
-							{'bwbwBWbwB'},{'BwbwBWbwb'},{'bwBwBWbwb'},\
-							{'bwbwbWBwB'},{'BwbwbWBwb'},{'bwBwbWBwb'},\
-							{'bwbwBWBwb'},{'BwbwbwbWB'},{'bwBwbwbWB'},\
-							{'BwBwbwbWb'},{'bwbwBwbWB'},{'BwbwBwbWb'},\
-							{'bwBwBwbWb'},{'bwbwbwBWB'},{'BwbwbwBWb'},\
-							{'bwBwbwBWb'},{'bwbwBwBWb'},{'BWbwbwbwB'},\
-							{'bWBwbwbwB'},{'BWBwbwbwb'},{'bWbwBwbwB'},\
-							{'BWbwBwbwb'},{'bWBwBwbwb'},\//A~Z
-							{'bWbwbwBwB'},\//'-'
-							{'BWbwbwBwb'},\//'.'
-							{'bWBwbwBwb'},\//' '
-							{'bWbWbWbwb'},\//'$'
-							{'bWbWbwbWb'},\//'/'
-							{'bWbwbWbWb'},\//'+'
-							{'bwbWbWbWb'},\//'%'
-							{'bWbwBwBwb'}};//'*'
+	static char code39_table[CODE39_SIZE+1];//44 char include '*'
+	static char code39_code_table[CODE39_SIZE+1][CODE39_CODE_LEN+1];
 	QVector<QPoint> *encode_buf;
 	uint chksum;
+	int global_Xposition;
 };
