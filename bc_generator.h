@@ -33,9 +33,11 @@
 #define LEAST_CHAR 5
 #define CODE39_SIZE 43	  //code table size 43 char
 #define CODE39_CODE_LEN 9 //code lenth 9 char
+#define ADD_CODE_LEN 3    //start & end '*', check sum '?'
 #define BASE_LEN   1
 #define RATIO_1_2  2
 #define RATIO_1_3  3
+#define RATIO_H_W  0.3
 
 #define NARROW_BAR_LEN BASE_LEN
 #define WIDE_BAR_LEN_R2  (BASE_LEN*RATIO_1_2)
@@ -44,7 +46,6 @@
 
 #define CHAR_LEN_R2 (NARROW_BAR_LEN*6+WIDE_BAR_LEN_R2*2)
 #define CHAR_LEN_R3 (NARROW_BAR_LEN*6+WIDE_BAR_LEN_R3*3)
-#define CHAR_TOT_LEN_R3 (NARROW_BAR_LEN*6+WIDE_BAR_LEN_R3*3+INTER_GAP_LEN*8)
 
 class BC_GEN: public QWidget
 {
@@ -53,6 +54,7 @@ public:
 	BC_GEN(QWidget* parent=0,int start_Xposition=0);
 	~BC_GEN();
 	inline QVector<QLine>* get_encode_buf(){return encode_buf;}
+	inline int lenth_calc(int char_num){return (char_num*(CHAR_LEN_R3+INTER_GAP_LEN)-INTER_GAP_LEN);}
 public slots:
 	int encode(QString input,int start_Xposition=0);
 protected:
@@ -65,4 +67,5 @@ private:
 	QVector<QLine> *encode_buf;
 	uint chksum;
 	int global_Xposition;
+	int global_Yposition;
 };

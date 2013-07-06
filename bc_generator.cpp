@@ -58,13 +58,13 @@ int BC_GEN::insertbuf(const QChar & bc)
 				switch(code39_code_table[index][i]){
 					case 'B':
 						for(int j=0;j<WIDE_BAR_LEN_R3;++j){
-							encode_buf->append(QLine(global_Xposition,0,global_Xposition,100));
-							global_Xposition+=BASE_LEN;}
+							encode_buf->append(QLine(global_Xposition,0,global_Xposition,global_Yposition));
+							global_Xposition+=1;}
 						break;
 					case 'b':
 						for(int j=0;j<NARROW_BAR_LEN;++j){
-							encode_buf->append(QLine(global_Xposition,0,global_Xposition,100));
-							global_Xposition+=BASE_LEN;}
+							encode_buf->append(QLine(global_Xposition,0,global_Xposition,global_Yposition));
+							global_Xposition+=1;}
 						break;
 					case 'W':
 						global_Xposition+=WIDE_BAR_LEN_R3;
@@ -91,6 +91,9 @@ int BC_GEN::encode(QString input, int start_Xposition){
 	encode_buf->clear();//clean these
 	chksum=0;
 	global_Xposition=start_Xposition-INTER_GAP_LEN;//init position
+	int width=lenth_calc(input.size()+ADD_CODE_LEN);
+	global_Yposition=width*RATIO_H_W;//init height
+	this->resize(width,global_Yposition);
 
 	//code39 start
 	if(insertbuf(QChar('*'))!=1) return -5;//start character
