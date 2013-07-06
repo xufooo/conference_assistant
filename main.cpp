@@ -33,13 +33,10 @@
 int main(int argc, char** argv)
 {
 	QApplication app(argc, argv);
-	QDialog *diag = new QDialog;
 //	QPixmap pix;
 	BC_GEN bcg;
 	bcg.encode(QString("ABCDEFG12345"));
-	QPainter painter(diag);
-	painter.drawLines(*bcg.get_encode_buf());
-	diag->show();
+	bcg.show();
 	return app.exec();
 //	return 0;
 }	

@@ -40,8 +40,8 @@
 	"bWbwbWbWb","bwbWbWbWb",\
 	"bWbwBwBwb"};
 
-BC_GEN::BC_GEN(QObject*,int start_Xposition):chksum(0),global_Xposition(start_Xposition){
-	encode_buf = new QVector<QPoint>();
+BC_GEN::BC_GEN(QWidget* parent,int start_Xposition):QWidget(parent),chksum(0),global_Xposition(start_Xposition){
+	encode_buf = new QVector<QLine>();
 
 }
 
@@ -58,12 +58,12 @@ int BC_GEN::insertbuf(const QChar & bc)
 				switch(code39_code_table[index][i]){
 					case 'B':
 						for(int j=0;j<WIDE_BAR_LEN_R3;++j){
-							encode_buf->append(QPoint(global_Xposition,100));
+							encode_buf->append(QLine(global_Xposition,0,global_Xposition,100));
 							global_Xposition+=BASE_LEN;}
 						break;
 					case 'b':
 						for(int j=0;j<NARROW_BAR_LEN;++j){
-							encode_buf->append(QPoint(global_Xposition,100));
+							encode_buf->append(QLine(global_Xposition,0,global_Xposition,100));
 							global_Xposition+=BASE_LEN;}
 						break;
 					case 'W':
@@ -103,3 +103,11 @@ int BC_GEN::encode(QString input, int start_Xposition){
 
 	return 1;//successfully encode
 }
+
+void BC_GEN::paintEvent(QPaintEvent *event){
+     QPainter painter;
+     painter.begin(this);
+	 painter.drawLines(*encode_buf);
+     painter.end();	
+}
+

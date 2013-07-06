@@ -24,9 +24,10 @@
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include <QObject>
+#include <QWidget>
+#include <QPainter>
 #include <QVector>
-#include <QPoint>
+#include <QLine>
 
 #define ENCODER   CODE39
 #define LEAST_CHAR 5
@@ -45,21 +46,23 @@
 #define CHAR_LEN_R3 (NARROW_BAR_LEN*6+WIDE_BAR_LEN_R3*3)
 #define CHAR_TOT_LEN_R3 (NARROW_BAR_LEN*6+WIDE_BAR_LEN_R3*3+INTER_GAP_LEN*8)
 
-class BC_GEN: public QObject
+class BC_GEN: public QWidget
 {
 	Q_OBJECT;
 public:
-	BC_GEN(QObject* parent=0,int start_Xposition=0);
+	BC_GEN(QWidget* parent=0,int start_Xposition=0);
 	~BC_GEN();
-	inline QVector<QPoint>* get_encode_buf(){return encode_buf;}
+	inline QVector<QLine>* get_encode_buf(){return encode_buf;}
 public slots:
 	int encode(QString input,int start_Xposition=0);
+protected:
+	void paintEvent(QPaintEvent *event);
 private:
 	int insertbuf(const QChar & bc);
 
 	static char code39_table[CODE39_SIZE+1];//44 char include '*'
 	static char code39_code_table[CODE39_SIZE+1][CODE39_CODE_LEN+1];
-	QVector<QPoint> *encode_buf;
+	QVector<QLine> *encode_buf;
 	uint chksum;
 	int global_Xposition;
 };
