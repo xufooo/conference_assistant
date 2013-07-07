@@ -16,30 +16,27 @@
 #
 #
 # Description: 
-# This is the main framework.
+# This module is used for creating information.
 #
-# Last modified: 2013-07-07 14:40
+# Last modified: 2013-07-07 16:57
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include <QDialog>
-class QTabWidget;
+#include <QWidget>
 class QLineEdit;
 class BC_GEN;
 
-class MainFrame:public QDialog
+class CreateInfo:public QWidget
 {
 	Q_OBJECT;
 
 public:
-	MainFrame(QWidget* parent=0,Qt::WindowFlags f=0);
-//	virtual ~MainFrame();
-
+	CreateInfo(QWidget *parent=0);
+	virtual ~CreateInfo();
 private:
-	QTabWidget *tab;
 	QLineEdit *bc_line;
 	BC_GEN *barcode;
-};
 
+};

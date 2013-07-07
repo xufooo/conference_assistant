@@ -24,24 +24,21 @@
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include <QLineEdit>
+#include <QTabWidget>
 #include <QVBoxLayout>
 
+#include "create_info.h"
 #include "mainframe.h"
-#include "bc_generator.h"
 
 MainFrame::MainFrame(QWidget* parent,Qt::WindowFlags f):QDialog(parent,f){
 
-	QVBoxLayout *mainLayout = new QVBoxLayout(this);
-	bc_line = new QLineEdit(this);
-	barcode = new BC_GEN(this);
-	mainLayout->addWidget(bc_line);
-	mainLayout->addWidget(barcode);
-	setLayout(mainLayout);
-	QObject::connect(bc_line,SIGNAL(textChanged(const QString&)),barcode,SLOT(encode(const QString&)));
+	tab = new QTabWidget(this);
+	tab->addTab(new CreateInfo(this),tr("Create"));
+	
+	QVBoxLayout *layout=new QVBoxLayout;
+	layout->setSizeConstraint(QLayout::SetNoConstraint);
+	layout->addWidget(tab);
+	setLayout(layout);
 }
 
-MainFrame::~MainFrame(){
-	delete barcode;
-	delete bc_line;
-}
+//MainFrame::~MainFrame(){}

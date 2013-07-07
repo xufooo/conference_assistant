@@ -26,6 +26,7 @@
 
 #include <QApplication>
 #include "mainframe.h"
+//#include "bc_generator.h"
 
 int main(int argc, char** argv)
 {

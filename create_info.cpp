@@ -16,30 +16,31 @@
 #
 #
 # Description: 
-# This is the main framework.
+# This module is used for creating information.
 #
-# Last modified: 2013-07-07 14:40
+# Last modified: 2013-07-07 16:59
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include <QDialog>
-class QTabWidget;
-class QLineEdit;
-class BC_GEN;
+#include <QLineEdit>
+#include <QVBoxLayout>
 
-class MainFrame:public QDialog
-{
-	Q_OBJECT;
+#include "bc_generator.h"
+#include "create_info.h"
 
-public:
-	MainFrame(QWidget* parent=0,Qt::WindowFlags f=0);
-//	virtual ~MainFrame();
+CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
+	QVBoxLayout *mainLayout = new QVBoxLayout(this);
+	bc_line = new QLineEdit(this);
+	barcode = new BC_GEN(this);
+	mainLayout->addWidget(bc_line);
+	mainLayout->addWidget(barcode);
+	setLayout(mainLayout);
+	QObject::connect(bc_line,SIGNAL(textChanged(const QString&)),barcode,SLOT(encode(const QString&)));
+}
 
-private:
-	QTabWidget *tab;
-	QLineEdit *bc_line;
-	BC_GEN *barcode;
-};
-
+CreateInfo::~CreateInfo(){
+	delete barcode;
+	delete bc_line;
+}
