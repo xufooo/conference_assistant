@@ -18,14 +18,13 @@
 # Description: 
 # This module is used to generate barcode.
 #
-# Last modified: 2013-07-06 12:11
+# Last modified: 2013-07-07 12:07
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
 #include "bc_generator.h"
-#include <iostream>
 
 	char BC_GEN::code39_table[CODE39_SIZE+1]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','-','.',' ','$','/','+','%','*'};
 	char BC_GEN::code39_code_table[CODE39_SIZE+1][CODE39_CODE_LEN+1]={"bwbWBwBwb","BwbWbwbwB","bwBWbwbwB","BwBWbwbwb","bwbWBwbwB",\
@@ -40,12 +39,14 @@
 	"bWbwbWbWb","bwbWbWbWb",\
 	"bWbwBwBwb"};
 
-BC_GEN::BC_GEN(QWidget* parent,int start_Xposition):QWidget(parent),chksum(0),global_Xposition(start_Xposition){
+BC_GEN::BC_GEN(QWidget* parent,Qt::WindowFlags f,int start_Xposition):QWidget(parent,f),chksum(0),global_Xposition(start_Xposition){
+	resize(INIT_WIDTH+2*MARGIN,INIT_HEIGHT+2*MARGIN);
 	encode_buf = new QVector<QLine>();
-
+	bc_pix = new QPixmap();
 }
 
 BC_GEN::~BC_GEN(){
+	delete bc_pix;
 	delete encode_buf;
 }
 
@@ -58,12 +59,12 @@ int BC_GEN::insertbuf(const QChar & bc)
 				switch(code39_code_table[index][i]){
 					case 'B':
 						for(int j=0;j<WIDE_BAR_LEN_R3;++j){
-							encode_buf->append(QLine(global_Xposition,0,global_Xposition,global_Yposition));
+							encode_buf->append(QLine(global_Xposition,MARGIN,global_Xposition,global_Yposition));
 							global_Xposition+=1;}
 						break;
 					case 'b':
 						for(int j=0;j<NARROW_BAR_LEN;++j){
-							encode_buf->append(QLine(global_Xposition,0,global_Xposition,global_Yposition));
+							encode_buf->append(QLine(global_Xposition,MARGIN,global_Xposition,global_Yposition));
 							global_Xposition+=1;}
 						break;
 					case 'W':
@@ -90,10 +91,11 @@ int BC_GEN::encode(QString input, int start_Xposition){
 
 	encode_buf->clear();//clean these
 	chksum=0;
-	global_Xposition=start_Xposition-INTER_GAP_LEN;//init position
-	int width=lenth_calc(input.size()+ADD_CODE_LEN);
-	global_Yposition=width*RATIO_H_W;//init height
-	this->resize(width,global_Yposition);
+	global_Xposition=start_Xposition+MARGIN-INTER_GAP_LEN;//init position
+	int width=lenth_calc(input.size()+ADD_CODE_LEN)+2*MARGIN;
+	global_Yposition=width*RATIO_H_W+MARGIN;//init height
+	this->setMinimumSize(width,global_Yposition+2*MARGIN);
+	this->resize(width,global_Yposition+MARGIN);
 
 	//code39 start
 	if(insertbuf(QChar('*'))!=1) return -5;//start character
@@ -104,13 +106,22 @@ int BC_GEN::encode(QString input, int start_Xposition){
 	if(insertbuf(code39_table[chksum%CODE39_SIZE])!=1) return -5;//chksum
 	if(insertbuf(QChar('*'))!=1) return -5;//end character
 
-	return 1;//successfully encode
+	delete bc_pix;//begin to draw barcode
+	bc_pix = new QPixmap(width,global_Yposition+MARGIN);//init bc_pix
+	bc_pix->fill();
+
+	QPainter p;//draw barcode
+	p.begin(bc_pix);
+	p.drawLines(*encode_buf);
+	p.end();
+
+	return 1;//successfully
 }
 
 void BC_GEN::paintEvent(QPaintEvent *event){
-     QPainter painter;
-     painter.begin(this);
-	 painter.drawLines(*encode_buf);
-     painter.end();	
+	QPainter painter;
+	painter.begin(this);
+	painter.drawPixmap(this->rect(),*bc_pix);
+	painter.end();
 }
 

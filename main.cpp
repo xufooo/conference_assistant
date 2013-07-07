@@ -18,24 +18,20 @@
 # Description: 
 # This Project is aimed for conference holding.
 #
-# Last modified: 2013-07-04 20:57
+# Last modified: 2013-07-07 12:23
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
 #include <QApplication>
-#include <QDialog>
-#include <QPixmap>
-#include <QPainter>
 #include "bc_generator.h"
 
 int main(int argc, char** argv)
 {
 	QApplication app(argc, argv);
-//	QPixmap pix;
 	BC_GEN bcg;
-	bcg.encode(QString("ABCDEFG12345"));
+	bcg.encode(QString("ABCDEFGHIJK012345"));
 	bcg.show();
 	return app.exec();
 //	return 0;

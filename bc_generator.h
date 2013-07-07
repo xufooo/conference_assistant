@@ -18,26 +18,32 @@
 # Description: 
 # This module is used to generate barcode.
 #
-# Last modified: 2013-07-06 12:12
+# Last modified: 2013-07-07 12:14
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
+#ifndef _BC_GENERATOR_H
+#define _BC_GENERATOR_H
 
 #include <QWidget>
 #include <QPainter>
+#include <QPixmap>
 #include <QVector>
 #include <QLine>
 
 #define ENCODER   CODE39
-#define LEAST_CHAR 5
-#define CODE39_SIZE 43	  //code table size 43 char
+#define LEAST_CHAR 1
+#define CODE39_SIZE 43	  //code table size 43 char, '*' not included
 #define CODE39_CODE_LEN 9 //code lenth 9 char
 #define ADD_CODE_LEN 3    //start & end '*', check sum '?'
 #define BASE_LEN   1
 #define RATIO_1_2  2
 #define RATIO_1_3  3
 #define RATIO_H_W  0.3
+#define MARGIN		10
+#define INIT_WIDTH	200
+#define INIT_HEIGHT	(INIT_WIDTH*RATIO_H_W)
 
 #define NARROW_BAR_LEN BASE_LEN
 #define WIDE_BAR_LEN_R2  (BASE_LEN*RATIO_1_2)
@@ -51,21 +57,24 @@ class BC_GEN: public QWidget
 {
 	Q_OBJECT;
 public:
-	BC_GEN(QWidget* parent=0,int start_Xposition=0);
-	~BC_GEN();
+	BC_GEN(QWidget* parent=0,Qt::WindowFlags f=0,int start_Xposition=MARGIN);
+	virtual ~BC_GEN();
 	inline QVector<QLine>* get_encode_buf(){return encode_buf;}
 	inline int lenth_calc(int char_num){return (char_num*(CHAR_LEN_R3+INTER_GAP_LEN)-INTER_GAP_LEN);}
 public slots:
 	int encode(QString input,int start_Xposition=0);
 protected:
-	void paintEvent(QPaintEvent *event);
+	virtual void paintEvent(QPaintEvent *event);
 private:
 	int insertbuf(const QChar & bc);
 
 	static char code39_table[CODE39_SIZE+1];//44 char include '*'
-	static char code39_code_table[CODE39_SIZE+1][CODE39_CODE_LEN+1];
+	static char code39_code_table[CODE39_SIZE+1][CODE39_CODE_LEN+1];//'\0'
 	QVector<QLine> *encode_buf;
 	uint chksum;
 	int global_Xposition;
 	int global_Yposition;
+	QPixmap *bc_pix;
 };
+
+#endif
