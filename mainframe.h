@@ -26,8 +26,6 @@
 
 #include <QDialog>
 class QTabWidget;
-class QLineEdit;
-class BC_GEN;
 
 class MainFrame:public QDialog
 {
@@ -37,9 +35,6 @@ public:
 	MainFrame(QWidget* parent=0,Qt::WindowFlags f=0);
 //	virtual ~MainFrame();
 
-private:
 	QTabWidget *tab;
-	QLineEdit *bc_line;
-	BC_GEN *barcode;
 };
 

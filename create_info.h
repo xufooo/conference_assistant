@@ -38,5 +38,4 @@ public:
 private:
 	QLineEdit *bc_line;
 	BC_GEN *barcode;
-
 };
