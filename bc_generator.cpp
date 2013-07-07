@@ -18,7 +18,7 @@
 # Description: 
 # This module is used to generate barcode.
 #
-# Last modified: 2013-07-07 12:07
+# Last modified: 2013-07-07 13:08
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
@@ -39,7 +39,7 @@
 	"bWbwbWbWb","bwbWbWbWb",\
 	"bWbwBwBwb"};
 
-BC_GEN::BC_GEN(QWidget* parent,Qt::WindowFlags f,int start_Xposition):QWidget(parent,f),chksum(0),global_Xposition(start_Xposition){
+BC_GEN::BC_GEN(QWidget* parent,Qt::WindowFlags f):QWidget(parent,f),chksum(0),global_Xposition(MARGIN),global_Yposition(MARGIN),global_height(MARGIN){
 	resize(INIT_WIDTH+2*MARGIN,INIT_HEIGHT+2*MARGIN);
 	encode_buf = new QVector<QLine>();
 	bc_pix = new QPixmap();
@@ -59,12 +59,12 @@ int BC_GEN::insertbuf(const QChar & bc)
 				switch(code39_code_table[index][i]){
 					case 'B':
 						for(int j=0;j<WIDE_BAR_LEN_R3;++j){
-							encode_buf->append(QLine(global_Xposition,MARGIN,global_Xposition,global_Yposition));
+							encode_buf->append(QLine(global_Xposition,global_Yposition,global_Xposition,global_Yposition+global_height));
 							global_Xposition+=1;}
 						break;
 					case 'b':
 						for(int j=0;j<NARROW_BAR_LEN;++j){
-							encode_buf->append(QLine(global_Xposition,MARGIN,global_Xposition,global_Yposition));
+							encode_buf->append(QLine(global_Xposition,global_Yposition,global_Xposition,global_Yposition+global_height));
 							global_Xposition+=1;}
 						break;
 					case 'W':
@@ -85,17 +85,22 @@ int BC_GEN::insertbuf(const QChar & bc)
 }
 
 						
-int BC_GEN::encode(QString input, int start_Xposition){
+int BC_GEN::encode(QString input, int start_Xposition,int start_Yposition){
 	if(input.size() < LEAST_CHAR)
 		return -4;//too short
 
 	encode_buf->clear();//clean these
 	chksum=0;
+	start_Xposition=(start_Xposition+MARGIN)>WIDE_BAR_LEN_R3?(start_Xposition+MARGIN):WIDE_BAR_LEN_R3;
+	start_Yposition=(start_Yposition+MARGIN)>WIDE_BAR_LEN_R3?(start_Yposition+MARGIN):WIDE_BAR_LEN_R3;
+
 	global_Xposition=start_Xposition+MARGIN-INTER_GAP_LEN;//init position
-	int width=lenth_calc(input.size()+ADD_CODE_LEN)+2*MARGIN;
-	global_Yposition=width*RATIO_H_W+MARGIN;//init height
-	this->setMinimumSize(width,global_Yposition+2*MARGIN);
-	this->resize(width,global_Yposition+MARGIN);
+	global_Yposition=start_Yposition+MARGIN;
+
+	int width=lenth_calc(input.size()+ADD_CODE_LEN);//calc width
+	global_height=width*RATIO_H_W;//barcode height
+	setMinimumSize(width+2*(MARGIN+start_Xposition),global_height+2*(MARGIN+start_Yposition));
+	resize(width+2*(MARGIN+start_Xposition),global_height+2*(MARGIN+start_Yposition));
 
 	//code39 start
 	if(insertbuf(QChar('*'))!=1) return -5;//start character
@@ -107,7 +112,7 @@ int BC_GEN::encode(QString input, int start_Xposition){
 	if(insertbuf(QChar('*'))!=1) return -5;//end character
 
 	delete bc_pix;//begin to draw barcode
-	bc_pix = new QPixmap(width,global_Yposition+MARGIN);//init bc_pix
+	bc_pix = new QPixmap(width+2*(MARGIN+start_Xposition),global_height+2*(MARGIN+start_Yposition));//init bc_pix
 	bc_pix->fill();
 
 	QPainter p;//draw barcode

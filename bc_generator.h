@@ -18,7 +18,7 @@
 # Description: 
 # This module is used to generate barcode.
 #
-# Last modified: 2013-07-07 12:14
+# Last modified: 2013-07-07 13:08
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
@@ -41,7 +41,7 @@
 #define RATIO_1_2  2
 #define RATIO_1_3  3
 #define RATIO_H_W  0.3
-#define MARGIN		10
+#define MARGIN		WIDE_BAR_LEN_R3
 #define INIT_WIDTH	200
 #define INIT_HEIGHT	(INIT_WIDTH*RATIO_H_W)
 
@@ -57,12 +57,12 @@ class BC_GEN: public QWidget
 {
 	Q_OBJECT;
 public:
-	BC_GEN(QWidget* parent=0,Qt::WindowFlags f=0,int start_Xposition=MARGIN);
+	BC_GEN(QWidget* parent=0,Qt::WindowFlags f=0);
 	virtual ~BC_GEN();
 	inline QVector<QLine>* get_encode_buf(){return encode_buf;}
 	inline int lenth_calc(int char_num){return (char_num*(CHAR_LEN_R3+INTER_GAP_LEN)-INTER_GAP_LEN);}
 public slots:
-	int encode(QString input,int start_Xposition=0);
+	int encode(QString input,int start_Xposition=0,int start_Yposition=0);
 protected:
 	virtual void paintEvent(QPaintEvent *event);
 private:
@@ -74,6 +74,7 @@ private:
 	uint chksum;
 	int global_Xposition;
 	int global_Yposition;
+	int global_height;
 	QPixmap *bc_pix;
 };
 

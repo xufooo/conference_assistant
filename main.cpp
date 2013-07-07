@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 {
 	QApplication app(argc, argv);
 	BC_GEN bcg;
-	bcg.encode(QString("ABCDEFGHIJK012345"));
+	bcg.encode(QString("ABCDEFGHIJK012345"),-15,-15);
 	bcg.show();
 	return app.exec();
 //	return 0;
