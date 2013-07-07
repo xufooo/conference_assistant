@@ -53,7 +53,7 @@ BC_GEN::~BC_GEN(){
 int BC_GEN::insertbuf(const QChar & bc)
 {
 	for(int index=0;index<(CODE39_SIZE+1);++index){//include '*'
-		if(bc.toAscii()==code39_table[index]){//found char
+		if(bc.toUpper().toAscii()==code39_table[index]){//found char
 			global_Xposition+=INTER_GAP_LEN;//char gap
 			for(int i=0;i<CODE39_CODE_LEN;++i){
 				switch(code39_code_table[index][i]){
