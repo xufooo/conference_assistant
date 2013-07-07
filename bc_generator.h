@@ -62,7 +62,7 @@ public:
 	inline QVector<QLine>* get_encode_buf(){return encode_buf;}
 	inline int lenth_calc(int char_num){return (char_num*(CHAR_LEN_R3+INTER_GAP_LEN)-INTER_GAP_LEN);}
 public slots:
-	int encode(QString input,int start_Xposition=0,int start_Yposition=0);
+	int encode(const QString& input,int start_Xposition=0,int start_Yposition=0);
 protected:
 	virtual void paintEvent(QPaintEvent *event);
 private:

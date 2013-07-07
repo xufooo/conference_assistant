@@ -16,26 +16,32 @@
 #
 #
 # Description: 
-# This Project is aimed for conference holding.
+# This is the main framework.
 #
-# Last modified: 2013-07-07 12:23
+# Last modified: 2013-07-07 14:39
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include <QApplication>
-#include "mainframe.h"
+#include <QLineEdit>
+#include <QVBoxLayout>
 
-int main(int argc, char** argv)
-{
-	QApplication app(argc, argv);
-//	BC_GEN bcg;
-//	bcg.encode(QString("abcdefGHIJK012345"),-15,-15);
-//	bcg.show();
-	MainFrame mainframe;
-	mainframe.show();
-	return app.exec();
-//	return 0;
-}	
-	
+#include "mainframe.h"
+#include "bc_generator.h"
+
+MainFrame::MainFrame(QWidget* parent,Qt::WindowFlags f):QDialog(parent,f){
+
+	QVBoxLayout *mainLayout = new QVBoxLayout(this);
+	bc_line = new QLineEdit(this);
+	barcode = new BC_GEN(this);
+	mainLayout->addWidget(bc_line);
+	mainLayout->addWidget(barcode);
+	setLayout(mainLayout);
+	QObject::connect(bc_line,SIGNAL(textChanged(const QString&)),barcode,SLOT(encode(const QString&)));
+}
+
+MainFrame::~MainFrame(){
+	delete barcode;
+	delete bc_line;
+}

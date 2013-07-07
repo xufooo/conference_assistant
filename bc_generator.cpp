@@ -85,7 +85,7 @@ int BC_GEN::insertbuf(const QChar & bc)
 }
 
 						
-int BC_GEN::encode(QString input, int start_Xposition,int start_Yposition){
+int BC_GEN::encode(const QString& input, int start_Xposition,int start_Yposition){
 	if(input.size() < LEAST_CHAR)
 		return -4;//too short
 

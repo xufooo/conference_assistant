@@ -16,26 +16,30 @@
 #
 #
 # Description: 
-# This Project is aimed for conference holding.
+# This is the main framework.
 #
-# Last modified: 2013-07-07 12:23
+# Last modified: 2013-07-07 14:40
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include <QApplication>
-#include "mainframe.h"
+#include <QDialog>
+class QTabWidget;
+class QLineEdit;
+class BC_GEN;
 
-int main(int argc, char** argv)
+class MainFrame:public QDialog
 {
-	QApplication app(argc, argv);
-//	BC_GEN bcg;
-//	bcg.encode(QString("abcdefGHIJK012345"),-15,-15);
-//	bcg.show();
-	MainFrame mainframe;
-	mainframe.show();
-	return app.exec();
-//	return 0;
-}	
-	
+	Q_OBJECT;
+
+public:
+	MainFrame(QWidget* parent=0,Qt::WindowFlags f=0);
+	virtual ~MainFrame();
+
+private:
+	QTabWidget *tab;
+	QLineEdit *bc_line;
+	BC_GEN *barcode;
+};
+
