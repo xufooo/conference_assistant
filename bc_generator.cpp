@@ -91,16 +91,16 @@ int BC_GEN::encode(const QString& input, int start_Xposition,int start_Yposition
 
 	encode_buf->clear();//clean these
 	chksum=0;
-	start_Xposition=(start_Xposition+MARGIN)>WIDE_BAR_LEN_R3?(start_Xposition+MARGIN):WIDE_BAR_LEN_R3;
+	start_Xposition=(start_Xposition+MARGIN)>WIDE_BAR_LEN_R3?(start_Xposition+MARGIN):WIDE_BAR_LEN_R3;//fix position
 	start_Yposition=(start_Yposition+MARGIN)>WIDE_BAR_LEN_R3?(start_Yposition+MARGIN):WIDE_BAR_LEN_R3;
 
-	global_Xposition=start_Xposition+MARGIN-INTER_GAP_LEN;//init position
-	global_Yposition=start_Yposition+MARGIN;
+	global_Xposition=start_Xposition-INTER_GAP_LEN;//init position
+	global_Yposition=start_Yposition;
 
 	int width=lenth_calc(input.size()+ADD_CODE_LEN);//calc width
 	global_height=width*RATIO_H_W;//barcode height
-	setMinimumSize(width+2*(MARGIN+start_Xposition),global_height+2*(MARGIN+start_Yposition));
-	resize(width+2*(MARGIN+start_Xposition),global_height+2*(MARGIN+start_Yposition));
+	setMinimumSize(width+2*start_Xposition,global_height+2*start_Yposition);
+	resize(width+2*start_Xposition,global_height+2*start_Yposition);
 
 	//code39 start
 	if(insertbuf(QChar('*'))!=1) return -5;//start character
@@ -112,7 +112,7 @@ int BC_GEN::encode(const QString& input, int start_Xposition,int start_Yposition
 	if(insertbuf(QChar('*'))!=1) return -5;//end character
 
 	delete bc_pix;//begin to draw barcode
-	bc_pix = new QPixmap(width+2*(MARGIN+start_Xposition),global_height+2*(MARGIN+start_Yposition));//init bc_pix
+	bc_pix = new QPixmap(width+2*start_Xposition,global_height+2*start_Yposition);//init bc_pix
 	bc_pix->fill();
 
 	QPainter p;//draw barcode
