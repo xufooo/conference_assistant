@@ -18,7 +18,7 @@
 # Description: 
 # This module is used to generate barcode.
 #
-# Last modified: 2013-07-07 13:08
+# Last modified: 2013-07-08 16:29
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
@@ -39,8 +39,11 @@
 	"bWbwbWbWb","bwbWbWbWb",\
 	"bWbwBwBwb"};
 
-BC_GEN::BC_GEN(QWidget* parent,Qt::WindowFlags f):QWidget(parent,f),chksum(0),global_Xposition(MARGIN),global_Yposition(MARGIN),global_height(MARGIN){
+BC_GEN::BC_GEN(QWidget* parent,int x,int y):QWidget(parent),chksum(0),global_Xposition(MARGIN),global_Yposition(MARGIN),start_Xposition(x),start_Yposition(y),global_height(MARGIN){
+	start_Xposition=(start_Xposition+MARGIN)>WIDE_BAR_LEN_R3?(start_Xposition+MARGIN):WIDE_BAR_LEN_R3;//fix position
+	start_Yposition=(start_Yposition+MARGIN)>WIDE_BAR_LEN_R3?(start_Yposition+MARGIN):WIDE_BAR_LEN_R3;
 	resize(INIT_WIDTH+2*MARGIN,INIT_HEIGHT+2*MARGIN);
+
 	encode_buf = new QVector<QLine>();
 	bc_pix = new QPixmap();
 }
@@ -85,14 +88,12 @@ int BC_GEN::insertbuf(const QChar & bc)
 }
 
 						
-int BC_GEN::encode(const QString& input, int start_Xposition,int start_Yposition){
+int BC_GEN::encode(const QString& input){
 	if(input.size() < LEAST_CHAR)
 		return -4;//too short
 
 	encode_buf->clear();//clean these
 	chksum=0;
-	start_Xposition=(start_Xposition+MARGIN)>WIDE_BAR_LEN_R3?(start_Xposition+MARGIN):WIDE_BAR_LEN_R3;//fix position
-	start_Yposition=(start_Yposition+MARGIN)>WIDE_BAR_LEN_R3?(start_Yposition+MARGIN):WIDE_BAR_LEN_R3;
 
 	global_Xposition=start_Xposition-INTER_GAP_LEN;//init position
 	global_Yposition=start_Yposition;

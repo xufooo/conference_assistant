@@ -57,12 +57,12 @@ class BC_GEN: public QWidget
 {
 	Q_OBJECT;
 public:
-	BC_GEN(QWidget* parent=0,Qt::WindowFlags f=0);
+	BC_GEN(QWidget* parent=0,int x=0,int y=0);
 	virtual ~BC_GEN();
 	inline QVector<QLine>* get_encode_buf(){return encode_buf;}
 	inline int lenth_calc(int char_num){return (char_num*(CHAR_LEN_R3+INTER_GAP_LEN)-INTER_GAP_LEN);}
 public slots:
-	int encode(const QString& input,int start_Xposition=0,int start_Yposition=0);
+	int encode(const QString& input);
 protected:
 	virtual void paintEvent(QPaintEvent *event);
 private:
@@ -74,7 +74,10 @@ private:
 	uint chksum;
 	int global_Xposition;
 	int global_Yposition;
+	int start_Xposition;
+	int start_Yposition;
 	int global_height;
+
 	QPixmap *bc_pix;
 };
 
