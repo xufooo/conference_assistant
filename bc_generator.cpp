@@ -18,7 +18,7 @@
 # Description: 
 # This module is used to generate barcode.
 #
-# Last modified: 2013-07-08 16:29
+# Last modified: 2013-07-08 17:30
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
@@ -42,7 +42,6 @@
 BC_GEN::BC_GEN(QWidget* parent,int x,int y):QWidget(parent),chksum(0),global_Xposition(MARGIN),global_Yposition(MARGIN),start_Xposition(x),start_Yposition(y),global_height(MARGIN){
 	start_Xposition=(start_Xposition+MARGIN)>WIDE_BAR_LEN_R3?(start_Xposition+MARGIN):WIDE_BAR_LEN_R3;//fix position
 	start_Yposition=(start_Yposition+MARGIN)>WIDE_BAR_LEN_R3?(start_Yposition+MARGIN):WIDE_BAR_LEN_R3;
-	resize(INIT_WIDTH+2*MARGIN,INIT_HEIGHT+2*MARGIN);
 
 	encode_buf = new QVector<QLine>();
 	bc_pix = new QPixmap();
@@ -89,8 +88,11 @@ int BC_GEN::insertbuf(const QChar & bc)
 
 						
 int BC_GEN::encode(const QString& input){
-	if(input.size() < LEAST_CHAR)
+	if(input.size() < LEAST_CHAR){
+		bc_pix->fill();
+		update();
 		return -4;//too short
+	}
 
 	encode_buf->clear();//clean these
 	chksum=0;
@@ -101,7 +103,6 @@ int BC_GEN::encode(const QString& input){
 	int width=lenth_calc(input.size()+ADD_CODE_LEN);//calc width
 	global_height=width*RATIO_H_W;//barcode height
 	setMinimumSize(width+2*start_Xposition,global_height+2*start_Yposition);
-	resize(width+2*start_Xposition,global_height+2*start_Yposition);
 
 	//code39 start
 	if(insertbuf(QChar('*'))!=1) return -5;//start character
@@ -120,6 +121,7 @@ int BC_GEN::encode(const QString& input){
 	p.begin(bc_pix);
 	p.drawLines(*encode_buf);
 	p.end();
+	update();//update display
 
 	return 1;//successfully
 }

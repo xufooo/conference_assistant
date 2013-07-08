@@ -18,7 +18,7 @@
 # Description: 
 # This module is used to generate barcode.
 #
-# Last modified: 2013-07-07 13:08
+# Last modified: 2013-07-08 17:30
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
@@ -60,7 +60,10 @@ public:
 	BC_GEN(QWidget* parent=0,int x=0,int y=0);
 	virtual ~BC_GEN();
 	inline QVector<QLine>* get_encode_buf(){return encode_buf;}
-	inline int lenth_calc(int char_num){return (char_num*(CHAR_LEN_R3+INTER_GAP_LEN)-INTER_GAP_LEN);}
+	inline int lenth_calc(const int& char_num){return (char_num*(CHAR_LEN_R3+INTER_GAP_LEN)-INTER_GAP_LEN);}
+	inline void setStartPosition(const int& Xposition,const int& Yposition){
+		start_Xposition=Xposition;start_Yposition=Yposition;}
+
 public slots:
 	int encode(const QString& input);
 protected:
@@ -70,6 +73,7 @@ private:
 
 	static char code39_table[CODE39_SIZE+1];//44 char include '*'
 	static char code39_code_table[CODE39_SIZE+1][CODE39_CODE_LEN+1];//'\0'
+
 	QVector<QLine> *encode_buf;
 	uint chksum;
 	int global_Xposition;

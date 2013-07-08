@@ -39,6 +39,7 @@ MainFrame::MainFrame(QWidget* parent,Qt::WindowFlags f):QDialog(parent,f){
 	layout->setSizeConstraint(QLayout::SetNoConstraint);
 	layout->addWidget(tab);
 	setLayout(layout);
+	setMinimumSize(500,300);
 }
 
 //MainFrame::~MainFrame(){}

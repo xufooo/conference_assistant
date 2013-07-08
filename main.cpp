@@ -32,7 +32,7 @@ int main(int argc, char** argv)
 {
 	QApplication app(argc, argv);
 //	BC_GEN bcg;
-//	bcg.encode(QString("abcdefGHIJK012345"),-15,-15);
+//	bcg.encode(QString("abcdefGHIJK012345"));
 //	bcg.show();
 	MainFrame mainframe;
 	mainframe.show();
