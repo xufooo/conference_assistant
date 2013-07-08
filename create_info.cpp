@@ -26,18 +26,20 @@
 
 #include <QLineEdit>
 #include <QVBoxLayout>
+#include <QTimer>
 
 #include "bc_generator.h"
 #include "create_info.h"
 
 CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
 	QVBoxLayout *mainLayout = new QVBoxLayout(this);
-	bc_line = new QLineEdit(this);
-	barcode = new BC_GEN(this);
+	bc_line = new QLineEdit;
+	barcode = new BC_GEN;
 	mainLayout->addWidget(bc_line);
 	mainLayout->addWidget(barcode);
 	setLayout(mainLayout);
 	QObject::connect(bc_line,SIGNAL(textChanged(const QString&)),barcode,SLOT(encode(const QString&)));
+	QTimer::singleShot(0,bc_line,SLOT(setFocus()));//focus on bc_line
 }
 
 CreateInfo::~CreateInfo(){
