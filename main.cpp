@@ -29,6 +29,7 @@
 //#include "bc_generator.h"
 #include <QWidget>
 #include "arthurwidgets.h"
+#include "hoverpoints.h"
 
 int main(int argc, char** argv)
 {
@@ -39,10 +40,11 @@ int main(int argc, char** argv)
 //	MainFrame mainframe;
 //	mainframe.show();
 	
-//	QWidget main;
+	QWidget main;
 	ArthurFrame a;
-//	main.show();
+	HoverPoints point(&a,HoverPoints::RectangleShape);
 	a.show();
+//	main.show();
 	return app.exec();
 //	return 0;
 }	
