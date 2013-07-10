@@ -25,8 +25,10 @@
 =============================================================================*/
 
 #include <QApplication>
-#include "mainframe.h"
+//#include "mainframe.h"
 //#include "bc_generator.h"
+#include <QWidget>
+#include "arthurwidgets.h"
 
 int main(int argc, char** argv)
 {
@@ -34,8 +36,13 @@ int main(int argc, char** argv)
 //	BC_GEN bcg;
 //	bcg.encode(QString("abcdefGHIJK012345"));
 //	bcg.show();
-	MainFrame mainframe;
-	mainframe.show();
+//	MainFrame mainframe;
+//	mainframe.show();
+	
+//	QWidget main;
+	ArthurFrame a;
+//	main.show();
+	a.show();
 	return app.exec();
 //	return 0;
 }	
