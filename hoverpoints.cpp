@@ -304,9 +304,20 @@ void HoverPoints::paintPoints()
                              p1.x() + distance / 2, p2.y(),
                              p2.x(), p2.y());
             }
+			/*ooo added the first point to form a close circle*/
+                QPointF p1 = m_points.last();
+                QPointF p2 = m_points.first();
+                qreal distance = p2.x() - p1.x();
+
+                path.cubicTo(p1.x() + distance / 2, p1.y(),
+                             p1.x() + distance / 2, p2.y(),
+                             p2.x(), p2.y());
+			/*ooo*/
+
             p.drawPath(path);
         } else {
-            p.drawPolyline(m_points);
+//            p.drawPolyline(m_points);
+            p.drawPolygon(m_points);//ooo changed to polygon
         }
     }
 
