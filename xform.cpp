@@ -46,13 +46,16 @@
 #include <QPainter>
 #include <QPainterPath>
 
+#include <QDebug>
+
 const int alpha = 155;
 
 XFormView::XFormView(QWidget *parent)
     : ArthurFrame(parent)
 {
     setAttribute(Qt::WA_MouseTracking);
-    m_type = VectorType;
+    //m_type = VectorType;
+    m_type = PixmapType;//ooo changed to pixmap
     m_rotation = 0.0;
     m_scale = 1.0;
     m_shear = 0.0;
@@ -66,7 +69,9 @@ XFormView::XFormView(QWidget *parent)
     pts->setShapePen(QPen(QColor(255, 100, 50, alpha)));
     pts->setConnectionPen(QPen(QColor(151, 0, 0, 50)));
     pts->setBoundingRect(QRectF(0, 0, 500, 500));
+    //pts->setBoundingRect(m_pixmap.rect());
     ctrlPoints << QPointF(250, 250) << QPointF(350, 250);
+    //ctrlPoints << QPointF(m_pixmap.x(), m_pixmap.width()) << QPointF(350, 250);
     pts->setPoints(ctrlPoints);
     connect(pts, SIGNAL(pointsChanged(QPolygonF)),
             this, SLOT(updateCtrlPoints(QPolygonF)));
@@ -113,12 +118,14 @@ void XFormView::mousePressEvent(QMouseEvent *)
 
 void XFormView::resizeEvent(QResizeEvent *e)
 {
+	qDebug()<<"resizeEvent";
     pts->setBoundingRect(rect());
     ArthurFrame::resizeEvent(e);
 }
 
 void XFormView::paint(QPainter *p)
 {
+	qDebug()<<"paint";
     p->save();
     p->setRenderHint(QPainter::Antialiasing);
     p->setRenderHint(QPainter::SmoothPixmapTransform);
@@ -138,25 +145,35 @@ void XFormView::paint(QPainter *p)
 
 void XFormView::updateCtrlPoints(const QPolygonF &points)
 {
+	qDebug()<<"updateCtrlPoints";
     QPointF trans = points.at(0) - ctrlPoints.at(0);
+	qDebug()<<"points:"<<points.at(0)<<" ctrlpoints:"<<ctrlPoints.at(0)<<"trans "<<trans;
 
     if (qAbs(points.at(0).x() - points.at(1).x()) < 10
-        && qAbs(points.at(0).y() - points.at(1).y()) < 10)
+        && qAbs(points.at(0).y() - points.at(1).y()) < 10){
         pts->setPoints(ctrlPoints);
+		qDebug()<<"setPoints1";
+	}
     if (!trans.isNull()) {
         ctrlPoints[0] = points.at(0);
         ctrlPoints[1] += trans;
         pts->setPoints(ctrlPoints);
+		qDebug()<<"setPoints2";
     }
     ctrlPoints = points;
 
     QLineF line(ctrlPoints.at(0), ctrlPoints.at(1));
+	qDebug()<<"m_rotation1:"<<m_rotation;
     m_rotation = line.angle(QLineF(0, 0, 1, 0));
-    if (line.dy() < 0)
+	qDebug()<<"m_rotation2:"<<m_rotation;
+    if (line.dy() < 0){
         m_rotation = 360 - m_rotation;
+	qDebug()<<"m_rotation3:"<<m_rotation;
+	}
 
     if (trans.isNull())
         emit rotationChanged(int(m_rotation*10));
+	qDebug()<<"m_rotation4:"<<m_rotation;
 }
 
 void XFormView::setVectorType()
@@ -213,6 +230,7 @@ void XFormView::setScale(qreal s)
 
 void XFormView::setRotation(qreal r)
 {
+	qDebug()<<"setRotation "<<m_rotation;
     qreal old_rot = m_rotation;
     m_rotation = r;
 
@@ -228,6 +246,7 @@ void XFormView::setRotation(qreal r)
 
 void XFormView::timerEvent(QTimerEvent *e)
 {
+	qDebug()<<"timer";
     if (e->timerId() == timer.timerId()) {
         QPointF center(pts->points().at(0));
         QMatrix m;
@@ -260,6 +279,7 @@ void XFormView::wheelEvent(QWheelEvent *e)
 
 void XFormView::reset()
 {
+	qDebug()<<"reset";
     emit rotationChanged(0);
     emit scaleChanged(1000);
     emit shearChanged(0);
@@ -272,13 +292,17 @@ void XFormView::reset()
 void XFormView::drawPixmapType(QPainter *painter)
 {
     QPointF center(m_pixmap.width() / qreal(2), m_pixmap.height() / qreal(2));
+	qDebug()<<"center:"<<center;
     painter->translate(ctrlPoints.at(0) - center);
+	qDebug()<<"offset1:"<<ctrlPoints.at(0) - center;
 
     painter->translate(center);
+	qDebug()<<"offset2:"<<center<<" m_rotation"<<m_rotation;
     painter->rotate(m_rotation);
     painter->scale(m_scale, m_scale);
     painter->shear(0, m_shear);
     painter->translate(-center);
+	qDebug()<<"offset3:"<<-center;
 
     painter->drawPixmap(QPointF(0, 0), m_pixmap);
     painter->setPen(QPen(QColor(255, 0, 0, alpha), 0.25, Qt::SolidLine, Qt::FlatCap, Qt::BevelJoin));
@@ -302,6 +326,7 @@ void XFormView::drawTextType(QPainter *painter)
 
     painter->translate(center);
     painter->rotate(m_rotation);
+	qDebug()<<"text "<<m_rotation;
     painter->scale(m_scale, m_scale);
     painter->shear(0, m_shear);
     painter->translate(-center);
@@ -325,6 +350,7 @@ void XFormView::drawVectorType(QPainter *painter)
     QPoint center = br.center();
     painter->translate(center.x(), center.y());
     painter->rotate(m_rotation);
+	qDebug()<<"vector "<<m_rotation;
     painter->scale(m_scale, m_scale);
     painter->shear(0, m_shear);
     painter->translate(-center.x(), -center.y());
@@ -777,7 +803,9 @@ XFormWidget::XFormWidget(QWidget *parent)
     setWindowTitle(tr("Affine Transformations"));
 
     view = new XFormView(this);
+	qDebug()<<"new view";
     view->setMinimumSize(200, 200);
+	qDebug()<<"new vieview->setMinimumSizew";
 
     QGroupBox *mainGroup = new QGroupBox(this);
     mainGroup->setFixedWidth(180);
@@ -815,7 +843,8 @@ XFormWidget::XFormWidget(QWidget *parent)
 
     QPushButton *animateButton = new QPushButton(mainGroup);
     animateButton->setText(tr("Animate"));
-    animateButton->setCheckable(true);
+    //animateButton->setCheckable(true);//ooo disabled animate
+    animateButton->setCheckable(false);
 
     QPushButton *showSourceButton = new QPushButton(mainGroup);
     showSourceButton->setText(tr("Show Source"));
@@ -889,14 +918,19 @@ XFormWidget::XFormWidget(QWidget *parent)
 #ifdef QT_OPENGL_SUPPORT
     connect(enableOpenGLButton, SIGNAL(clicked(bool)), view, SLOT(enableOpenGL(bool)));
 #endif
-    view->loadSourceFile(":res/affine/xform.cpp");
+    view->loadSourceFile("xform.cpp");
     view->loadDescription(":res/affine/xform.html");
 
     // defaults
+	qDebug()<<"i think here may be the reason1";
     view->reset();
-    vectorType->setChecked(true);
+	qDebug()<<"i think here may be the reason2";
+    //vectorType->setChecked(true);
+    pixmapType->setChecked(true);//ooo changed to pixmap
+	qDebug()<<"i think here may be the reason3";
     textEditor->setText("Qt Affine Transformation Demo");
     textEditor->setEnabled(false);
 
-    animateButton->animateClick();
+    //animateButton->animateClick();//ooo disabled animate
+	qDebug()<<"i think here may be the reason4";
 }

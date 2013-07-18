@@ -46,6 +46,8 @@
 #include "arthurwidgets.h"
 #include "hoverpoints.h"
 
+#include <QDebug>
+
 #define printf
 
 HoverPoints::HoverPoints(QWidget *widget, PointShape shape)
@@ -55,12 +57,13 @@ HoverPoints::HoverPoints(QWidget *widget, PointShape shape)
     widget->installEventFilter(this);
     widget->setAttribute(Qt::WA_AcceptTouchEvents);
 
-    m_connectionType = CurveConnection;
+    //m_connectionType = CurveConnection;
+    m_connectionType = LineConnection;//ooo changed to line
     m_sortType = NoSort;
     m_shape = shape;
-    m_pointPen = QPen(QColor(255, 255, 255, 191), 1);
-    m_connectionPen = QPen(QColor(255, 255, 255, 127), 2);
-    m_pointBrush = QBrush(QColor(191, 191, 191, 127));
+    m_pointPen = QPen(QColor(255, 255, 0, 191), 1);
+    m_connectionPen = QPen(QColor(255, 0, 255, 127), 2);
+    m_pointBrush = QBrush(QColor(0, 191, 191, 127));
     m_pointSize = QSize(11, 11);
     m_currentIndex = -1;
     m_editable = true;
@@ -99,6 +102,7 @@ bool HoverPoints::eventFilter(QObject *object, QEvent *event)
                     path.addEllipse(pointBoundingRect(i));
                 else
                     path.addRect(pointBoundingRect(i));
+				qDebug()<<"path.addRect";//ooo added
 
                 if (path.contains(clickPos)) {
                     index = i;
@@ -116,16 +120,21 @@ bool HoverPoints::eventFilter(QObject *object, QEvent *event)
                         for (int i=0; i<m_points.size(); ++i)
                             if (m_points.at(i).x() > clickPos.x()) {
                                 pos = i;
+								qDebug()<<"m_points.size "<<m_points.size();
+								qDebug()<<"XSort:"<<"m_point.at(i).x() "<<m_points.at(i).x()<<" clickPos.x() "<<clickPos.x();
                                 break;
                             }
                     } else if (m_sortType == YSort) {
                         for (int i=0; i<m_points.size(); ++i)
                             if (m_points.at(i).y() > clickPos.y()) {
                                 pos = i;
+								qDebug()<<"m_points.size "<<m_points.size();
+								qDebug()<<"YSort:"<<"m_point.at(i).y() "<<m_points.at(i).y()<<" clickPos.y() "<<clickPos.y();
                                 break;
                             }
                     }
 
+					qDebug()<<"pos,clickPos:"<<pos<<" "<<clickPos;
                     m_points.insert(pos, clickPos);
                     m_locks.insert(pos, 0);
                     m_currentIndex = pos;
@@ -237,13 +246,18 @@ bool HoverPoints::eventFilter(QObject *object, QEvent *event)
 
         case QEvent::Resize:
         {
+			qDebug()<<"hoverpoints--Resize";
             QResizeEvent *e = (QResizeEvent *) event;
-            if (e->oldSize().width() == 0 || e->oldSize().height() == 0)
+            if (e->oldSize().width() == -1 || e->oldSize().height() == -1)//ooo changed 0 to -1
                 break;
+			qDebug()<<"e->width:"<<e->size().width()<<";e->oldwidth:"<<qreal(e->oldSize().width());
+			qDebug()<<"e->height:"<<e->size().height()<<";e->oldheight:"<<qreal(e->oldSize().height());
             qreal stretch_x = e->size().width() / qreal(e->oldSize().width());
             qreal stretch_y = e->size().height() / qreal(e->oldSize().height());
+			qDebug()<<"stretch_x:"<<stretch_x<<";stretch_y:"<<stretch_y;
             for (int i=0; i<m_points.size(); ++i) {
                 QPointF p = m_points[i];
+				qDebug()<<"resize_event--to movePoint;p:"<<p<<"p--stretch:"<<QPointF(p.x() * stretch_x, p.y() * stretch_y);
                 movePoint(i, QPointF(p.x() * stretch_x, p.y() * stretch_y), false);
             }
 
@@ -341,21 +355,24 @@ static QPointF bound_point(const QPointF &point, const QRectF &bounds, int lock)
     qreal right = bounds.right();
     qreal top = bounds.top();
     qreal bottom = bounds.bottom();
+	qDebug()<<"hover--bound_point\nleft:"<<left<<";right:"<<right<<";top:"<<top<<";bottom:"<<bottom<<"\np:"<<p;
 
-    if (p.x() < left || (lock & HoverPoints::LockToLeft)) p.setX(left);
-    else if (p.x() > right || (lock & HoverPoints::LockToRight)) p.setX(right);
+    if (p.x() < left || (lock & HoverPoints::LockToLeft)) {qDebug()<<"setX(left)";p.setX(left);}
+    else if (p.x() > right || (lock & HoverPoints::LockToRight)){qDebug()<<"setX(right)"; p.setX(right);}
 
-    if (p.y() < top || (lock & HoverPoints::LockToTop)) p.setY(top);
-    else if (p.y() > bottom || (lock & HoverPoints::LockToBottom)) p.setY(bottom);
+    if (p.y() < top || (lock & HoverPoints::LockToTop)){qDebug()<<"setY(top)"; p.setY(top);}
+    else if (p.y() > bottom || (lock & HoverPoints::LockToBottom)){qDebug()<<"setY(bottom)"; p.setY(bottom);}
 
     return p;
 }
 
 void HoverPoints::setPoints(const QPolygonF &points)
 {
+	qDebug()<<"hoverpoints--setPoints";
     if (points.size() != m_points.size())
         m_fingerPointMapping.clear();
     m_points.clear();
+	qDebug()<<"m_points.clear";
     for (int i=0; i<points.size(); ++i)
         m_points << bound_point(points.at(i), boundingRect(), 0);
 
@@ -364,13 +381,18 @@ void HoverPoints::setPoints(const QPolygonF &points)
         m_locks.resize(m_points.size());
 
         m_locks.fill(0);
+		qDebug()<<"m_points:"<<m_points;
     }
 }
 
 
 void HoverPoints::movePoint(int index, const QPointF &point, bool emitUpdate)
 {
+	qDebug()<<"hoverpoints--move";
+	qDebug()<<"hoverpoints--move--point:"<<point;
+	qDebug()<<"hover_m_points1:"<<m_points;
     m_points[index] = bound_point(point, boundingRect(), m_locks.at(index));
+	qDebug()<<"hover_m_points2:"<<m_points;
     if (emitUpdate)
         firePointChange();
 }
@@ -393,6 +415,7 @@ void HoverPoints::firePointChange()
 
     if (m_sortType != NoSort) {
 
+		qDebug()<<"firePointChange--!NoSort";
         QPointF oldCurrent;
         if (m_currentIndex != -1) {
             oldCurrent = m_points[m_currentIndex];
@@ -422,5 +445,6 @@ void HoverPoints::firePointChange()
 //                i, m_points.at(i).x(), m_points.at(i).y(), m_locks.at(i));
 //     }
 
+	qDebug()<<"hoverpoints--m_points:"<<m_points;
     emit pointsChanged(m_points);
 }

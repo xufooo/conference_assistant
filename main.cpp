@@ -30,6 +30,7 @@
 #include <QWidget>
 #include "arthurwidgets.h"
 #include "hoverpoints.h"
+#include "xform.h"
 
 int main(int argc, char** argv)
 {
@@ -40,11 +41,14 @@ int main(int argc, char** argv)
 //	MainFrame mainframe;
 //	mainframe.show();
 	
-	QWidget main;
-	ArthurFrame a;
-	HoverPoints point(&a,HoverPoints::RectangleShape);
-	a.show();
+//	QWidget main;
+//	ArthurFrame a;
+//	HoverPoints point(&a,HoverPoints::RectangleShape);
+//	a.show();
 //	main.show();
+
+	XFormWidget *xfw=new XFormWidget(0);
+	xfw->show();
 	return app.exec();
 //	return 0;
 }	
