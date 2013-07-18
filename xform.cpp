@@ -70,8 +70,8 @@ XFormView::XFormView(QWidget *parent)
     pts->setConnectionPen(QPen(QColor(151, 0, 0, 50)));
     pts->setBoundingRect(QRectF(0, 0, 500, 500));
     //pts->setBoundingRect(m_pixmap.rect());
-    ctrlPoints << QPointF(250, 250) << QPointF(350, 250);
-    //ctrlPoints << QPointF(m_pixmap.x(), m_pixmap.width()) << QPointF(350, 250);
+    //ctrlPoints << QPointF(250, 250) << QPointF(350, 250);
+    ctrlPoints << QPointF(250-qreal(m_pixmap.width()/2), 250-qreal(m_pixmap.height()/2)) << QPointF(250+qreal(m_pixmap.width()/2), 250-qreal(m_pixmap.height()/2))<< QPointF(250+qreal(m_pixmap.width()/2), 250+qreal(m_pixmap.height()/2))<< QPointF(250-qreal(m_pixmap.width()/2), 250+qreal(m_pixmap.height()/2));
     pts->setPoints(ctrlPoints);
     connect(pts, SIGNAL(pointsChanged(QPolygonF)),
             this, SLOT(updateCtrlPoints(QPolygonF)));
@@ -280,6 +280,7 @@ void XFormView::wheelEvent(QWheelEvent *e)
 void XFormView::reset()
 {
 	qDebug()<<"reset";
+	/*
     emit rotationChanged(0);
     emit scaleChanged(1000);
     emit shearChanged(0);
@@ -287,13 +288,23 @@ void XFormView::reset()
     ctrlPoints << QPointF(250, 250) << QPointF(350, 250);
     pts->setPoints(ctrlPoints);
     pts->firePointChange();
+	*/
+    emit rotationChanged(0);
+    emit scaleChanged(1000);
+    emit shearChanged(0);
+    ctrlPoints = QPolygonF();
+    ctrlPoints << QPointF(250-qreal(m_pixmap.width()/2), 250-qreal(m_pixmap.height()/2)) << QPointF(250+qreal(m_pixmap.width()/2), 250-qreal(m_pixmap.height()/2))<< QPointF(250+qreal(m_pixmap.width()/2), 250+qreal(m_pixmap.height()/2))<< QPointF(250-qreal(m_pixmap.width()/2), 250+qreal(m_pixmap.height()/2));
+    pts->setPoints(ctrlPoints);
+    pts->firePointChange();
 }
 
 void XFormView::drawPixmapType(QPainter *painter)
 {
+	qDebug()<<"drawPixmap";
     QPointF center(m_pixmap.width() / qreal(2), m_pixmap.height() / qreal(2));
 	qDebug()<<"center:"<<center;
-    painter->translate(ctrlPoints.at(0) - center);
+    //painter->translate(ctrlPoints.at(0) - center);
+    painter->translate(QPointF(250,250) - center);
 	qDebug()<<"offset1:"<<ctrlPoints.at(0) - center;
 
     painter->translate(center);
