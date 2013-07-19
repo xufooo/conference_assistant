@@ -58,7 +58,7 @@ HoverPoints::HoverPoints(QWidget *widget, PointShape shape)
     widget->setAttribute(Qt::WA_AcceptTouchEvents);
 
     //m_connectionType = CurveConnection;
-    m_connectionType = LineConnection;//ooo changed to line
+    m_connectionType = HVLConnection;//ooo changed to HVL 
     m_sortType = NoSort;
     m_shape = shape;
     m_pointPen = QPen(QColor(255, 255, 0, 191), 1);
@@ -102,7 +102,6 @@ bool HoverPoints::eventFilter(QObject *object, QEvent *event)
                     path.addEllipse(pointBoundingRect(i));
                 else
                     path.addRect(pointBoundingRect(i));
-				qDebug()<<"path.addRect";//ooo added
 
                 if (path.contains(clickPos)) {
                     index = i;
@@ -135,6 +134,14 @@ bool HoverPoints::eventFilter(QObject *object, QEvent *event)
                     }
 
 					qDebug()<<"pos,clickPos:"<<pos<<" "<<clickPos;
+					if(m_connectionType==HVLConnection && !m_points.isEmpty())//ooo added
+					{
+						if(qAbs(m_points.first().x()-clickPos.x()) >= qAbs(m_points.last().y()-clickPos.y()))
+							clickPos.setY(m_points.first().y());
+						else
+							clickPos.setX(m_points.first().x());
+						qDebug()<<"m_points.x:"<<m_points.first().x()<<" clickPos.x:"<<clickPos.x()<<"; m_points.y:"<<m_points.first().y()<<" clickPos.y:"<<clickPos.y();
+					}
                     m_points.insert(pos, clickPos);
                     m_locks.insert(pos, 0);
                     m_currentIndex = pos;
@@ -167,8 +174,44 @@ bool HoverPoints::eventFilter(QObject *object, QEvent *event)
         case QEvent::MouseMove:
             if (!m_fingerPointMapping.isEmpty())
                 return true;
-            if (m_currentIndex >= 0)
+            if (m_currentIndex >= 0){
+				/*ooo added HVLConnection*/
+					qDebug()<<"m_connectionType:"<<m_connectionType<<";m_points.size"<<m_points.size();
+				if(m_connectionType==HVLConnection && m_points.size()!=1){
+					qDebug()<<"enter HVLConnection!!!!!!!!!!!!!!!";
+					QPointF pp = m_points.at(m_currentIndex);//record previous point
+					if(m_currentIndex==0){
+						qDebug()<<"m_currentIndex==0";
+						if(pp.x()-m_points.at(m_currentIndex+1).x()){
+							movePoint(m_currentIndex+1,QPointF(m_points.at(m_currentIndex+1).x(),((QMouseEvent *)event)->pos().y()));
+						}
+						else{
+							movePoint(m_currentIndex+1,QPointF(((QMouseEvent *)event)->pos().x(),m_points.at(m_currentIndex+1).y()));
+						}
+					}
+					else if(m_currentIndex==m_points.size()-1){
+						if(pp.x()-m_points.at(m_currentIndex-1).x()){
+							movePoint(m_currentIndex-1,QPointF(m_points.at(m_currentIndex-1).x(),((QMouseEvent *)event)->pos().y()));
+						}
+						else{
+							movePoint(m_currentIndex-1,QPointF(((QMouseEvent *)event)->pos().x(),m_points.at(m_currentIndex-1).y()));
+						}
+					}
+					else{
+						qDebug()<<"m_currentIndex!=0";
+						if(pp.x()-m_points.at(m_currentIndex-1).x()){
+							movePoint(m_currentIndex-1,QPointF(m_points.at(m_currentIndex-1).x(),((QMouseEvent *)event)->pos().y()));
+							movePoint(m_currentIndex+1,QPointF(((QMouseEvent *)event)->pos().x(),m_points.at(m_currentIndex+1).y()));
+						}
+						else{
+							movePoint(m_currentIndex-1,QPointF(((QMouseEvent *)event)->pos().x(),m_points.at(m_currentIndex-1).y()));
+							movePoint(m_currentIndex+1,QPointF(m_points.at(m_currentIndex+1).x(),((QMouseEvent *)event)->pos().y()));
+						}
+					}
+				}
+				/*ooo added end*/
                 movePoint(m_currentIndex, ((QMouseEvent *)event)->pos());
+			}
             break;
         case QEvent::TouchBegin:
         case QEvent::TouchUpdate:
@@ -329,7 +372,12 @@ void HoverPoints::paintPoints()
 			/*ooo*/
 
             p.drawPath(path);
-        } else {
+        } 
+		else if(m_connectionType == HVLConnection){
+			
+			p.drawPolygon(m_points);
+		}
+		else {
 //            p.drawPolyline(m_points);
             p.drawPolygon(m_points);//ooo changed to polygon
         }

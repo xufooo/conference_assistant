@@ -42,13 +42,13 @@ int main(int argc, char** argv)
 //	mainframe.show();
 	
 //	QWidget main;
-//	ArthurFrame a;
-//	HoverPoints point(&a,HoverPoints::RectangleShape);
-//	a.show();
+	ArthurFrame a;
+	HoverPoints point(&a,HoverPoints::RectangleShape);
+	a.show();
 //	main.show();
 
-	XFormWidget *xfw=new XFormWidget(0);
-	xfw->show();
+//	XFormWidget *xfw=new XFormWidget(0);
+//	xfw->show();
 	return app.exec();
 //	return 0;
 }	

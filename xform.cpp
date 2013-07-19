@@ -147,7 +147,7 @@ void XFormView::updateCtrlPoints(const QPolygonF &points)
 {
 	qDebug()<<"updateCtrlPoints";
     QPointF trans = points.at(0) - ctrlPoints.at(0);
-	qDebug()<<"points:"<<points.at(0)<<" ctrlpoints:"<<ctrlPoints.at(0)<<"trans "<<trans;
+	qDebug()<<"points:"<<points.at(0)<<";ctrlpoints:"<<ctrlPoints.at(0)<<";trans:"<<trans;
 
     if (qAbs(points.at(0).x() - points.at(1).x()) < 10
         && qAbs(points.at(0).y() - points.at(1).y()) < 10){
@@ -171,8 +171,10 @@ void XFormView::updateCtrlPoints(const QPolygonF &points)
 	qDebug()<<"m_rotation3:"<<m_rotation;
 	}
 
-    if (trans.isNull())
+    if (trans.isNull()){
+		qDebug()<<"trans isNull";
         emit rotationChanged(int(m_rotation*10));
+	}
 	qDebug()<<"m_rotation4:"<<m_rotation;
 }
 
