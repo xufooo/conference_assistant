@@ -57,8 +57,8 @@ HoverPoints::HoverPoints(QWidget *widget, PointShape shape)
     widget->installEventFilter(this);
     widget->setAttribute(Qt::WA_AcceptTouchEvents);
 
-    m_connectionType = CurveConnection;
-    //m_connectionType = HVLConnection;//ooo changed to HVL 
+    //m_connectionType = CurveConnection;
+    m_connectionType = HVLConnection;//ooo changed to HVL 
     m_sortType = NoSort;
     m_shape = shape;
     m_pointPen = QPen(QColor(255, 255, 0, 191), 1);
@@ -142,16 +142,16 @@ bool HoverPoints::eventFilter(QObject *object, QEvent *event)
 							clickPos.setX(m_points.first().x());
 						qDebug()<<"m_points.x:"<<m_points.first().x()<<" clickPos.x:"<<clickPos.x()<<"; m_points.y:"<<m_points.first().y()<<" clickPos.y:"<<clickPos.y();
 					}
-                    m_points.insert(pos, clickPos);
-                    m_locks.insert(pos, 0);
-                    m_currentIndex = pos;
-                    firePointChange();
+//                    m_points.insert(pos, clickPos);
+//                    m_locks.insert(pos, 0);
+//                    m_currentIndex = pos;
+//                    firePointChange();
                 } else {
                     m_currentIndex = index;
                 }
                 return true;
 
-            } else if (me->button() == Qt::RightButton) {
+            }/* else if (me->button() == Qt::RightButton) {
                 if (index >= 0 && m_editable) {
                     if (m_locks[index] == 0) {
                         m_locks.remove(index);
@@ -160,7 +160,7 @@ bool HoverPoints::eventFilter(QObject *object, QEvent *event)
                     firePointChange();
                     return true;
                 }
-            }
+            }*/
 
         }
         break;
@@ -184,17 +184,21 @@ bool HoverPoints::eventFilter(QObject *object, QEvent *event)
 						qDebug()<<"m_currentIndex==0";
 						if(pp.x()-m_points.at(m_currentIndex+1).x()){
 							movePoint(m_currentIndex+1,QPointF(m_points.at(m_currentIndex+1).x(),((QMouseEvent *)event)->pos().y()));
+							movePoint(m_points.size()-1,QPointF(((QMouseEvent *)event)->pos().x(),m_points.last().y()));
 						}
 						else{
 							movePoint(m_currentIndex+1,QPointF(((QMouseEvent *)event)->pos().x(),m_points.at(m_currentIndex+1).y()));
+							movePoint(m_points.size()-1,QPointF(m_points.last().x(),((QMouseEvent *)event)->pos().y()));
 						}
 					}
 					else if(m_currentIndex==m_points.size()-1){
 						if(pp.x()-m_points.at(m_currentIndex-1).x()){
 							movePoint(m_currentIndex-1,QPointF(m_points.at(m_currentIndex-1).x(),((QMouseEvent *)event)->pos().y()));
+							movePoint(0,QPointF(((QMouseEvent *)event)->pos().x(),m_points.first().y()));
 						}
 						else{
 							movePoint(m_currentIndex-1,QPointF(((QMouseEvent *)event)->pos().x(),m_points.at(m_currentIndex-1).y()));
+							movePoint(0,QPointF(m_points.first().x(),((QMouseEvent *)event)->pos().y()));
 						}
 					}
 					else{
