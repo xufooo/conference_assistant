@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "xform.h"
-#include "hoverpoints.h"
+#include "myhoverpoints.h"//ooo changed
 
 #include <QLayout>
 #include <QPainter>
@@ -61,8 +61,10 @@ XFormView::XFormView(QWidget *parent)
     m_shear = 0.0;
 
     m_pixmap = QPixmap("bg1.jpg");//change path
-    pts = new HoverPoints(this, HoverPoints::RectangleShape);//change shape
-    pts->setConnectionType(HoverPoints::LineConnection);
+    pts = new MyHoverPoints(this);//ooo change
+    //pts = new HoverPoints(this, HoverPoints::RectangleShape);//change shape
+    //pts->setConnectionType(HoverPoints::LineConnection);
+    //pts->setConnectionType(HoverPoints::HVLConnection);
     pts->setEditable(false);
     pts->setPointSize(QSize(15, 15));
     pts->setShapeBrush(QBrush(QColor(151, 0, 0, alpha)));

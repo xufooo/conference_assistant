@@ -25,6 +25,7 @@
 =============================================================================*/
 
 #include "bc_generator.h"
+#include "myhoverpoints.h"
 
 	char BC_GEN::code39_table[CODE39_SIZE+1]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','-','.',' ','$','/','+','%','*'};
 	char BC_GEN::code39_code_table[CODE39_SIZE+1][CODE39_CODE_LEN+1]={"bwbWBwBwb","BwbWbwbwB","bwBWbwbwB","BwBWbwbwb","bwbWBwbwB",\
@@ -39,15 +40,25 @@
 	"bWbwbWbWb","bwbWbWbWb",\
 	"bWbwBwBwb"};
 
-BC_GEN::BC_GEN(QWidget* parent,int x,int y):QWidget(parent),chksum(0),global_Xposition(MARGIN),global_Yposition(MARGIN),start_Xposition(x),start_Yposition(y),global_height(MARGIN){
+BC_GEN::BC_GEN(QWidget* parent,bool ifHoverPoints,int x,int y):QWidget(parent),chksum(0),global_Xposition(MARGIN),global_Yposition(MARGIN),start_Xposition(x),start_Yposition(y),global_height(MARGIN),withHoverPoints(ifHoverPoints){
 	start_Xposition=(start_Xposition+MARGIN)>WIDE_BAR_LEN_R3?(start_Xposition+MARGIN):WIDE_BAR_LEN_R3;//fix position
 	start_Yposition=(start_Yposition+MARGIN)>WIDE_BAR_LEN_R3?(start_Yposition+MARGIN):WIDE_BAR_LEN_R3;
 
 	encode_buf = new QVector<QLine>();
 	bc_pix = new QPixmap();
+	if(isHoverPoints()){
+		h_points = new MyHoverPoints(this);
+		QPolygonF cornerpoints;
+		cornerpoints << QPointF(this->pos())<<QPointF(this->pos().x()+this->width(),this->pos().y())<<QPointF(this->pos()+QPointF(this->width(),this->height()))<<QPointF(this->pos().x(),this->pos().y()+this->height());
+		//h_points->setPoints(QPolygonF(QRectF(this->rect())));
+		h_points->setPoints(cornerpoints);
+		qDebug()<<"h_points:"<<h_points;
+	}
 }
 
 BC_GEN::~BC_GEN(){
+	if(isHoverPoints())
+		delete h_points;
 	delete bc_pix;
 	delete encode_buf;
 }

@@ -34,7 +34,7 @@
 CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
 	QVBoxLayout *mainLayout = new QVBoxLayout(this);
 	bc_line = new QLineEdit(this);
-	barcode = new BC_GEN(this);
+	barcode = new BC_GEN(this,true);
 	mainLayout->addWidget(bc_line);
 	mainLayout->addWidget(barcode);
 	setLayout(mainLayout);

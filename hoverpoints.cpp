@@ -57,8 +57,8 @@ HoverPoints::HoverPoints(QWidget *widget, PointShape shape)
     widget->installEventFilter(this);
     widget->setAttribute(Qt::WA_AcceptTouchEvents);
 
-    //m_connectionType = CurveConnection;
-    m_connectionType = HVLConnection;//ooo changed to HVL 
+    m_connectionType = CurveConnection;
+    //m_connectionType = HVLConnection;//ooo changed to HVL 
     m_sortType = NoSort;
     m_shape = shape;
     m_pointPen = QPen(QColor(255, 255, 0, 191), 1);
@@ -291,7 +291,7 @@ bool HoverPoints::eventFilter(QObject *object, QEvent *event)
         {
 			qDebug()<<"hoverpoints--Resize";
             QResizeEvent *e = (QResizeEvent *) event;
-            if (e->oldSize().width() == -1 || e->oldSize().height() == -1)//ooo changed 0 to -1
+            if (e->oldSize().width() <= 0 || e->oldSize().height() <= 0)//ooo equal 0 to lessorequal
                 break;
 			qDebug()<<"e->width:"<<e->size().width()<<";e->oldwidth:"<<qreal(e->oldSize().width());
 			qDebug()<<"e->height:"<<e->size().height()<<";e->oldheight:"<<qreal(e->oldSize().height());
