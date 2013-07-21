@@ -16,7 +16,7 @@
 #
 #
 # Description: 
-#
+# Use this module to add hoverpoints to qobjects for scaling them. inherits HoverPoints.
 #
 # Last modified: 2013-07-20 12:47
 #
@@ -52,6 +52,15 @@ bool MyHoverPoints::eventFilter(QObject *object, QEvent *event)
 						return HoverPoints::eventFilter(object,event);
 					}
 					return false;
+					break;
+				}
+
+			case QEvent::Resize:
+				{
+					QPolygonF myhoverpoints=QPolygonF(QRectF(m_widget->rect()));
+					myhoverpoints.resize(4);
+					setPoints(myhoverpoints);
+					return true;
 					break;
 				}
 
