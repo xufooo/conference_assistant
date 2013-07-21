@@ -37,7 +37,7 @@ public:
 
 	bool eventFilter(QObject *object, QEvent *event);
 
-	void paintPoints();
+//	void paintPoints();
 	
 private:
 	QWidget *m_widget;

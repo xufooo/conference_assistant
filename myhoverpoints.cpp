@@ -34,29 +34,30 @@ MyHoverPoints::MyHoverPoints(QWidget *parent, PointShape shape):HoverPoints(pare
 	qDebug()<<"parent.rect"<<parent->rect();
 }
 
-
 bool MyHoverPoints::eventFilter(QObject *object, QEvent *event)
 {
-	
-	if(object==m_widget){
-		switch(event->type()){
-			case QEvent::MouseButtonPress:
-			break;	
-//			case QEvent::Paint:
-//			object->event(event);
-		}
-		return true;
-	}
-	
-//	HoverPoints::eventFilter(object,event);
-}
+	if(object==m_widget)
 
-void MyHoverPoints::paintPoints()
-{
-//	if(!isVisible()){
-		qDebug()<<"not visible";
-		return;
-//	}
-//	HoverPoints::paintPoints();
+		switch (event->type()){
+			case QEvent::MouseButtonPress:
+				{
+					QMouseEvent *me = (QMouseEvent *) event;
+
+					if(findClickPos(me->pos())!=-1)
+					{
+						qDebug()<<"press";
+						return HoverPoints::eventFilter(object,event);
+					}
+					return false;
+					break;
+				}
+
+			default:
+				{
+					return HoverPoints::eventFilter(object,event);
+					break;
+				}
+		}
+	return false;
 }
 

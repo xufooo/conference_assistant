@@ -114,6 +114,7 @@ signals:
 
 public:
     void firePointChange();
+	int  findClickPos(const QPointF &clickPos);
 
 private:
     inline QRectF pointBoundingRect(int i) const;

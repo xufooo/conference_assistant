@@ -95,7 +95,9 @@ bool HoverPoints::eventFilter(QObject *object, QEvent *event)
             QMouseEvent *me = (QMouseEvent *) event;
 
             QPointF clickPos = me->pos();
+			/*
             int index = -1;
+
             for (int i=0; i<m_points.size(); ++i) {
                 QPainterPath path;
                 if (m_shape == CircleShape)
@@ -108,6 +110,8 @@ bool HoverPoints::eventFilter(QObject *object, QEvent *event)
                     break;
                 }
             }
+			*/
+			int index=findClickPos(clickPos);//ooo added
 
             if (me->button() == Qt::LeftButton) {
                 if (index == -1) {
@@ -142,16 +146,16 @@ bool HoverPoints::eventFilter(QObject *object, QEvent *event)
 							clickPos.setX(m_points.first().x());
 						qDebug()<<"m_points.x:"<<m_points.first().x()<<" clickPos.x:"<<clickPos.x()<<"; m_points.y:"<<m_points.first().y()<<" clickPos.y:"<<clickPos.y();
 					}
-//                    m_points.insert(pos, clickPos);
-//                    m_locks.insert(pos, 0);
-//                    m_currentIndex = pos;
-//                    firePointChange();
+                    m_points.insert(pos, clickPos);
+                    m_locks.insert(pos, 0);
+                    m_currentIndex = pos;
+                    firePointChange();
                 } else {
                     m_currentIndex = index;
                 }
                 return true;
 
-            }/* else if (me->button() == Qt::RightButton) {
+            } else if (me->button() == Qt::RightButton) {
                 if (index >= 0 && m_editable) {
                     if (m_locks[index] == 0) {
                         m_locks.remove(index);
@@ -160,7 +164,7 @@ bool HoverPoints::eventFilter(QObject *object, QEvent *event)
                     firePointChange();
                     return true;
                 }
-            }*/
+            }
 
         }
         break;
@@ -499,4 +503,24 @@ void HoverPoints::firePointChange()
 
 	qDebug()<<"hoverpoints--m_points:"<<m_points;
     emit pointsChanged(m_points);
+}
+
+/*ooo added*/
+int HoverPoints::findClickPos(const QPointF &clickPos)
+{
+	int index=-1;
+	for (int i=0; i<m_points.size(); ++i) {
+		QPainterPath path;
+			if (m_shape == CircleShape)
+				path.addEllipse(pointBoundingRect(i));
+			else
+				path.addRect(pointBoundingRect(i));
+
+			if (path.contains(clickPos)) {
+				index = i;
+				break;
+			}
+	}
+	qDebug()<<"index:"<<index;
+	return index;
 }
