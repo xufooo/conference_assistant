@@ -45,13 +45,12 @@ bool MyHoverPoints::eventFilter(QObject *object, QEvent *event)
 			case QEvent::MouseButtonPress:
 				{
 					QMouseEvent *me = (QMouseEvent *) event;
+					if(me->button()==Qt::RightButton)
+						return false;
 
 					if(findClickPos(me->pos())!=-1)
-					{
-						qDebug()<<"press";
 						return HoverPoints::eventFilter(object,event);
-					}
-					return false;
+
 					break;
 				}
 
