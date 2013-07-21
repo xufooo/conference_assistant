@@ -36,11 +36,20 @@ public:
 	MyHoverPoints(QWidget *parent, PointShape shape=HoverPoints::CircleShape);
 
 	bool eventFilter(QObject *object, QEvent *event);
+	void setEditable(bool editable){m_editable=editable;HoverPoints::setEditable(editable);}
+	bool editable() const {return m_editable;}
+	bool enabled() const {return m_enabled;}
 
-//	void paintPoints();
+public slots:
+	void setEnabled(bool enabled);
+
+signals:
+	void updateRect(const QRectF &rect);
 	
 private:
 	QWidget *m_widget;
+	bool m_editable;
+	bool m_enabled;
 };
 
 

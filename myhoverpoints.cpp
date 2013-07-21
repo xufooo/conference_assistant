@@ -27,19 +27,22 @@
 #include "myhoverpoints.h"
 #include <QDebug>
 
-MyHoverPoints::MyHoverPoints(QWidget *parent, PointShape shape):HoverPoints(parent,shape)
+MyHoverPoints::MyHoverPoints(QWidget *parent, PointShape shape):HoverPoints(parent,shape),m_widget(parent),m_editable(true),m_enabled(true)
 {
-	m_widget=parent;
+	if(m_widget->parent())
+		setBoundingRect(m_widget->parentWidget()->rect());
 	setConnectionType(HoverPoints::HVLConnection);
 	QPolygonF myhoverpoints=QPolygonF(QRectF(parent->rect()));
 	myhoverpoints.resize(4);
 	setPoints(myhoverpoints);
-	qDebug()<<"parent.rect"<<parent->rect();
+	HoverPoints::setEditable(m_editable);
+	HoverPoints::setEnabled(m_enabled);
+	qDebug()<<"parent.rect"<<m_widget->rect();
 }
 
 bool MyHoverPoints::eventFilter(QObject *object, QEvent *event)
 {
-	if(object==m_widget)
+	if(object==m_widget && m_enabled){
 
 		switch (event->type()){
 			case QEvent::MouseButtonPress:
@@ -63,12 +66,32 @@ bool MyHoverPoints::eventFilter(QObject *object, QEvent *event)
 					break;
 				}
 
+			case QEvent::MouseMove:
+				{
+					HoverPoints::eventFilter(object,event);
+					qDebug()<<"points.rect:"<<points().boundingRect();
+					emit updateRect(points().boundingRect());
+					return true;
+					break;
+				}
+
 			default:
 				{
 					return HoverPoints::eventFilter(object,event);
 					break;
 				}
 		}
+	}
 	return false;
 }
+
+void MyHoverPoints::setEnabled(bool enabled)
+{
+	if (m_enabled != enabled){
+		m_enabled = enabled;
+	}
+	HoverPoints::setEnabled(m_enabled);
+	return;
+}
+
 

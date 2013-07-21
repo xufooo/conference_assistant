@@ -49,6 +49,7 @@ BC_GEN::BC_GEN(QWidget* parent,bool ifHoverPoints,int x,int y):QWidget(parent),c
 	if(isHoverPoints()){
 		h_points = new MyHoverPoints(this);
 		qDebug()<<"h_points:"<<h_points;
+		connect(h_points,SIGNAL(updateRect(const QRectF&)),this,SLOT(setRect(const QRectF&)));
 	}
 }
 
@@ -140,3 +141,9 @@ void BC_GEN::paintEvent(QPaintEvent *event){
 	painter.end();
 }
 
+void BC_GEN::setRect(const QRectF &rect)
+{
+	qDebug()<<"rect.toRect:"<<rect.toRect();
+	setGeometry(rect.toRect());
+	return;
+}

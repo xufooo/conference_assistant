@@ -70,6 +70,7 @@ public:
 
 public slots:
 	int encode(const QString& input);
+	void setRect(const QRectF &rect);
 protected:
 	virtual void paintEvent(QPaintEvent *event);
 private:
