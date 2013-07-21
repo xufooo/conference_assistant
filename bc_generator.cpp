@@ -48,10 +48,6 @@ BC_GEN::BC_GEN(QWidget* parent,bool ifHoverPoints,int x,int y):QWidget(parent),c
 	bc_pix = new QPixmap();
 	if(isHoverPoints()){
 		h_points = new MyHoverPoints(this);
-		QPolygonF cornerpoints;
-		cornerpoints << QPointF(this->pos())<<QPointF(this->pos().x()+this->width(),this->pos().y())<<QPointF(this->pos()+QPointF(this->width(),this->height()))<<QPointF(this->pos().x(),this->pos().y()+this->height());
-		//h_points->setPoints(QPolygonF(QRectF(this->rect())));
-		h_points->setPoints(cornerpoints);
 		qDebug()<<"h_points:"<<h_points;
 	}
 }

@@ -31,6 +31,9 @@ MyHoverPoints::MyHoverPoints(QWidget *parent, PointShape shape):HoverPoints(pare
 {
 	m_widget=parent;
 	setConnectionType(HoverPoints::HVLConnection);
+	QPolygonF myhoverpoints=QPolygonF(QRectF(parent->rect()));
+	myhoverpoints.resize(4);
+	setPoints(myhoverpoints);
 	qDebug()<<"parent.rect"<<parent->rect();
 }
 
