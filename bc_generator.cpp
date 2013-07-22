@@ -47,7 +47,7 @@ BC_GEN::BC_GEN(QWidget* parent,bool ifHoverPoints,int x,int y):QWidget(parent),c
 	encode_buf = new QVector<QLine>();
 	bc_pix = new QPixmap();
 	if(isHoverPoints()){
-		h_points = new MyHoverPoints(this);
+		h_points = new MyHoverPoints(this,HoverPoints::RectangleShape);
 		qDebug()<<"h_points:"<<h_points;
 		connect(h_points,SIGNAL(updateRect(const QRectF&)),this,SLOT(setRect(const QRectF&)));
 	}

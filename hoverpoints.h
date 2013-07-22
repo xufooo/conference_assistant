@@ -115,6 +115,7 @@ signals:
 public:
     void firePointChange();
 	int  findClickPos(const QPointF &clickPos);
+	void setVisible(int index,bool b);//ooo added
 
 private:
     inline QRectF pointBoundingRect(int i) const;
@@ -129,6 +130,7 @@ private:
     ConnectionType m_connectionType;
 
     QVector<uint> m_locks;
+	QVector<bool> m_visible;//ooo added
 
     QSizeF m_pointSize;
     int m_currentIndex;

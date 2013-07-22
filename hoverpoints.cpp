@@ -57,8 +57,8 @@ HoverPoints::HoverPoints(QWidget *widget, PointShape shape)
     widget->installEventFilter(this);
     widget->setAttribute(Qt::WA_AcceptTouchEvents);
 
-    //m_connectionType = CurveConnection;
-    m_connectionType = HVLConnection;//ooo changed to HVL 
+    m_connectionType = CurveConnection;
+    //m_connectionType = HVLConnection;//ooo changed to HVL 
     m_sortType = NoSort;
     m_shape = shape;
     m_pointPen = QPen(QColor(255, 255, 0, 191), 1);
@@ -148,6 +148,7 @@ bool HoverPoints::eventFilter(QObject *object, QEvent *event)
 					}
                     m_points.insert(pos, clickPos);
                     m_locks.insert(pos, 0);
+					m_visible.insert(pos,true);//ooo added
                     m_currentIndex = pos;
                     firePointChange();
                 } else {
@@ -159,6 +160,7 @@ bool HoverPoints::eventFilter(QObject *object, QEvent *event)
                 if (index >= 0 && m_editable) {
                     if (m_locks[index] == 0) {
                         m_locks.remove(index);
+						m_visible.remove(index);//ooo added
                         m_points.remove(index);
                     }
                     firePointChange();
@@ -395,7 +397,9 @@ void HoverPoints::paintPoints()
     p.setBrush(m_pointBrush);
 
     for (int i=0; i<m_points.size(); ++i) {
-        QRectF bounds = pointBoundingRect(i);
+		QRectF bounds = QRectF(0,0,1,1);//ooo changed
+		if(m_visible.at(i))
+        	bounds = pointBoundingRect(i);
         if (m_shape == CircleShape)
             p.drawEllipse(bounds);
         else
@@ -428,10 +432,14 @@ void HoverPoints::setPoints(const QPolygonF &points)
     if (points.size() != m_points.size())
         m_fingerPointMapping.clear();
     m_points.clear();
+	if(m_visible.isEmpty()){
+		m_visible.resize(points.size());//ooo added
+		m_visible.fill(true);//ooo added
+	}
 	qDebug()<<"m_points.clear";
     for (int i=0; i<points.size(); ++i)
-        m_points << bound_point(points.at(i), boundingRect(), 0);
-
+        	m_points << bound_point(points.at(i), boundingRect(), 0);
+	
     m_locks.clear();
     if (m_points.size() > 0) {
         m_locks.resize(m_points.size());
@@ -523,4 +531,12 @@ int HoverPoints::findClickPos(const QPointF &clickPos)
 	}
 	qDebug()<<"index:"<<index;
 	return index;
+}
+
+void HoverPoints::setVisible(int index,bool b)
+{
+	if(m_points.size()>index)
+		m_visible.replace(index,b);
+
+	return;
 }

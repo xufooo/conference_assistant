@@ -32,12 +32,15 @@ MyHoverPoints::MyHoverPoints(QWidget *parent, PointShape shape):HoverPoints(pare
 	if(m_widget->parent())
 		setBoundingRect(m_widget->parentWidget()->rect());
 	setConnectionType(HoverPoints::HVLConnection);
+	setPointSize(QSize(24,24));
 	QPolygonF myhoverpoints=QPolygonF(QRectF(parent->rect()));
 	myhoverpoints.resize(4);
 	setPoints(myhoverpoints);
+	setVisible(0,false);
+	setVisible(1,false);
+	setVisible(3,false);
 	HoverPoints::setEditable(m_editable);
 	HoverPoints::setEnabled(m_enabled);
-	qDebug()<<"parent.rect"<<m_widget->rect();
 }
 
 bool MyHoverPoints::eventFilter(QObject *object, QEvent *event)
@@ -68,8 +71,14 @@ bool MyHoverPoints::eventFilter(QObject *object, QEvent *event)
 
 			case QEvent::MouseMove:
 				{
-					HoverPoints::eventFilter(object,event);
+					
+					QMouseEvent *me=(QMouseEvent *)event;
+						if(me->pos().x()<=m_widget->minimumWidth() || me->pos().y()<=m_widget->minimumHeight())
+							return false;
+
 					qDebug()<<"points.rect:"<<points().boundingRect();
+					HoverPoints::eventFilter(object,event);
+
 					emit updateRect(points().boundingRect());
 					return true;
 					break;
