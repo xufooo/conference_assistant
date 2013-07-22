@@ -67,6 +67,7 @@ public:
 		start_Xposition=Xposition;start_Yposition=Yposition;}
 	inline bool isHoverPoints(){return withHoverPoints;}
 	inline void setHoverPoints(bool b){withHoverPoints=b;};
+	QPixmap const * getPixmap(){return bc_pix;}
 
 public slots:
 	int encode(const QString& input);

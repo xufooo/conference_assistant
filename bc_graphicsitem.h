@@ -16,49 +16,28 @@
 #
 #
 # Description: 
-# This Project is aimed for conference holding.
+# barcode view in QGraphicsScene
 #
-# Last modified: 2013-07-07 12:23
+# Last modified: 2013-07-22 20:46
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include <QApplication>
-#include "mainframe.h"
+#ifndef BC_GRAPHICSITEM_H
+#define BC_GRAPHICSITEM_H
+
+#include <QGraphicsPixmapItem>
 #include "bc_generator.h"
-#include <QWidget>
-#include <QPixmap>
-#include "arthurwidgets.h"
-#include "myhoverpoints.h"
-#include "xform.h"
-#include "designframe.h"
-#include "bc_graphicsitem.h"
 
-int main(int argc, char** argv)
+class BC_GraphicsItem:public QGraphicsItem,public BC_GEN
 {
-	QApplication app(argc, argv);
-//	BC_GEN bcg;
-//	bcg.encode(QString("abcdefGHIJK012345"));
-//	bcg.show();
-//	MainFrame mainframe;
-//	mainframe.show();
-	
-//	QWidget main;
-//	ArthurFrame a;
-//	BC_GEN bcg(&a,true);
-//	bcg.encode(QString("abcdefGHIJK012345"));
-//	HoverPoints point(&a,HoverPoints::RectangleShape);
-//	a.show();
-//	main.show();
 
-//	XFormWidget *xfw=new XFormWidget(0);
-//	xfw->show();
+public:
+	BC_GraphicsItem(QGraphicsItem *parent=0);
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget=0);
+	QRectF boundingRect() const;
 
-	DesignFrame df;
-	df.show();
+};
 
-	return app.exec();
-//	return 0;
-}	
-	
+#endif

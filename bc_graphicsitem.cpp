@@ -16,49 +16,29 @@
 #
 #
 # Description: 
-# This Project is aimed for conference holding.
+# barcode view in QGraphicsScene
 #
-# Last modified: 2013-07-07 12:23
+# Last modified: 2013-07-22 20:58
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include <QApplication>
-#include "mainframe.h"
-#include "bc_generator.h"
-#include <QWidget>
-#include <QPixmap>
-#include "arthurwidgets.h"
-#include "myhoverpoints.h"
-#include "xform.h"
-#include "designframe.h"
 #include "bc_graphicsitem.h"
+#include <QDebug>
 
-int main(int argc, char** argv)
+BC_GraphicsItem::BC_GraphicsItem(QGraphicsItem *parent):QGraphicsItem(parent)
 {
-	QApplication app(argc, argv);
-//	BC_GEN bcg;
-//	bcg.encode(QString("abcdefGHIJK012345"));
-//	bcg.show();
-//	MainFrame mainframe;
-//	mainframe.show();
 	
-//	QWidget main;
-//	ArthurFrame a;
-//	BC_GEN bcg(&a,true);
-//	bcg.encode(QString("abcdefGHIJK012345"));
-//	HoverPoints point(&a,HoverPoints::RectangleShape);
-//	a.show();
-//	main.show();
+}
 
-//	XFormWidget *xfw=new XFormWidget(0);
-//	xfw->show();
+QRectF BC_GraphicsItem::boundingRect() const
+{
+	return BC_GEN::rect();
+}
 
-	DesignFrame df;
-	df.show();
+void BC_GraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+	painter->drawPixmap(BC_GEN::rect(),*(getPixmap()));
+}
 
-	return app.exec();
-//	return 0;
-}	
-	

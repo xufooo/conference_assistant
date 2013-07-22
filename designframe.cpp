@@ -16,49 +16,24 @@
 #
 #
 # Description: 
-# This Project is aimed for conference holding.
+# card design display, print, etc.
 #
-# Last modified: 2013-07-07 12:23
+# Last modified: 2013-07-22 19:47
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include <QApplication>
-#include "mainframe.h"
-#include "bc_generator.h"
-#include <QWidget>
-#include <QPixmap>
-#include "arthurwidgets.h"
-#include "myhoverpoints.h"
-#include "xform.h"
 #include "designframe.h"
 #include "bc_graphicsitem.h"
 
-int main(int argc, char** argv)
+DesignFrame::DesignFrame(QWidget *parent):QGraphicsView(parent)
 {
-	QApplication app(argc, argv);
-//	BC_GEN bcg;
-//	bcg.encode(QString("abcdefGHIJK012345"));
-//	bcg.show();
-//	MainFrame mainframe;
-//	mainframe.show();
-	
-//	QWidget main;
-//	ArthurFrame a;
-//	BC_GEN bcg(&a,true);
-//	bcg.encode(QString("abcdefGHIJK012345"));
-//	HoverPoints point(&a,HoverPoints::RectangleShape);
-//	a.show();
-//	main.show();
+	sc = new QGraphicsScene;
+	bc = new BC_GraphicsItem;
+	bc->encode("1234567");
+	sc->addItem(bc);
+	setScene(sc);
+}
 
-//	XFormWidget *xfw=new XFormWidget(0);
-//	xfw->show();
 
-	DesignFrame df;
-	df.show();
-
-	return app.exec();
-//	return 0;
-}	
-	
