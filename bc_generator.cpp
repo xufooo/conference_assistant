@@ -26,6 +26,7 @@
 
 #include "bc_generator.h"
 #include "myhoverpoints.h"
+#include <QDebug>
 
 	char BC_GEN::code39_table[CODE39_SIZE+1]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','-','.',' ','$','/','+','%','*'};
 	char BC_GEN::code39_code_table[CODE39_SIZE+1][CODE39_CODE_LEN+1]={"bwbWBwBwb","BwbWbwbwB","bwBWbwbwB","BwBWbwbwb","bwbWBwbwB",\
@@ -111,6 +112,7 @@ int BC_GEN::encode(const QString& input){
 	int width=lenth_calc(input.size()+ADD_CODE_LEN);//calc width
 	global_height=width*RATIO_H_W;//barcode height
 	setMinimumSize(width+2*start_Xposition,global_height+2*start_Yposition);
+	resize(minimumSize());
 
 	//code39 start
 	if(insertbuf(QChar('*'))!=1) return -5;//start character
@@ -137,7 +139,7 @@ int BC_GEN::encode(const QString& input){
 void BC_GEN::paintEvent(QPaintEvent *event){
 	QPainter painter;
 	painter.begin(this);
-	painter.drawPixmap(this->rect(),*bc_pix);
+	painter.drawPixmap(rect(),*bc_pix);
 	painter.end();
 }
 

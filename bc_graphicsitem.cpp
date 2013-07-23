@@ -29,16 +29,16 @@
 
 BC_GraphicsItem::BC_GraphicsItem(QGraphicsItem *parent):QGraphicsItem(parent)
 {
-	
+	setAcceptedMouseButtons(Qt::LeftButton);	
 }
 
 QRectF BC_GraphicsItem::boundingRect() const
 {
-	return BC_GEN::rect();
+	return rect();
 }
 
 void BC_GraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-	painter->drawPixmap(BC_GEN::rect(),*(getPixmap()));
+	painter->drawPixmap(rect(),*(getPixmap()));
 }
 
