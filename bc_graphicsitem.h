@@ -27,7 +27,7 @@
 #ifndef BC_GRAPHICSITEM_H
 #define BC_GRAPHICSITEM_H
 
-#include <QGraphicsPixmapItem>
+#include <QGraphicsItem>
 #include "bc_generator.h"
 
 class BC_GraphicsItem:public QGraphicsItem,public BC_GEN

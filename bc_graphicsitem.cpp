@@ -29,7 +29,6 @@
 
 BC_GraphicsItem::BC_GraphicsItem(QGraphicsItem *parent):QGraphicsItem(parent)
 {
-	setAcceptedMouseButtons(Qt::LeftButton);	
 }
 
 QRectF BC_GraphicsItem::boundingRect() const

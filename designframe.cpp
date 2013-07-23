@@ -26,13 +26,20 @@
 
 #include "designframe.h"
 #include "bc_graphicsitem.h"
+#include <QGraphicsTextItem>
 
 DesignFrame::DesignFrame(QWidget *parent):QGraphicsView(parent)
 {
 	sc = new QGraphicsScene;
 	bc = new BC_GraphicsItem;
 	bc->encode("1234567");
+	bc->setFlag(QGraphicsItem::ItemIsMovable);
+	bc->setFlag(QGraphicsItem::ItemIsSelectable);
+	QGraphicsTextItem *ti=new QGraphicsTextItem("lalala");
+	ti->setFlag(QGraphicsItem::ItemIsMovable);
+	ti->setFlag(QGraphicsItem::ItemIsSelectable);
 	sc->addItem(bc);
+	sc->addItem(ti);
 	setScene(sc);
 }
 
