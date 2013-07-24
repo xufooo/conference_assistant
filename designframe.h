@@ -38,6 +38,9 @@ class DesignFrame:public QGraphicsView
 public:
 	DesignFrame(QWidget *parent=0);
 
+public slots:
+	void receiveFixedSize(bool fixed);
+
 private:
 	DesignScene *sc;
 	BC_GraphicsItem *bc;

@@ -29,9 +29,6 @@
 #include "bc_generator.h"
 #include <QWidget>
 #include <QPixmap>
-#include "arthurwidgets.h"
-#include "myhoverpoints.h"
-#include "xform.h"
 #include "designframe.h"
 #include "bc_graphicsitem.h"
 

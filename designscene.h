@@ -36,12 +36,21 @@ class DesignScene:public QGraphicsScene
 
 public:
 	DesignScene(QObject *parent=0);
+	inline bool isBackground(){return m_bg;}
+
+signals:
+	void sendFixedSize(bool fixed);
+
+public slots:
+	void setBackground(const QPixmap &pixmap);
 
 protected:
 	void drawBackground(QPainter *painter,const QRectF &rect);
 
 private:
 	QPixmap m_tile;
+	QPixmap m_background;
+	bool m_bg;
 };
 
 #endif

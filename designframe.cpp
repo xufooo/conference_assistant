@@ -28,6 +28,7 @@
 #include "designscene.h"
 #include "bc_graphicsitem.h"
 #include <QGraphicsTextItem>
+#include <QDebug>
 
 DesignFrame::DesignFrame(QWidget *parent):QGraphicsView(parent)
 {
@@ -40,5 +41,15 @@ DesignFrame::DesignFrame(QWidget *parent):QGraphicsView(parent)
 	sc->addItem(bc);
 	sc->addItem(ti);
 	setScene(sc);
+	QObject::connect(sc,SIGNAL(sendFixedSize(bool)),this,SLOT(receiveFixedSize(bool)));
+	sc->setBackground(QPixmap("bg1.jpg"));
+}
+
+void DesignFrame::receiveFixedSize(bool fixed)
+{
+	if(fixed)
+		setFixedSize(sceneRect().width()+10,sceneRect().height()+10);
+	else
+		QWidget::setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
 }
 

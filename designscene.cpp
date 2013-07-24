@@ -26,8 +26,9 @@
 
 #include "designscene.h"
 #include <QPainter>
+#include <QDebug>
 
-DesignScene::DesignScene(QObject *parent):QGraphicsScene(parent)
+DesignScene::DesignScene(QObject *parent):QGraphicsScene(parent),m_bg(false)
 {
 	m_tile = QPixmap(128,128);
 	m_tile.fill(Qt::white);
@@ -40,6 +41,24 @@ DesignScene::DesignScene(QObject *parent):QGraphicsScene(parent)
 
 void DesignScene::drawBackground(QPainter *painter,const QRectF &rect)
 {
-	painter->drawTiledPixmap(rect,m_tile);
+	if(m_bg)
+		painter->drawPixmap(rect.toRect(),m_background);
+	else
+		painter->drawTiledPixmap(rect,m_tile);
 	update();
 }
+
+void DesignScene::setBackground(const QPixmap &pixmap)
+{
+	if(pixmap.isNull())
+		m_bg=false;
+	else
+	{
+		m_bg=true;
+		m_background=pixmap;
+		setSceneRect(sceneRect().x(),sceneRect().y(),m_background.width(),m_background.height());
+		emit sendFixedSize(m_bg);
+	}
+}
+
+

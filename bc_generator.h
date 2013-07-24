@@ -59,21 +59,20 @@ class BC_GEN: public QWidget
 {
 	Q_OBJECT;
 public:
-	BC_GEN(QWidget* parent=0, bool ifHoverPoints=false, int x=0, int y=0);
+	BC_GEN(QWidget* parent=0, int x=0, int y=0);
 	virtual ~BC_GEN();
 	inline QVector<QLine>* get_encode_buf(){return encode_buf;}
 	inline int lenth_calc(const int& char_num){return (char_num*(CHAR_LEN_R3+INTER_GAP_LEN)-INTER_GAP_LEN);}
 	inline void setStartPosition(const int& Xposition,const int& Yposition){
 		start_Xposition=Xposition;start_Yposition=Yposition;}
-	inline bool isHoverPoints(){return withHoverPoints;}
-	inline void setHoverPoints(bool b){withHoverPoints=b;};
 	QPixmap const * getPixmap(){return bc_pix;}
 
 public slots:
 	int encode(const QString& input);
-	void setRect(const QRectF &rect);
+
 protected:
 	virtual void paintEvent(QPaintEvent *event);
+
 private:
 	int insertbuf(const QChar & bc);
 
@@ -89,9 +88,6 @@ private:
 	int global_height;
 
 	QPixmap *bc_pix;
-
-	bool withHoverPoints;
-	MyHoverPoints *h_points;
 };
 
 #endif
