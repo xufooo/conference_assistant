@@ -29,6 +29,7 @@
 
 BC_GraphicsItem::BC_GraphicsItem(QGraphicsItem *parent):QGraphicsItem(parent)
 {
+	setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
 }
 
 QRectF BC_GraphicsItem::boundingRect() const
@@ -39,5 +40,12 @@ QRectF BC_GraphicsItem::boundingRect() const
 void BC_GraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	painter->drawPixmap(rect(),*(getPixmap()));
+	if(isSelected())
+	{
+		painter->save();
+		painter->setPen(Qt::DashLine);
+		painter->drawRect(rect());
+		painter->restore();
+	}
 }
 
