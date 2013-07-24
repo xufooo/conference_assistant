@@ -48,7 +48,7 @@ DesignFrame::DesignFrame(QWidget *parent):QGraphicsView(parent)
 void DesignFrame::receiveFixedSize(bool fixed)
 {
 	if(fixed)
-		setFixedSize(sceneRect().width()+10,sceneRect().height()+10);
+		setFixedSize(sceneRect().width()+2,sceneRect().height()+2);
 	else
 		QWidget::setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
 }
