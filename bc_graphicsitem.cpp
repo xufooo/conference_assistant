@@ -25,9 +25,11 @@
 =============================================================================*/
 
 #include "bc_graphicsitem.h"
+#include <QGraphicsSceneWheelEvent>
+
 #include <QDebug>
 
-BC_GraphicsItem::BC_GraphicsItem(QGraphicsItem *parent):QGraphicsItem(parent)
+BC_GraphicsItem::BC_GraphicsItem(QGraphicsItem *parent):QGraphicsItem(parent),m_scale(1)
 {
 	setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
 }
@@ -49,3 +51,15 @@ void BC_GraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 	}
 }
 
+void BC_GraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
+{
+	if(!isSelected())
+	{
+		event->ignore();
+		return;
+	}
+
+	m_scale -= event->delta() / qreal(1200);
+    m_scale = qMax(qreal(1), qMin(qreal(5), m_scale));
+    setScale(m_scale);
+}

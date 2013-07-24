@@ -38,6 +38,12 @@ public:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget=0);
 	QRectF boundingRect() const;
 
+protected:
+	void wheelEvent(QGraphicsSceneWheelEvent *event);
+
+private:
+	qreal m_scale;	
+
 };
 
 #endif
