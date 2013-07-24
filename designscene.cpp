@@ -16,29 +16,30 @@
 #
 #
 # Description: 
-# card design display, print, etc.
+# Design Scene
 #
-# Last modified: 2013-07-22 19:47
+# Last modified: 2013-07-24 12:42
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include "designframe.h"
 #include "designscene.h"
-#include "bc_graphicsitem.h"
-#include <QGraphicsTextItem>
+#include <QPainter>
 
-DesignFrame::DesignFrame(QWidget *parent):QGraphicsView(parent)
+DesignScene::DesignScene(QObject *parent):QGraphicsScene(parent)
 {
-	sc = new DesignScene;
-	bc = new BC_GraphicsItem;
-	bc->encode("1234567");
-	QGraphicsTextItem *ti=new QGraphicsTextItem("lalala");
-	ti->setFlag(QGraphicsItem::ItemIsMovable);
-	ti->setFlag(QGraphicsItem::ItemIsSelectable);
-	sc->addItem(bc);
-	sc->addItem(ti);
-	setScene(sc);
+	m_tile = QPixmap(128,128);
+	m_tile.fill(Qt::white);
+	QPainter pt(&m_tile);
+	QColor color(230,230,230);
+	pt.fillRect(0,0,64,64,color);
+	pt.fillRect(64,64,64,64,color);
+	pt.end();
 }
 
+void DesignScene::drawBackground(QPainter *painter,const QRectF &rect)
+{
+	painter->drawTiledPixmap(rect,m_tile);
+	update();
+}

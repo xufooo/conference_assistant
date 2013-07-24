@@ -28,7 +28,7 @@
 #define DESIGNFRAME_H
 
 #include <QGraphicsView>
-#include <QGraphicsScene>
+class DesignScene;
 class BC_GraphicsItem;
 
 class DesignFrame:public QGraphicsView
@@ -39,7 +39,7 @@ public:
 	DesignFrame(QWidget *parent=0);
 
 private:
-	QGraphicsScene *sc;
+	DesignScene *sc;
 	BC_GraphicsItem *bc;
 };
 
