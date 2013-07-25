@@ -30,10 +30,14 @@
 #include <QGraphicsItem>
 #include "bc_generator.h"
 
-class BC_GraphicsItem:public QGraphicsItem,public BC_GEN
+class BC_GraphicsItem:public BC_GEN,public QGraphicsItem
 {
+	Q_OBJECT
 
 public:
+	enum {Type = UserType + 11};
+	int type() const {return Type;}
+
 	BC_GraphicsItem(QGraphicsItem *parent=0);
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget=0);
 	QRectF boundingRect() const;

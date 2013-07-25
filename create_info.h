@@ -30,7 +30,7 @@ class BC_GEN;
 
 class CreateInfo:public QWidget
 {
-	Q_OBJECT;
+	Q_OBJECT
 
 public:
 	CreateInfo(QWidget *parent=0);

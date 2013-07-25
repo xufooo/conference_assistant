@@ -33,7 +33,7 @@ class BC_GraphicsItem;
 
 class DesignFrame:public QGraphicsView
 {
-	Q_OBJECT;
+	Q_OBJECT
 	
 public:
 	DesignFrame(QWidget *parent=0);

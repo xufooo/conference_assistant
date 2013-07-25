@@ -57,7 +57,7 @@ class MyHoverPoints;
 
 class BC_GEN: public QWidget
 {
-	Q_OBJECT;
+	Q_OBJECT
 public:
 	BC_GEN(QWidget* parent=0, int x=0, int y=0);
 	virtual ~BC_GEN();

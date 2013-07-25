@@ -32,7 +32,7 @@
 
 class DesignScene:public QGraphicsScene
 {
-	Q_OBJECT;
+	Q_OBJECT
 
 public:
 	DesignScene(QObject *parent=0);
