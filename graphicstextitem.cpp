@@ -16,40 +16,38 @@
 #
 #
 # Description: 
-# card design display, print, etc.
+# To put text on the qgraphicsscene, inherits QGraphicsTextItem.
 #
-# Last modified: 2013-07-22 19:47
+# Last modified: 2013-07-26 11:45
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include "designframe.h"
-#include "designscene.h"
-#include "bc_graphicsitem.h"
 #include "graphicstextitem.h"
-#include <QGraphicsTextItem>
-#include <QDebug>
 
-DesignFrame::DesignFrame(QWidget *parent):QGraphicsView(parent)
+GraphicsTextItem::GraphicsTextItem(QGraphicsItem  *parent, QGraphicsScene *scene):QGraphicsTextItem(parent, scene)
 {
-	sc = new DesignScene;
-	bc = new BC_GraphicsItem;
-	bc->encode("1234567");
-	GraphicsTextItem *ti=new GraphicsTextItem;
-	ti->setPlainText("lllaaa");
-	sc->addItem(bc);
-	sc->addItem(ti);
-	setScene(sc);
-	QObject::connect(sc,SIGNAL(sendFixedSize(bool)),this,SLOT(receiveFixedSize(bool)));
-	sc->setBackground(QPixmap("bg1.jpg"));
+	setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
 }
 
-void DesignFrame::receiveFixedSize(bool fixed)
+QVariant GraphicsTextItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-	if(fixed)
-		setFixedSize(sceneRect().width()+2,sceneRect().height()+2);
-	else
-		QWidget::setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
+	if(change==QGraphicsItem::ItemSelectedHasChanged)
+		emit selectedChange(this);
+	return value;
 }
 
+void GraphicsTextItem::focusOutEvent(QFocusEvent *event)
+{
+	setTextInteractionFlags(Qt::NoTextInteraction);
+	emit lostFocus(this);
+	QGraphicsTextItem::focusOutEvent(event);
+}
+
+void GraphicsTextItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+	if(textInteractionFlags()==Qt::NoTextInteraction)
+		setTextInteractionFlags(Qt::TextEditorInteraction);
+	QGraphicsTextItem::mouseDoubleClickEvent(event);
+}

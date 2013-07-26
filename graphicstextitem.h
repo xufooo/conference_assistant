@@ -16,40 +16,43 @@
 #
 #
 # Description: 
-# card design display, print, etc.
+# To put text on the qgraphicsscene, inherits QGraphicsTextItem.
 #
-# Last modified: 2013-07-22 19:47
+# Last modified: 2013-07-26 11:37
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include "designframe.h"
-#include "designscene.h"
-#include "bc_graphicsitem.h"
-#include "graphicstextitem.h"
+#ifndef GRAPHICSTEXTITEM_H
+#define GRAPHICSTEXTITEM_H
+
 #include <QGraphicsTextItem>
-#include <QDebug>
 
-DesignFrame::DesignFrame(QWidget *parent):QGraphicsView(parent)
+class QFocusEvent;
+class QGraphicsItem;
+class QGraphicsScene;
+class QGraphicsSceneMouseEvent;
+
+class GraphicsTextItem:public QGraphicsTextItem
 {
-	sc = new DesignScene;
-	bc = new BC_GraphicsItem;
-	bc->encode("1234567");
-	GraphicsTextItem *ti=new GraphicsTextItem;
-	ti->setPlainText("lllaaa");
-	sc->addItem(bc);
-	sc->addItem(ti);
-	setScene(sc);
-	QObject::connect(sc,SIGNAL(sendFixedSize(bool)),this,SLOT(receiveFixedSize(bool)));
-	sc->setBackground(QPixmap("bg1.jpg"));
-}
+	Q_OBJECT
 
-void DesignFrame::receiveFixedSize(bool fixed)
-{
-	if(fixed)
-		setFixedSize(sceneRect().width()+2,sceneRect().height()+2);
-	else
-		QWidget::setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
-}
+public:
+		enum {Type = UserType + 11};
+		int type() const {return Type;}
 
+		GraphicsTextItem(QGraphicsItem *parent=0,QGraphicsScene *scene=0);
+
+signals:
+		void lostFocus(GraphicsTextItem *item);
+		void selectedChange(QGraphicsItem *item);
+
+protected:
+		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+		void focusOutEvent(QFocusEvent *event);
+		void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+
+};
+
+#endif
