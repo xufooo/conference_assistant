@@ -35,6 +35,8 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QPrinter>
+#include <QPrintDialog>
 #include <QDebug>
 
 DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
@@ -75,10 +77,11 @@ DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 	fontlayout->addWidget(fontSizeCombo);
 	
 	QHBoxLayout *buttonlayout=new QHBoxLayout;
-	saveScene= new QPushButton(tr("Save"));
-	printScene= new QPushButton(tr("Print"));
-	buttonlayout->addWidget(saveScene);
-	buttonlayout->addWidget(printScene);
+	savebutton= new QPushButton(tr("Save"),this);
+	printbutton= new QPushButton(tr("Print"),this);
+	connect(printbutton,SIGNAL(clicked()),this,SLOT(printScene()));
+	buttonlayout->addWidget(savebutton);
+	buttonlayout->addWidget(printbutton);
 
 	layout->addLayout(fontlayout);
 	layout->addLayout(buttonlayout);
@@ -120,4 +123,14 @@ void DesignFrame::itemSelected(QGraphicsItem *item)
 	QFont font=textitem->font();
 	fontCombo->setCurrentFont(font);
 	fontSizeCombo->setEditText(QString().setNum(font.pointSize()));
+}
+
+void DesignFrame::printScene()
+{
+	 QPrinter printer;
+	 if (QPrintDialog(&printer).exec() == QDialog::Accepted) {
+     	QPainter painter(&printer);
+     	painter.setRenderHint(QPainter::Antialiasing);
+     	scene->render(&painter);
+ }
 }

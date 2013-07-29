@@ -45,6 +45,7 @@ public:
 
 public slots:
 	void receiveFixedSize(bool fixed);
+	void printScene();
 
 private slots:
 	void currentFontChanged(const QFont &font);
@@ -60,8 +61,8 @@ private:
 	QComboBox *fontSizeCombo;
 	QFontComboBox *fontCombo;
 	
-	QPushButton *saveScene;
-	QPushButton *printScene;
+	QPushButton *savebutton;
+	QPushButton *printbutton;
 
 
 };
