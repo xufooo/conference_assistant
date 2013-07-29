@@ -28,12 +28,14 @@
 #include <QVBoxLayout>
 
 #include "create_info.h"
+#include "designframe.h"
 #include "mainframe.h"
 
 MainFrame::MainFrame(QWidget* parent,Qt::WindowFlags f):QDialog(parent,f){
 
 	tab = new QTabWidget(this);
 	tab->addTab(new CreateInfo(this),tr("Create"));
+	tab->addTab(new DesignFrame(this),tr("Design"));
 	
 	QVBoxLayout *layout=new QVBoxLayout;
 	layout->setSizeConstraint(QLayout::SetNoConstraint);

@@ -38,8 +38,8 @@ int main(int argc, char** argv)
 //	BC_GEN bcg;
 //	bcg.encode(QString("abcdefGHIJK012345"));
 //	bcg.show();
-//	MainFrame mainframe;
-//	mainframe.show();
+	MainFrame mainframe;
+	mainframe.show();
 	
 //	QWidget main;
 //	ArthurFrame a;
@@ -52,8 +52,8 @@ int main(int argc, char** argv)
 //	XFormWidget *xfw=new XFormWidget(0);
 //	xfw->show();
 
-	DesignFrame df;
-	df.show();
+//	DesignFrame df;
+//	df.show();
 
 	return app.exec();
 //	return 0;
