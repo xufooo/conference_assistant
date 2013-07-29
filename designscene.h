@@ -16,33 +16,48 @@
 #
 #
 # Description: 
-# This module is used for creating information.
+# Design Scene
 #
-# Last modified: 2013-07-07 16:59
+# Last modified: 2013-07-24 12:39
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include <QLineEdit>
-#include <QVBoxLayout>
-#include <QTimer>
+#ifndef DESIGNSCENE_H
+#define DESIGNSCENE_H
 
-#include "bc_generator.h"
-#include "create_info.h"
+#include <QGraphicsScene>
+#include <QPixmap>
 
-CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
-	QVBoxLayout *mainLayout = new QVBoxLayout(this);
-	bc_line = new QLineEdit(this);
-	barcode = new BC_GEN(this,true);
-	mainLayout->addWidget(bc_line);
-	mainLayout->addWidget(barcode);
-	setLayout(mainLayout);
-	connect(bc_line,SIGNAL(textChanged(const QString&)),barcode,SLOT(encode(const QString&)));
-	QTimer::singleShot(0,bc_line,SLOT(setFocus()));//focus on bc_line
-}
+class DesignScene:public QGraphicsScene
+{
+	Q_OBJECT
 
-CreateInfo::~CreateInfo(){
-	delete barcode;
-	delete bc_line;
-}
+public:
+	DesignScene(QObject *parent=0);
+	QFont font() const {return myFont;}
+
+	inline bool isBackground(){return m_bg;}
+
+	void setFont(const QFont &font);
+
+signals:
+	void sendFixedSize(bool fixed);
+	void itemSelected(QGraphicsItem *item);
+
+public slots:
+	void setBackground(const QPixmap &pixmap);
+	void emitItemSelected();
+
+private:
+	bool isItemChange(int type);
+
+	QPixmap m_tile;
+	QPixmap m_background;
+	bool m_bg;
+
+	QFont myFont;
+};
+
+#endif

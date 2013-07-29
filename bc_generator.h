@@ -53,21 +53,26 @@
 #define CHAR_LEN_R2 (NARROW_BAR_LEN*6+WIDE_BAR_LEN_R2*2)
 #define CHAR_LEN_R3 (NARROW_BAR_LEN*6+WIDE_BAR_LEN_R3*3)
 
+class MyHoverPoints;
+
 class BC_GEN: public QWidget
 {
-	Q_OBJECT;
+	Q_OBJECT
 public:
-	BC_GEN(QWidget* parent=0,int x=0,int y=0);
+	BC_GEN(QWidget* parent=0, int x=0, int y=0);
 	virtual ~BC_GEN();
 	inline QVector<QLine>* get_encode_buf(){return encode_buf;}
 	inline int lenth_calc(const int& char_num){return (char_num*(CHAR_LEN_R3+INTER_GAP_LEN)-INTER_GAP_LEN);}
 	inline void setStartPosition(const int& Xposition,const int& Yposition){
 		start_Xposition=Xposition;start_Yposition=Yposition;}
+	QPixmap const * getPixmap(){return bc_pix;}
 
 public slots:
 	int encode(const QString& input);
+
 protected:
 	virtual void paintEvent(QPaintEvent *event);
+
 private:
 	int insertbuf(const QChar & bc);
 

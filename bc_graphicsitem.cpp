@@ -16,33 +16,50 @@
 #
 #
 # Description: 
-# This module is used for creating information.
+# barcode view in QGraphicsScene
 #
-# Last modified: 2013-07-07 16:59
+# Last modified: 2013-07-22 20:58
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include <QLineEdit>
-#include <QVBoxLayout>
-#include <QTimer>
+#include "bc_graphicsitem.h"
+#include <QGraphicsSceneWheelEvent>
 
-#include "bc_generator.h"
-#include "create_info.h"
+#include <QDebug>
 
-CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
-	QVBoxLayout *mainLayout = new QVBoxLayout(this);
-	bc_line = new QLineEdit(this);
-	barcode = new BC_GEN(this,true);
-	mainLayout->addWidget(bc_line);
-	mainLayout->addWidget(barcode);
-	setLayout(mainLayout);
-	connect(bc_line,SIGNAL(textChanged(const QString&)),barcode,SLOT(encode(const QString&)));
-	QTimer::singleShot(0,bc_line,SLOT(setFocus()));//focus on bc_line
+BC_GraphicsItem::BC_GraphicsItem(QGraphicsItem *parent):QGraphicsItem(parent),m_scale(1)
+{
+	setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
 }
 
-CreateInfo::~CreateInfo(){
-	delete barcode;
-	delete bc_line;
+QRectF BC_GraphicsItem::boundingRect() const
+{
+	return rect();
+}
+
+void BC_GraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+	painter->drawPixmap(rect(),*(getPixmap()));
+	if(isSelected())
+	{
+		painter->save();
+		painter->setPen(Qt::DashLine);
+		painter->drawRect(rect());
+		painter->restore();
+	}
+}
+
+void BC_GraphicsItem::wheelEvent(QGraphicsSceneWheelEvent *event)
+{
+	if(!isSelected())
+	{
+		event->ignore();
+		return;
+	}
+
+	m_scale -= event->delta() / qreal(1200);
+    m_scale = qMax(qreal(1), qMin(qreal(5), m_scale));
+    setScale(m_scale);
 }

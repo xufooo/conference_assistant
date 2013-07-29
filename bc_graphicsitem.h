@@ -16,33 +16,38 @@
 #
 #
 # Description: 
-# This module is used for creating information.
+# barcode view in QGraphicsScene
 #
-# Last modified: 2013-07-07 16:59
+# Last modified: 2013-07-22 20:46
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include <QLineEdit>
-#include <QVBoxLayout>
-#include <QTimer>
+#ifndef BC_GRAPHICSITEM_H
+#define BC_GRAPHICSITEM_H
 
+#include <QGraphicsItem>
 #include "bc_generator.h"
-#include "create_info.h"
 
-CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
-	QVBoxLayout *mainLayout = new QVBoxLayout(this);
-	bc_line = new QLineEdit(this);
-	barcode = new BC_GEN(this,true);
-	mainLayout->addWidget(bc_line);
-	mainLayout->addWidget(barcode);
-	setLayout(mainLayout);
-	connect(bc_line,SIGNAL(textChanged(const QString&)),barcode,SLOT(encode(const QString&)));
-	QTimer::singleShot(0,bc_line,SLOT(setFocus()));//focus on bc_line
-}
+class BC_GraphicsItem:public BC_GEN,public QGraphicsItem
+{
+	Q_OBJECT
 
-CreateInfo::~CreateInfo(){
-	delete barcode;
-	delete bc_line;
-}
+public:
+	enum {Type = UserType + 11};
+	int type() const {return Type;}
+
+	BC_GraphicsItem(QGraphicsItem *parent=0);
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget=0);
+	QRectF boundingRect() const;
+
+protected:
+	void wheelEvent(QGraphicsSceneWheelEvent *event);
+
+private:
+	qreal m_scale;	
+
+};
+
+#endif

@@ -16,33 +16,43 @@
 #
 #
 # Description: 
-# This module is used for creating information.
+# To put text on the qgraphicsscene, inherits QGraphicsTextItem.
 #
-# Last modified: 2013-07-07 16:59
+# Last modified: 2013-07-26 11:37
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include <QLineEdit>
-#include <QVBoxLayout>
-#include <QTimer>
+#ifndef GRAPHICSTEXTITEM_H
+#define GRAPHICSTEXTITEM_H
 
-#include "bc_generator.h"
-#include "create_info.h"
+#include <QGraphicsTextItem>
 
-CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
-	QVBoxLayout *mainLayout = new QVBoxLayout(this);
-	bc_line = new QLineEdit(this);
-	barcode = new BC_GEN(this,true);
-	mainLayout->addWidget(bc_line);
-	mainLayout->addWidget(barcode);
-	setLayout(mainLayout);
-	connect(bc_line,SIGNAL(textChanged(const QString&)),barcode,SLOT(encode(const QString&)));
-	QTimer::singleShot(0,bc_line,SLOT(setFocus()));//focus on bc_line
-}
+class QFocusEvent;
+class QGraphicsItem;
+class QGraphicsScene;
+class QGraphicsSceneMouseEvent;
 
-CreateInfo::~CreateInfo(){
-	delete barcode;
-	delete bc_line;
-}
+class GraphicsTextItem:public QGraphicsTextItem
+{
+	Q_OBJECT
+
+public:
+		enum {Type = UserType + 12};
+		int type() const {return Type;}
+
+		GraphicsTextItem(QGraphicsItem *parent=0,QGraphicsScene *scene=0);
+
+signals:
+		void lostFocus(GraphicsTextItem *item);
+		void selectedChange(QGraphicsItem *item);
+
+protected:
+		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+		void focusOutEvent(QFocusEvent *event);
+		void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+
+};
+
+#endif

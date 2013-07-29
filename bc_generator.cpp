@@ -103,6 +103,7 @@ int BC_GEN::encode(const QString& input){
 	int width=lenth_calc(input.size()+ADD_CODE_LEN);//calc width
 	global_height=width*RATIO_H_W;//barcode height
 	setMinimumSize(width+2*start_Xposition,global_height+2*start_Yposition);
+	resize(minimumSize());
 
 	//code39 start
 	if(insertbuf(QChar('*'))!=1) return -5;//start character
@@ -129,7 +130,6 @@ int BC_GEN::encode(const QString& input){
 void BC_GEN::paintEvent(QPaintEvent *event){
 	QPainter painter;
 	painter.begin(this);
-	painter.drawPixmap(this->rect(),*bc_pix);
+	painter.drawPixmap(rect(),*bc_pix);
 	painter.end();
 }
-

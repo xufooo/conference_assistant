@@ -16,33 +16,38 @@
 #
 #
 # Description: 
-# This module is used for creating information.
+# To put text on the qgraphicsscene, inherits QGraphicsTextItem.
 #
-# Last modified: 2013-07-07 16:59
+# Last modified: 2013-07-26 11:45
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include <QLineEdit>
-#include <QVBoxLayout>
-#include <QTimer>
+#include "graphicstextitem.h"
 
-#include "bc_generator.h"
-#include "create_info.h"
-
-CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
-	QVBoxLayout *mainLayout = new QVBoxLayout(this);
-	bc_line = new QLineEdit(this);
-	barcode = new BC_GEN(this,true);
-	mainLayout->addWidget(bc_line);
-	mainLayout->addWidget(barcode);
-	setLayout(mainLayout);
-	connect(bc_line,SIGNAL(textChanged(const QString&)),barcode,SLOT(encode(const QString&)));
-	QTimer::singleShot(0,bc_line,SLOT(setFocus()));//focus on bc_line
+GraphicsTextItem::GraphicsTextItem(QGraphicsItem  *parent, QGraphicsScene *scene):QGraphicsTextItem(parent, scene)
+{
+	setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
 }
 
-CreateInfo::~CreateInfo(){
-	delete barcode;
-	delete bc_line;
+QVariant GraphicsTextItem::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+	if(change==QGraphicsItem::ItemSelectedHasChanged)
+		emit selectedChange(this);
+	return value;
+}
+
+void GraphicsTextItem::focusOutEvent(QFocusEvent *event)
+{
+	setTextInteractionFlags(Qt::NoTextInteraction);
+	emit lostFocus(this);
+	QGraphicsTextItem::focusOutEvent(event);
+}
+
+void GraphicsTextItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+	if(textInteractionFlags()==Qt::NoTextInteraction)
+		setTextInteractionFlags(Qt::TextEditorInteraction);
+	QGraphicsTextItem::mouseDoubleClickEvent(event);
 }
