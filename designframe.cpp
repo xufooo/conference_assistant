@@ -53,10 +53,10 @@ DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 	mainlayout->addWidget(view);
 	setLayout(mainlayout);
 	bc = new BC_GraphicsItem;
-	GraphicsTextItem *ti=new GraphicsTextItem;
-	ti->setPlainText("Name");
+	GraphicsTextItem *name=new GraphicsTextItem;
+	name->setPlainText("Name");
 	scene->addItem(bc);
-	scene->addItem(ti);
+	scene->addItem(name);
 	view->setScene(scene);
 	connect(scene,SIGNAL(sendFixedSize(bool)),this,SLOT(receiveFixedSize(bool)));
 	connect(scene,SIGNAL(itemSelected(QGraphicsItem*)),this,SLOT(itemSelected(QGraphicsItem*)));
@@ -81,7 +81,7 @@ DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 	fontlayout->addWidget(fontSizeCombo);
 	
 	QHBoxLayout *bclayout=new QHBoxLayout;
-	bc_label=new QLabel(tr("BarCode input:"));
+	bc_label=new QLabel(tr("Input BarCode: "));
 	bc_line=new QLineEdit();
 	connect(bc_line,SIGNAL(textChanged(const QString&)),bc,SLOT(encode(const QString&)));
 	connect(bc_line,SIGNAL(textChanged(const QString&)),scene,SLOT(update()));
