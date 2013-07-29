@@ -28,6 +28,7 @@
 #include "graphicstextitem.h"
 #include <QGraphicsTextItem>
 #include <QPainter>
+#include <QTimer>
 #include <QDebug>
 
 DesignScene::DesignScene(QObject *parent):QGraphicsScene(parent),m_bg(false)
@@ -39,29 +40,28 @@ DesignScene::DesignScene(QObject *parent):QGraphicsScene(parent),m_bg(false)
 	pt.fillRect(0,0,64,64,color);
 	pt.fillRect(64,64,64,64,color);
 	pt.end();
+	setBackgroundBrush(m_tile);
+	setSceneRect(0,0,300,300);
 	connect(this,SIGNAL(selectionChanged()),this,SLOT(emitItemSelected()));
-}
-
-void DesignScene::drawBackground(QPainter *painter,const QRectF &rect)
-{
-	if(m_bg)
-		painter->drawPixmap(rect.toRect(),m_background);
-	else
-		painter->drawTiledPixmap(rect,m_tile);
-	update();
 }
 
 void DesignScene::setBackground(const QPixmap &pixmap)
 {
-	if(pixmap.isNull())
+	if(pixmap.isNull()){
 		m_bg=false;
+		setBackgroundBrush(m_tile);
+	}
 	else
 	{
 		m_bg=true;
 		m_background=pixmap;
+		setBackgroundBrush(m_background);
 		setSceneRect(sceneRect().x(),sceneRect().y(),m_background.width(),m_background.height());
 		emit sendFixedSize(m_bg);
 	}
+	foreach(QGraphicsItem *item,items())
+		item->setPos(0,0);
+	update();
 }
 
 void DesignScene::setFont(const QFont &font)
@@ -72,6 +72,7 @@ void DesignScene::setFont(const QFont &font)
 		if(item)
 			item->setFont(myFont);
 	}
+	update();
 }
 
 bool DesignScene::isItemChange(int type)

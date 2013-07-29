@@ -38,7 +38,7 @@ CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
 	mainLayout->addWidget(bc_line);
 	mainLayout->addWidget(barcode);
 	setLayout(mainLayout);
-	QObject::connect(bc_line,SIGNAL(textChanged(const QString&)),barcode,SLOT(encode(const QString&)));
+	connect(bc_line,SIGNAL(textChanged(const QString&)),barcode,SLOT(encode(const QString&)));
 	QTimer::singleShot(0,bc_line,SLOT(setFocus()));//focus on bc_line
 }
 

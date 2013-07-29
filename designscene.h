@@ -50,9 +50,6 @@ public slots:
 	void setBackground(const QPixmap &pixmap);
 	void emitItemSelected();
 
-protected:
-	void drawBackground(QPainter *painter,const QRectF &rect);
-
 private:
 	bool isItemChange(int type);
 

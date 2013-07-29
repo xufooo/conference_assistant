@@ -35,28 +35,32 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QTimer>
 #include <QPrinter>
 #include <QPrintDialog>
+#include <QFileDialog>
+#include <QDir>
+#include <QMessageBox>
 #include <QDebug>
 
 DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 {
 	scene = new DesignScene;
-	view = new QGraphicsView(scene);
+	view = new QGraphicsView;
 	QHBoxLayout *mainlayout=new QHBoxLayout;
 	mainlayout->addWidget(view);
 	setLayout(mainlayout);
 	bc = new BC_GraphicsItem;
-	bc->encode("1234567");
 	GraphicsTextItem *ti=new GraphicsTextItem;
-	ti->setPlainText("lllaaa");
+	ti->setPlainText("Name");
 	scene->addItem(bc);
 	scene->addItem(ti);
 	view->setScene(scene);
 	connect(scene,SIGNAL(sendFixedSize(bool)),this,SLOT(receiveFixedSize(bool)));
 	connect(scene,SIGNAL(itemSelected(QGraphicsItem*)),this,SLOT(itemSelected(QGraphicsItem*)));
 
-	scene->setBackground(QPixmap("bg1.jpg"));
 
 	/*createCtrlPanel*/
 	QVBoxLayout *layout=new QVBoxLayout;
@@ -76,14 +80,27 @@ DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 	fontlayout->addWidget(fontCombo);
 	fontlayout->addWidget(fontSizeCombo);
 	
+	QHBoxLayout *bclayout=new QHBoxLayout;
+	bc_label=new QLabel(tr("BarCode input:"));
+	bc_line=new QLineEdit();
+	connect(bc_line,SIGNAL(textChanged(const QString&)),bc,SLOT(encode(const QString&)));
+	connect(bc_line,SIGNAL(textChanged(const QString&)),scene,SLOT(update()));
+	QTimer::singleShot(0,bc_line,SLOT(setFocus()));//focus on bc_line
+	bclayout->addWidget(bc_label);
+	bclayout->addWidget(bc_line);
+
 	QHBoxLayout *buttonlayout=new QHBoxLayout;
-	savebutton= new QPushButton(tr("Save"),this);
-	printbutton= new QPushButton(tr("Print"),this);
+	openbutton= new QPushButton(tr("Open"));
+	connect(openbutton,SIGNAL(clicked()),this,SLOT(open()));
+	savebutton= new QPushButton(tr("Save"));
+	printbutton= new QPushButton(tr("Print"));
 	connect(printbutton,SIGNAL(clicked()),this,SLOT(printScene()));
+	buttonlayout->addWidget(openbutton);
 	buttonlayout->addWidget(savebutton);
 	buttonlayout->addWidget(printbutton);
 
 	layout->addLayout(fontlayout);
+	layout->addLayout(bclayout);
 	layout->addLayout(buttonlayout);
 
 	mainlayout->addLayout(layout);
@@ -133,4 +150,18 @@ void DesignFrame::printScene()
      	painter.setRenderHint(QPainter::Antialiasing);
      	scene->render(&painter);
  }
+}
+
+void DesignFrame::open()
+{
+	QString fileName=QFileDialog::getOpenFileName(this,tr("Open File"),QDir::currentPath());
+	
+	if(!fileName.isEmpty()){
+		QPixmap image(fileName);
+		if(image.isNull()){
+			QMessageBox::information(this,tr("Failure"),tr("Cannot load %1.").arg(fileName));
+			return;
+		}
+	scene->setBackground(image);
+	}
 }

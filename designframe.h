@@ -34,6 +34,8 @@ class DesignScene;
 class BC_GraphicsItem;
 class QComboBox;
 class QFontComboBox;
+class QLabel;
+class QLineEdit;
 class QPushButton;
 
 class DesignFrame:public QWidget
@@ -52,6 +54,8 @@ private slots:
 	void fontSizeChanged(const QString &size);
 	void handleFontChange();
 	void itemSelected(QGraphicsItem *item);
+	
+	void open();
 
 private:
 	DesignScene *scene;
@@ -60,7 +64,11 @@ private:
 
 	QComboBox *fontSizeCombo;
 	QFontComboBox *fontCombo;
+
+	QLabel *bc_label;
+	QLineEdit *bc_line;
 	
+	QPushButton *openbutton;
 	QPushButton *savebutton;
 	QPushButton *printbutton;
 
