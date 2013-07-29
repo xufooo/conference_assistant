@@ -148,7 +148,16 @@ void DesignFrame::printScene()
 	 if (QPrintDialog(&printer).exec() == QDialog::Accepted) {
      	QPainter painter(&printer);
      	painter.setRenderHint(QPainter::Antialiasing);
-     	scene->render(&painter);
+		if(scene->isBackground())
+     		scene->render(&painter);
+		else
+		{
+			QPixmap white(scene->width(),scene->height());
+			white.fill();
+			scene->setBackground(white);
+			scene->render(&painter);
+			scene->setBackground(NULL);
+		}
  }
 }
 
