@@ -27,11 +27,16 @@
 #ifndef DESIGNFRAME_H
 #define DESIGNFRAME_H
 
-#include <QGraphicsView>
+#include <QWidget>
+class QGraphicsItem;
+class QGraphicsView;
 class DesignScene;
 class BC_GraphicsItem;
+class QComboBox;
+class QFontComboBox;
+class QPushButton;
 
-class DesignFrame:public QGraphicsView
+class DesignFrame:public QWidget
 {
 	Q_OBJECT
 	
@@ -41,9 +46,24 @@ public:
 public slots:
 	void receiveFixedSize(bool fixed);
 
+private slots:
+	void currentFontChanged(const QFont &font);
+	void fontSizeChanged(const QString &size);
+	void handleFontChange();
+	void itemSelected(QGraphicsItem *item);
+
 private:
-	DesignScene *sc;
+	DesignScene *scene;
+	QGraphicsView *view;
 	BC_GraphicsItem *bc;
+
+	QComboBox *fontSizeCombo;
+	QFontComboBox *fontCombo;
+	
+	QPushButton *saveScene;
+	QPushButton *printScene;
+
+
 };
 
 #endif

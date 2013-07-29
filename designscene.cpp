@@ -25,6 +25,8 @@
 =============================================================================*/
 
 #include "designscene.h"
+#include "graphicstextitem.h"
+#include <QGraphicsTextItem>
 #include <QPainter>
 #include <QDebug>
 
@@ -37,6 +39,7 @@ DesignScene::DesignScene(QObject *parent):QGraphicsScene(parent),m_bg(false)
 	pt.fillRect(0,0,64,64,color);
 	pt.fillRect(64,64,64,64,color);
 	pt.end();
+	connect(this,SIGNAL(selectionChanged()),this,SLOT(emitItemSelected()));
 }
 
 void DesignScene::drawBackground(QPainter *painter,const QRectF &rect)
@@ -61,4 +64,31 @@ void DesignScene::setBackground(const QPixmap &pixmap)
 	}
 }
 
+void DesignScene::setFont(const QFont &font)
+{
+	myFont=font;
+	if(isItemChange(GraphicsTextItem::Type)){
+		GraphicsTextItem *item=qgraphicsitem_cast<GraphicsTextItem *>(selectedItems().first());
+		if(item)
+			item->setFont(myFont);
+	}
+}
 
+bool DesignScene::isItemChange(int type)
+{
+	foreach(QGraphicsItem *item, selectedItems()){
+		if(item->type()==type)
+			return true;
+	}
+	return false;
+}
+
+void DesignScene::emitItemSelected()
+{
+	if(isItemChange(GraphicsTextItem::Type)){
+		GraphicsTextItem *item=qgraphicsitem_cast<GraphicsTextItem *>(selectedItems().first());
+		if(item)
+			emit itemSelected(item);
+	}
+}
+	

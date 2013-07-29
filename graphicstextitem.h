@@ -39,7 +39,7 @@ class GraphicsTextItem:public QGraphicsTextItem
 	Q_OBJECT
 
 public:
-		enum {Type = UserType + 11};
+		enum {Type = UserType + 12};
 		int type() const {return Type;}
 
 		GraphicsTextItem(QGraphicsItem *parent=0,QGraphicsScene *scene=0);

@@ -36,21 +36,31 @@ class DesignScene:public QGraphicsScene
 
 public:
 	DesignScene(QObject *parent=0);
+	QFont font() const {return myFont;}
+
 	inline bool isBackground(){return m_bg;}
+
+	void setFont(const QFont &font);
 
 signals:
 	void sendFixedSize(bool fixed);
+	void itemSelected(QGraphicsItem *item);
 
 public slots:
 	void setBackground(const QPixmap &pixmap);
+	void emitItemSelected();
 
 protected:
 	void drawBackground(QPainter *painter,const QRectF &rect);
 
 private:
+	bool isItemChange(int type);
+
 	QPixmap m_tile;
 	QPixmap m_background;
 	bool m_bg;
+
+	QFont myFont;
 };
 
 #endif

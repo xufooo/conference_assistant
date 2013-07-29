@@ -28,28 +28,96 @@
 #include "designscene.h"
 #include "bc_graphicsitem.h"
 #include "graphicstextitem.h"
+#include <QGraphicsView>
 #include <QGraphicsTextItem>
+#include <QComboBox>
+#include <QFontComboBox>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QDebug>
 
-DesignFrame::DesignFrame(QWidget *parent):QGraphicsView(parent)
+DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 {
-	sc = new DesignScene;
+	scene = new DesignScene;
+	view = new QGraphicsView(scene);
+	QHBoxLayout *mainlayout=new QHBoxLayout;
+	mainlayout->addWidget(view);
+	setLayout(mainlayout);
 	bc = new BC_GraphicsItem;
 	bc->encode("1234567");
 	GraphicsTextItem *ti=new GraphicsTextItem;
 	ti->setPlainText("lllaaa");
-	sc->addItem(bc);
-	sc->addItem(ti);
-	setScene(sc);
-	QObject::connect(sc,SIGNAL(sendFixedSize(bool)),this,SLOT(receiveFixedSize(bool)));
-	sc->setBackground(QPixmap("bg1.jpg"));
+	scene->addItem(bc);
+	scene->addItem(ti);
+	view->setScene(scene);
+	connect(scene,SIGNAL(sendFixedSize(bool)),this,SLOT(receiveFixedSize(bool)));
+	connect(scene,SIGNAL(itemSelected(QGraphicsItem*)),this,SLOT(itemSelected(QGraphicsItem*)));
+
+	scene->setBackground(QPixmap("bg1.jpg"));
+
+	/*createCtrlPanel*/
+	QVBoxLayout *layout=new QVBoxLayout;
+
+	QHBoxLayout *fontlayout=new QHBoxLayout;
+	fontCombo=new QFontComboBox;
+	connect(fontCombo,SIGNAL(currentFontChanged(QFont)),this,SLOT(currentFontChanged(QFont)));
+
+	fontSizeCombo=new QComboBox;
+	fontSizeCombo->setEditable(true);
+	for(int i=6;i<30;i+=2)
+		fontSizeCombo->addItem(QString().setNum(i));
+	QIntValidator *validator=new QIntValidator(2,100,this);
+	fontSizeCombo->setValidator(validator);
+	connect(fontSizeCombo,SIGNAL(currentIndexChanged(QString)),this,SLOT(fontSizeChanged(QString)));
+
+	fontlayout->addWidget(fontCombo);
+	fontlayout->addWidget(fontSizeCombo);
+	
+	QHBoxLayout *buttonlayout=new QHBoxLayout;
+	saveScene= new QPushButton(tr("Save"));
+	printScene= new QPushButton(tr("Print"));
+	buttonlayout->addWidget(saveScene);
+	buttonlayout->addWidget(printScene);
+
+	layout->addLayout(fontlayout);
+	layout->addLayout(buttonlayout);
+
+	mainlayout->addLayout(layout);
+	/*CtrlPanel*/
 }
 
 void DesignFrame::receiveFixedSize(bool fixed)
 {
 	if(fixed)
-		setFixedSize(sceneRect().width()+2,sceneRect().height()+2);
+		view->setFixedSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
 	else
 		QWidget::setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
 }
 
+void DesignFrame::currentFontChanged(const QFont &)
+{
+	handleFontChange();
+}
+
+void DesignFrame::fontSizeChanged(const QString &)
+{
+	handleFontChange();
+}
+
+void DesignFrame::handleFontChange()
+{
+	QFont font=fontCombo->currentFont();
+	font.setPointSize(fontSizeCombo->currentText().toInt());
+	
+	scene->setFont(font);
+}
+
+void DesignFrame::itemSelected(QGraphicsItem *item)
+{
+	QGraphicsTextItem *textitem=(QGraphicsTextItem*)item;
+
+	QFont font=textitem->font();
+	fontCombo->setCurrentFont(font);
+	fontSizeCombo->setEditText(QString().setNum(font.pointSize()));
+}
