@@ -65,7 +65,8 @@ public:
 	inline int lenth_calc(const int& char_num){return (char_num*(CHAR_LEN_R3+INTER_GAP_LEN)-INTER_GAP_LEN);}
 	inline void setStartPosition(const int& Xposition,const int& Yposition){
 		start_Xposition=Xposition;start_Yposition=Yposition;}
-	QPixmap const * getPixmap(){return bc_pix;}
+	QPixmap* getPixmap() const {return bc_pix;}
+	const QString& getCode() {return code;}
 
 public slots:
 	int encode(const QString& input);
@@ -80,6 +81,7 @@ private:
 	static char code39_code_table[CODE39_SIZE+1][CODE39_CODE_LEN+1];//'\0'
 
 	QVector<QLine> *encode_buf;
+	QString code;
 	uint chksum;
 	int global_Xposition;
 	int global_Yposition;

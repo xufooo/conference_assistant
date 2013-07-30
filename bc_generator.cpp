@@ -93,6 +93,7 @@ int BC_GEN::encode(const QString& input){
 		update();
 		return -4;//too short
 	}
+	code=input;
 
 	encode_buf->clear();//clean these
 	chksum=0;
