@@ -55,12 +55,13 @@ private slots:
 	void handleFontChange();
 	void itemSelected(QGraphicsItem *item);
 	
-	void open();
+	int open();
+	void save();
 
 private:
 	DesignScene *scene;
 	QGraphicsView *view;
-	BC_GraphicsItem *bc;
+//	BC_GraphicsItem *bc;
 
 	QComboBox *fontSizeCombo;
 	QFontComboBox *fontCombo;
