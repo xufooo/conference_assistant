@@ -25,6 +25,11 @@
 =============================================================================*/
 
 #include "scenesaver.h"
+#include "designframe.h"
+#include "designscene.h"
+#include "bc_graphicsitem.h"
+#include "graphicstextitem.h"
+#include <QFileDialog>
 #include <QDataStream>
 #include <QDebug>
 
@@ -99,6 +104,99 @@ int SceneSaver::restore(DesignScene* const scene, QString filename)
 		{
 			BC_GraphicsItem *item=new BC_GraphicsItem;
 			scene->addItem(item);
+			item->encode(loader.value(QString("Item/%1/BarCode").arg(i)).toString());
+			item->setPos(loader.value(QString("Item/%1/Pos").arg(i)).toPointF());
+			item->setScale(loader.value(QString("Item/%1/Scale").arg(i)).toDouble());
+		}
+		else if(loader.value(QString("Item/%1/Type").arg(i)).toInt()==GraphicsTextItem::Type)
+		{
+			GraphicsTextItem *item=new GraphicsTextItem;
+			scene->addItem(item);
+			item->setPlainText(loader.value(QString("Item/%1/Context").arg(i)).toString());
+			item->setPos(loader.value(QString("Item/%1/Pos").arg(i)).toPointF());
+			item->setScale(loader.value(QString("Item/%1/Scale").arg(i)).toDouble());
+		}
+	}
+	scene->setFont(loader.value("Scene/Font").value<QFont>());//set Background
+
+	return 1;
+}
+
+int SceneSaver::save(DesignFrame* const frame, QString filename)
+{
+	if(frame->getScene()==NULL)
+		return 0;
+	DesignScene *scene=frame->getScene();
+	QMap<QString,QVariant> saver;
+	saver.insert("Scene/Rect",scene->sceneRect());
+	if(scene->isBackground())
+		saver.insert("Scene/Background",scene->background());
+	else
+		saver.insert("Scene/Background",scene->isBackground());
+	saver.insert("Scene/Rect",scene->sceneRect());
+	saver.insert("Scene/Font",scene->font());
+	saver.insert("Scene/ItemNumber",scene->items().size());
+
+	for(int i=0;i<scene->items().size();++i){
+		QString Item=QString("Item/%1/").arg(i);
+		int type=scene->items().at(i)->type();
+		saver.insert(Item+"Type",type);
+		if(type==BC_GraphicsItem::Type)
+		{
+			BC_GraphicsItem *item=qgraphicsitem_cast<BC_GraphicsItem*>(scene->items().at(i));
+			saver.insert(Item+"BarCode",item->getCode());
+		}
+		else if(type==GraphicsTextItem::Type)
+		{
+			GraphicsTextItem *item=qgraphicsitem_cast<GraphicsTextItem*>(scene->items().at(i));
+			saver.insert(Item+"Context",item->toPlainText());
+		}
+		saver.insert(Item+"Pos",scene->items().at(i)->pos());
+		saver.insert(Item+"Scale",scene->items().at(i)->scale());
+	}
+
+	QString name=QFileDialog::getSaveFileName(0, "Save Design", filename, tr("Design Files(*.sav)"));
+	QFile file(name);
+	if(!file.open(QIODevice::WriteOnly))
+		return 0;
+	QDataStream out(&file);
+	out << (quint32)0xDE5190;
+	out << saver;
+
+	return 1;
+}
+
+int SceneSaver::restore(DesignFrame* const frame, QString filename)
+{
+	if(frame->getScene()==NULL)
+		return 0;
+	DesignScene *scene=frame->getScene();
+	QFile file(filename);
+	if(!file.open(QIODevice::ReadOnly))
+		return 0;
+	QDataStream in(&file);
+	QMap<QString,QVariant> loader;
+
+	quint32 magic;
+	in >> magic;
+	if(magic != 0xDE5190)
+		return 0;
+	in >> loader;
+
+	scene->clear();
+
+	scene->setSceneRect(loader.value("Scene/Rect").toRectF());//set RectF
+//	if(loader.value("Scene/Background").type()!=QVariant::Bool)
+		scene->setBackground(loader.value("Scene/Background").value<QPixmap>());//set Background
+
+	for(int i=0;i<loader.value("Scene/ItemNumber").toInt();++i)
+	{
+		if(loader.value(QString("Item/%1/Type").arg(i)).toInt()==BC_GraphicsItem::Type)
+		{
+			BC_GraphicsItem *item=new BC_GraphicsItem;
+			scene->addItem(item);
+			frame->setBC(item);
+
 			item->encode(loader.value(QString("Item/%1/BarCode").arg(i)).toString());
 			item->setPos(loader.value(QString("Item/%1/Pos").arg(i)).toPointF());
 			item->setScale(loader.value(QString("Item/%1/Scale").arg(i)).toDouble());

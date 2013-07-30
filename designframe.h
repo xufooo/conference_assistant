@@ -44,6 +44,8 @@ class DesignFrame:public QWidget
 	
 public:
 	DesignFrame(QWidget *parent=0);
+	DesignScene * getScene() const {return scene;}
+	void setBC(BC_GraphicsItem* const newbc);
 
 public slots:
 	void receiveFixedSize(bool fixed);
@@ -61,7 +63,7 @@ private slots:
 private:
 	DesignScene *scene;
 	QGraphicsView *view;
-//	BC_GraphicsItem *bc;
+	BC_GraphicsItem *bc;
 
 	QComboBox *fontSizeCombo;
 	QFontComboBox *fontCombo;

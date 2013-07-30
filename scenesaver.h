@@ -28,13 +28,11 @@
 #define SCENESAVER_H
 #include <QObject>
 #include <QString>
-#include <QFileDialog>
 #include <QDir>
 #include <QMap>
 #include <QVariant>
-#include "bc_graphicsitem.h"
-#include "graphicstextitem.h"
-#include "designscene.h"
+class DesignScene;
+class DesignFrame;
 
 class SceneSaver:public QObject
 {
@@ -46,15 +44,17 @@ public:
 //		int save();
 //		int save(const QString& filename);
 		static int save(DesignScene *const scene, QString filename=QDir::currentPath()+"/design.sav");
+		static int save(DesignFrame *const frame, QString filename=QDir::currentPath()+"/design.sav");
 //		int restore();
 //		int restore(DesignScene* const scene);
 		static int restore(DesignScene *const scene, QString filename=QDir::currentPath()+"/design.sav");
+		static int restore(DesignFrame *const frame, QString filename=QDir::currentPath()+"/design.sav");
 
 private:
 		DesignScene *savescene;
 		QString savefilename;
 
-		QMap<QString,QVariant> saver;
+//		QMap<QString,QVariant> saver;
 };
 
 #endif

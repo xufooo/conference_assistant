@@ -53,7 +53,7 @@ DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 	QHBoxLayout *mainlayout=new QHBoxLayout;
 	mainlayout->addWidget(view);
 	setLayout(mainlayout);
-	BC_GraphicsItem *bc = new BC_GraphicsItem;
+	bc = new BC_GraphicsItem;
 	GraphicsTextItem *name = new GraphicsTextItem;
 	name->setPlainText("Name");
 	scene->addItem(bc);
@@ -169,7 +169,7 @@ int DesignFrame::open()
 	
 	if(!fileName.isEmpty()){
 		if(fileName.endsWith(".sav"))
-			return SceneSaver::restore(scene,fileName);
+			return SceneSaver::restore(this,fileName);
 		QPixmap image(fileName);
 		if(image.isNull()){
 			QMessageBox::information(this,tr("Failure"),tr("Cannot load %1.").arg(fileName));
@@ -184,4 +184,10 @@ void DesignFrame::save()
 {
 	if(SceneSaver::save(scene))
 		QMessageBox::information(this,tr("Saved"),tr("Save Successfully."));
+}
+
+void DesignFrame::setBC(BC_GraphicsItem *newbc)
+{
+	bc=newbc;
+	connect(bc_line,SIGNAL(textChanged(const QString&)),bc,SLOT(encode(const QString&)));
 }
