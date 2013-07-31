@@ -56,11 +56,13 @@ void DesignScene::setBackground(const QPixmap &pixmap)
 		m_bg=true;
 		m_background=pixmap;
 		setBackgroundBrush(m_background);
+		if(width()>m_background.width()||height()>m_background.height()){
+			foreach(QGraphicsItem *item,items())
+				item->setPos(0,0);
+		}
 		setSceneRect(sceneRect().x(),sceneRect().y(),m_background.width(),m_background.height());
 		emit sendFixedSize(m_bg);
 	}
-	foreach(QGraphicsItem *item,items())
-		item->setPos(0,0);
 	update();
 }
 

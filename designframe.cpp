@@ -44,6 +44,7 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QDebug>
+#include "scenesaver.h"
 
 DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 {
@@ -53,7 +54,7 @@ DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 	mainlayout->addWidget(view);
 	setLayout(mainlayout);
 	bc = new BC_GraphicsItem;
-	GraphicsTextItem *name=new GraphicsTextItem;
+	GraphicsTextItem *name = new GraphicsTextItem;
 	name->setPlainText("Name");
 	scene->addItem(bc);
 	scene->addItem(name);
@@ -93,6 +94,7 @@ DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 	openbutton= new QPushButton(tr("Open"));
 	connect(openbutton,SIGNAL(clicked()),this,SLOT(open()));
 	savebutton= new QPushButton(tr("Save"));
+	connect(savebutton,SIGNAL(clicked()),this,SLOT(save()));
 	printbutton= new QPushButton(tr("Print"));
 	connect(printbutton,SIGNAL(clicked()),this,SLOT(printScene()));
 	buttonlayout->addWidget(openbutton);
@@ -148,20 +150,44 @@ void DesignFrame::printScene()
 	 if (QPrintDialog(&printer).exec() == QDialog::Accepted) {
      	QPainter painter(&printer);
      	painter.setRenderHint(QPainter::Antialiasing);
-     	scene->render(&painter);
+		if(scene->isBackground())
+     		scene->render(&painter);
+		else
+		{
+			QPixmap white(scene->width(),scene->height());
+			white.fill();
+			scene->setBackground(white);
+			scene->render(&painter);
+			scene->setBackground(NULL);
+		}
  }
 }
 
-void DesignFrame::open()
+int DesignFrame::open()
 {
-	QString fileName=QFileDialog::getOpenFileName(this,tr("Open File"),QDir::currentPath());
+	QString fileName=QFileDialog::getOpenFileName(this,tr("Open File"),QDir::currentPath(), tr("All Files (*.sav *.png *.jpg *.bmp)"));
 	
 	if(!fileName.isEmpty()){
+		if(fileName.endsWith(".sav"))
+			return SceneSaver::restore(this,fileName);
 		QPixmap image(fileName);
 		if(image.isNull()){
 			QMessageBox::information(this,tr("Failure"),tr("Cannot load %1.").arg(fileName));
-			return;
+			return 0;
 		}
 	scene->setBackground(image);
 	}
+	return 1;
+}
+
+void DesignFrame::save()
+{
+	if(SceneSaver::save(scene))
+		QMessageBox::information(this,tr("Saved"),tr("Save Successfully."));
+}
+
+void DesignFrame::setBC(BC_GraphicsItem *newbc)
+{
+	bc=newbc;
+	connect(bc_line,SIGNAL(textChanged(const QString&)),bc,SLOT(encode(const QString&)));
 }

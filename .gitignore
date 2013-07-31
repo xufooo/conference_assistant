@@ -5,6 +5,7 @@
 *.la
 *.pro
 *.swp
+*.sav
 moc*.*
 Makefile
 Qt_conference-assistant

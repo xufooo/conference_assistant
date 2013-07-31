@@ -37,6 +37,12 @@ class DesignScene:public QGraphicsScene
 public:
 	DesignScene(QObject *parent=0);
 	QFont font() const {return myFont;}
+	QPixmap background() const {
+		if(m_bg)
+			return m_background;
+		else
+			return QPixmap();
+		}
 
 	inline bool isBackground(){return m_bg;}
 

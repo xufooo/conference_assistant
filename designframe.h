@@ -44,6 +44,8 @@ class DesignFrame:public QWidget
 	
 public:
 	DesignFrame(QWidget *parent=0);
+	DesignScene * getScene() const {return scene;}
+	void setBC(BC_GraphicsItem* const newbc);
 
 public slots:
 	void receiveFixedSize(bool fixed);
@@ -55,7 +57,8 @@ private slots:
 	void handleFontChange();
 	void itemSelected(QGraphicsItem *item);
 	
-	void open();
+	int open();
+	void save();
 
 private:
 	DesignScene *scene;
