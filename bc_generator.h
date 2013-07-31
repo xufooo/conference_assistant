@@ -80,7 +80,6 @@ private:
 	static char code39_table[CODE39_SIZE+1];//44 char include '*'
 	static char code39_code_table[CODE39_SIZE+1][CODE39_CODE_LEN+1];//'\0'
 
-	QVector<QLine> *encode_buf;
 	QString code;
 	uint chksum;
 	int global_Xposition;
