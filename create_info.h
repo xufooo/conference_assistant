@@ -25,8 +25,12 @@
 =============================================================================*/
 
 #include <QWidget>
+#include <QSqlError>
 class QLineEdit;
 class BC_GEN;
+class QLabel;
+class QPushButton;
+class QSqlTableModel;
 
 class CreateInfo:public QWidget
 {
@@ -34,8 +38,19 @@ class CreateInfo:public QWidget
 
 public:
 	CreateInfo(QWidget *parent=0);
-	virtual ~CreateInfo();
 private:
-	QLineEdit *bc_line;
+	void showError(const QSqlError &err);
+
+	QLineEdit *number;
 	BC_GEN *barcode;
+	QLabel *numberlabel;
+
+	QLabel *namelabel;
+	QLineEdit *name;
+
+	QPushButton *p_connect;
+	QPushButton *p_insert;
+	QPushButton *p_delete;
+
+	QSqlTableModel *model;
 };

@@ -38,10 +38,10 @@ MainFrame::MainFrame(QWidget* parent,Qt::WindowFlags f):QDialog(parent,f){
 	tab->addTab(new DesignFrame(this),tr("Design"));
 	
 	QVBoxLayout *layout=new QVBoxLayout;
-	layout->setSizeConstraint(QLayout::SetNoConstraint);
+//	layout->setSizeConstraint(QLayout::SetNoConstraint);
 	layout->addWidget(tab);
 	setLayout(layout);
-	setMinimumSize(500,300);
+	setMinimumSize(500,200);
 }
 
 //MainFrame::~MainFrame(){}
