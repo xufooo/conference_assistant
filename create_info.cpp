@@ -39,18 +39,50 @@
 #include "bc_generator.h"
 #include "create_info.h"
 
-QSqlError initDb()
+#include <QDebug>
+
+ConnectDialog::ConnectDialog(QSqlDatabase *const db, QWidget *parent):QDialog(parent,Qt::Dialog),database(db)
 {
-	QSqlDatabase db=QSqlDatabase::addDatabase("QMYSQL");
-	db.setHostName("192.168.1.103");
-	db.setDatabaseName("cookbook");
-	db.setUserName("bcuser");
-	db.setPassword("bcpass");
+	setWindowTitle(tr("SQL Database Info"));
 
-	if(!db.open())
-		return db.lastError();
+	QLabel *host_label=new QLabel("HostName:");
+	host_edit=new QLineEdit("192.168.1.103");
+	QLabel *db_label=new QLabel("DatabaseName:");
+	db_edit=new QLineEdit("cookbook");
+	QLabel *username_label=new QLabel("UserName:");
+	username_edit=new QLineEdit("bcuser");
+	QLabel *password_label=new QLabel("PassWord:");
+	password_edit=new QLineEdit("bcpass");
+	
+	QGridLayout *layout=new QGridLayout(this);
+	layout->addWidget(host_label,0,0);
+	layout->addWidget(host_edit,0,1);
+	layout->addWidget(db_label,1,0);
+	layout->addWidget(db_edit,1,1);
+	layout->addWidget(username_label,2,0);
+	layout->addWidget(username_edit,2,1);
+	layout->addWidget(password_label,3,0);
+	layout->addWidget(password_edit,3,1);
 
-	return QSqlError();
+	QPushButton *cancel=new QPushButton("Cancel");
+	QPushButton *ok=new QPushButton("OK");
+	ok->setDefault(true);
+	connect(cancel,SIGNAL(clicked()),this,SLOT(reject()));
+	connect(ok,SIGNAL(clicked()),this,SLOT(accept()));
+
+	layout->addWidget(cancel,4,0);
+	layout->addWidget(ok,4,1);
+
+	setLayout(layout);
+}
+
+void ConnectDialog::accept()
+{
+	database->setHostName(host_edit->text());
+	database->setDatabaseName(db_edit->text());
+	database->setUserName(username_edit->text());
+	database->setPassword(password_edit->text());
+	QDialog::accept();
 }
 
 CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
@@ -86,7 +118,7 @@ CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
 	panellayout->addLayout(buttonlayout);
 	panellayout->addWidget(barcode);
 
-	QTableView *view = new QTableView(this);
+	view = new QTableView(this);
 
 	mainLayout->addLayout(panellayout);
 	mainLayout->addWidget(view);
@@ -94,12 +126,23 @@ CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
 
 	QTimer::singleShot(5,number,SLOT(setFocus()));//focus on number
 	
+	connect(p_connect,SIGNAL(clicked()),this,SLOT(doConnect()));
+	
 	/*setup db*/
 	if(!QSqlDatabase::drivers().contains("QMYSQL"))
-		QMessageBox::critical(this,"Unable to load database","No QMYSQL driver");
-	QSqlError err=initDb();
-	if(err.type()!=QSqlError::NoError){
-		showError(err);
+		QMessageBox::critical(this, tr("Unable to load database"), tr("No QMYSQL driver"));
+}
+
+void CreateInfo::doConnect()
+{
+	QSqlDatabase db=QSqlDatabase::addDatabase("QMYSQL");
+	ConnectDialog cd(&db);
+	if(!cd.exec())
+		return;//reject
+
+	db.open();
+	if(db.lastError().type()!=QSqlError::NoError){
+		showError(db.lastError());
 		return;
 	}
 
@@ -118,9 +161,6 @@ CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
 
 	view->setModel(model);
 	view->setSelectionMode(QAbstractItemView::SingleSelection);
-
-
-	
 }
 
 void CreateInfo::showError(const QSqlError &err)

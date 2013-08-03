@@ -25,12 +25,15 @@
 =============================================================================*/
 
 #include <QWidget>
+#include <QDialog>
 #include <QSqlError>
 class QLineEdit;
 class BC_GEN;
 class QLabel;
 class QPushButton;
+class QSqlDatabase;
 class QSqlTableModel;
+class QTableView;
 
 class CreateInfo:public QWidget
 {
@@ -38,6 +41,10 @@ class CreateInfo:public QWidget
 
 public:
 	CreateInfo(QWidget *parent=0);
+
+public slots:
+	void doConnect();
+
 private:
 	void showError(const QSqlError &err);
 
@@ -52,5 +59,24 @@ private:
 	QPushButton *p_insert;
 	QPushButton *p_delete;
 
+	QTableView *view;
 	QSqlTableModel *model;
 };
+
+class ConnectDialog:public QDialog
+{
+	Q_OBJECT
+public:
+	ConnectDialog(QSqlDatabase *const db, QWidget *parent=0);
+
+	void accept();
+
+private:
+	QSqlDatabase *database;
+
+	QLineEdit *host_edit;
+	QLineEdit *db_edit;
+	QLineEdit *username_edit;
+	QLineEdit *password_edit;
+};
+
