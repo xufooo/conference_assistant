@@ -44,6 +44,9 @@ public:
 
 public slots:
 	void doConnect();
+	void doInsert();
+	void doDelete();
+	void doSave();
 
 private:
 	void showError(const QSqlError &err);
@@ -58,6 +61,7 @@ private:
 	QPushButton *p_connect;
 	QPushButton *p_insert;
 	QPushButton *p_delete;
+	QPushButton *p_save;
 
 	QTableView *view;
 	QSqlTableModel *model;

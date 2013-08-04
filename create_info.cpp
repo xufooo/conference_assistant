@@ -35,6 +35,8 @@
 #include <QSqlDatabase>
 #include <QSqlTableModel>
 #include <QSqlQuery>
+#include <QDataWidgetMapper>
+#include <QHeaderView>
 
 #include "bc_generator.h"
 #include "create_info.h"
@@ -110,11 +112,18 @@ CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
 	p_connect = new QPushButton(tr("Connect"));
 	p_insert = new QPushButton(tr("Insert"));
 	p_delete = new QPushButton(tr("Delete"));
+	p_save = new QPushButton(tr("Save"));
 	buttonlayout->addWidget(p_connect);
 	buttonlayout->addWidget(p_insert);
 	buttonlayout->addWidget(p_delete);
+	buttonlayout->addWidget(p_save);
 	panellayout->addLayout(buttonlayout);
 	panellayout->addWidget(barcode);
+
+	connect(p_connect,SIGNAL(clicked()),this,SLOT(doConnect()));
+	connect(p_insert,SIGNAL(clicked()),this,SLOT(doInsert()));
+	connect(p_delete,SIGNAL(clicked()),this,SLOT(doDelete()));
+	connect(p_save,SIGNAL(clicked()),this,SLOT(doSave()));
 
 	view = new QTableView(this);
 
@@ -123,8 +132,6 @@ CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
 	setLayout(mainLayout);
 
 	QTimer::singleShot(5,number,SLOT(setFocus()));//focus on number
-	
-	connect(p_connect,SIGNAL(clicked()),this,SLOT(doConnect()));
 	
 	/*setup db*/
 	if(!QSqlDatabase::drivers().contains("QMYSQL"))
@@ -146,11 +153,14 @@ void CreateInfo::doConnect()
 
 	model=new QSqlTableModel(this);
 	model->setEditStrategy(QSqlTableModel::OnManualSubmit);
-	model->setTable("limbs");
+	QSqlQuery query;
+	query.exec("CREATE TABLE IF NOT EXISTS test (name VARCHAR(20), number VARCHAR(20));");
+	if(query.lastError().type()!=QSqlError::NoError)
+		showError(query.lastError());
+	model->setTable("test");
 	
-	model->setHeaderData(model->fieldIndex("thing"),Qt::Horizontal,tr("Thing"));
-	model->setHeaderData(model->fieldIndex("legs"),Qt::Horizontal,tr("Legs"));
-	model->setHeaderData(model->fieldIndex("arms"),Qt::Horizontal,tr("Arms"));
+	model->setHeaderData(model->fieldIndex("name"),Qt::Horizontal,tr("Name"));
+	model->setHeaderData(model->fieldIndex("number"),Qt::Horizontal,tr("NO."));
 
 	if(!model->select()){
 		showError(model->lastError());
@@ -159,6 +169,43 @@ void CreateInfo::doConnect()
 
 	view->setModel(model);
 	view->setSelectionMode(QAbstractItemView::SingleSelection);
+	view->horizontalHeader()->setStretchLastSection(true);
+
+	QDataWidgetMapper *mapper=new QDataWidgetMapper(this);
+	mapper->setModel(model);
+	mapper->addMapping(name,model->fieldIndex("name"));
+	mapper->addMapping(number,model->fieldIndex("number"));
+
+	connect(view->selectionModel(),SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),mapper,SLOT(setCurrentModelIndex(QModelIndex)));
+
+	view->setCurrentIndex(model->index(0,0));
+}
+
+void CreateInfo::doInsert()
+{
+	if(!model->insertRow(model->rowCount())){
+		showError(model->lastError());
+			return;
+	}
+	view->setCurrentIndex(model->index(model->rowCount()-1,0));
+}
+
+void CreateInfo::doDelete()
+{
+	if(!model->removeRow(view->currentIndex().row()))
+		showError(model->lastError());
+}
+
+void CreateInfo::doSave()
+{
+	model->database().transaction();
+	if(model->submitAll()){
+		model->database().commit();
+	}
+	else{
+		model->database().rollback();
+		showError(model->lastError());
+	}
 }
 
 void CreateInfo::showError(const QSqlError &err)
