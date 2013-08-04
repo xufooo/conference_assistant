@@ -210,6 +210,6 @@ void CreateInfo::doSave()
 
 void CreateInfo::showError(const QSqlError &err)
 {
-	QMessageBox::critical(this, tr("Unable to initialize Database"), tr("Error initializing database:")+err.text());
+	QMessageBox::critical(this, tr("An Error Occur"), tr("Error: ")+err.text());
 }
 
