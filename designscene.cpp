@@ -86,6 +86,16 @@ void DesignScene::setFont(const QFont &font)
 	update();
 }
 
+void DesignScene::setFont(QGraphicsItem *item, const QFont &font)
+{
+	myFont=font;
+	if(item->type()==GraphicsTextItem::Type){
+		GraphicsTextItem *myitem=qgraphicsitem_cast<GraphicsTextItem *>(item);
+		if(myitem)
+			myitem->setFont(myFont);
+	}
+	update();
+}
 bool DesignScene::isItemChange(int type)
 {
 	foreach(QGraphicsItem *item, selectedItems()){

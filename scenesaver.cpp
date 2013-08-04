@@ -208,9 +208,9 @@ int SceneSaver::restore(DesignFrame* const frame, QString filename)
 			item->setPlainText(loader.value(QString("Item/%1/Context").arg(i)).toString());
 			item->setPos(loader.value(QString("Item/%1/Pos").arg(i)).toPointF());
 			item->setScale(loader.value(QString("Item/%1/Scale").arg(i)).toDouble());
+			scene->setFont(item, loader.value("Scene/Font").value<QFont>());//set Font
 		}
 	}
-	scene->setFont(loader.value("Scene/Font").value<QFont>());//set Background
 
 	return 1;
 }

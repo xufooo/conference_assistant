@@ -47,6 +47,7 @@ public:
 	inline bool isBackground(){return m_bg;}
 
 	void setFont(const QFont &font);
+	void setFont(QGraphicsItem *item, const QFont &font);
 
 signals:
 	void sendFixedSize(bool fixed);
