@@ -40,6 +40,7 @@
 #include <QTimer>
 #include <QPrinter>
 #include <QPrintDialog>
+#include <QPrintPreviewWidget>
 #include <QFileDialog>
 #include <QDir>
 #include <QMessageBox>
@@ -95,10 +96,13 @@ DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 	connect(openbutton,SIGNAL(clicked()),this,SLOT(open()));
 	savebutton= new QPushButton(tr("Save"));
 	connect(savebutton,SIGNAL(clicked()),this,SLOT(save()));
+	previewbutton= new QPushButton(tr("Preview"));
+	connect(previewbutton,SIGNAL(clicked()),this,SLOT(previewScene()));
 	printbutton= new QPushButton(tr("Print"));
 	connect(printbutton,SIGNAL(clicked()),this,SLOT(printScene()));
 	buttonlayout->addWidget(openbutton);
 	buttonlayout->addWidget(savebutton);
+	buttonlayout->addWidget(previewbutton);
 	buttonlayout->addWidget(printbutton);
 
 	layout->addLayout(fontlayout);
@@ -111,10 +115,13 @@ DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 
 void DesignFrame::receiveFixedSize(bool fixed)
 {
-	if(fixed)
+	if(fixed){
 		view->setFixedSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
+		emit toResize(view->size());
+		qDebug()<<view->size();
+	}
 	else
-		QWidget::setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
+		view->setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
 }
 
 void DesignFrame::currentFontChanged(const QFont &)
@@ -149,7 +156,7 @@ void DesignFrame::printScene()
 	 QPrinter printer;
 	 if (QPrintDialog(&printer).exec() == QDialog::Accepted) {
      	QPainter painter(&printer);
-     	painter.setRenderHint(QPainter::Antialiasing);
+     	painter.setRenderHint(QPainter::SmoothPixmapTransform);
 		if(scene->isBackground())
      		scene->render(&painter);
 		else
@@ -161,6 +168,30 @@ void DesignFrame::printScene()
 			scene->setBackground(NULL);
 		}
  }
+}
+
+void DesignFrame::previewScene()
+{
+	QPrintPreviewWidget *preview=new QPrintPreviewWidget;
+	preview->setZoomMode(QPrintPreviewWidget::FitInView);
+	connect(preview,SIGNAL(paintRequested(QPrinter*)),this,SLOT(doPreview(QPrinter*)));
+	preview->show();
+}
+
+void DesignFrame::doPreview(QPrinter *printer)
+{
+   	QPainter painter(printer);
+   	painter.setRenderHint(QPainter::SmoothPixmapTransform);
+	if(scene->isBackground())
+   		scene->render(&painter);
+	else
+	{
+		QPixmap white(scene->width(),scene->height());
+		white.fill();
+		scene->setBackground(white);
+		scene->render(&painter);
+		scene->setBackground(NULL);
+	}
 }
 
 int DesignFrame::open()

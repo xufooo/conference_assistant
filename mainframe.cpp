@@ -31,17 +31,12 @@
 #include "designframe.h"
 #include "mainframe.h"
 
-MainFrame::MainFrame(QWidget* parent,Qt::WindowFlags f):QDialog(parent,f){
+MainFrame::MainFrame(QWidget* parent,Qt::WindowFlags f):QMainWindow(parent,f){
 
-	tab = new QTabWidget(this);
+	tab = new QTabWidget;
 	tab->addTab(new CreateInfo(this),tr("Create"));
 	tab->addTab(new DesignFrame(this),tr("Design"));
 	
-	QVBoxLayout *layout=new QVBoxLayout;
-//	layout->setSizeConstraint(QLayout::SetNoConstraint);
-	layout->addWidget(tab);
-	setLayout(layout);
-	setMinimumSize(500,200);
+	setCentralWidget(tab);
 }
 
-//MainFrame::~MainFrame(){}

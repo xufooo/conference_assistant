@@ -37,6 +37,7 @@ class QFontComboBox;
 class QLabel;
 class QLineEdit;
 class QPushButton;
+class QPrinter;
 
 class DesignFrame:public QWidget
 {
@@ -47,9 +48,14 @@ public:
 	DesignScene * getScene() const {return scene;}
 	void setBC(BC_GraphicsItem* const newbc);
 
+signals:
+	void toResize(const QSize &size);
+
 public slots:
 	void receiveFixedSize(bool fixed);
 	void printScene();
+	void previewScene();
+	void doPreview(QPrinter *printer);
 
 private slots:
 	void currentFontChanged(const QFont &font);
@@ -73,9 +79,8 @@ private:
 	
 	QPushButton *openbutton;
 	QPushButton *savebutton;
+	QPushButton *previewbutton;
 	QPushButton *printbutton;
-
-
 };
 
 #endif

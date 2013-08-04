@@ -93,20 +93,18 @@ CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
 
 	QVBoxLayout *panellayout = new QVBoxLayout;
 
-	QHBoxLayout *namelayout = new QHBoxLayout;
+	QGridLayout *editlayout = new QGridLayout;
 	namelabel = new QLabel(tr("Name :"));
 	name = new QLineEdit;
-	namelayout->addWidget(namelabel);
-	namelayout->addWidget(name);
-	panellayout->addLayout(namelayout);
 
-	QHBoxLayout *bclayout = new QHBoxLayout;
-	numberlabel = new QLabel(tr("NO.  :"));
+	numberlabel = new QLabel(tr("NO. :"));
 	number = new QLineEdit(this);
-	bclayout->addWidget(numberlabel);
-	bclayout->addWidget(number);
+	editlayout->addWidget(namelabel,0,0);
+	editlayout->addWidget(name,0,1);
+	editlayout->addWidget(numberlabel,1,0);
+	editlayout->addWidget(number,1,1);
 	connect(number,SIGNAL(textChanged(const QString&)),barcode,SLOT(encode(const QString&)));
-	panellayout->addLayout(bclayout);
+	panellayout->addLayout(editlayout);
 
 	QHBoxLayout *buttonlayout = new QHBoxLayout;
 	p_connect = new QPushButton(tr("Connect"));

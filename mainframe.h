@@ -24,16 +24,15 @@
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include <QDialog>
+#include <QMainWindow>
 class QTabWidget;
 
-class MainFrame:public QDialog
+class MainFrame:public QMainWindow
 {
 	Q_OBJECT;
 
 public:
 	MainFrame(QWidget* parent=0,Qt::WindowFlags f=0);
-//	virtual ~MainFrame();
 
 	QTabWidget *tab;
 };
