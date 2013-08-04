@@ -29,6 +29,8 @@
 #include <QGraphicsTextItem>
 #include <QPainter>
 #include <QTimer>
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QDebug>
 
 DesignScene::DesignScene(QObject *parent):QGraphicsScene(parent),m_bg(false)
@@ -54,7 +56,11 @@ void DesignScene::setBackground(const QPixmap &pixmap)
 	else
 	{
 		m_bg=true;
-		m_background=pixmap;
+		QRect desktop_rect=QApplication::desktop()->availableGeometry();
+		if(pixmap.width()>desktop_rect.width()-50||pixmap.height()>desktop_rect.height()-100)
+			m_background=pixmap.scaled(desktop_rect.size()-QSize(50,100),Qt::KeepAspectRatio, Qt::SmoothTransformation);
+		else
+			m_background=pixmap;
 		setBackgroundBrush(m_background);
 		if(width()>m_background.width()||height()>m_background.height()){
 			foreach(QGraphicsItem *item,items())
