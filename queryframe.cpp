@@ -46,6 +46,8 @@
 #include <QSortFilterProxyModel>
 #include <QMessageBox>
 #include <QTimer>
+#include <QPrinter>
+#include <QPrintDialog>
 #include <QDebug>
 
 QueryFrame::QueryFrame(QWidget *parent):QWidget(parent)
@@ -200,6 +202,21 @@ void QueryFrame::doConnect()
 
 void QueryFrame::doPrint()
 {
+	QPrinter printer;
+	if (QPrintDialog(&printer).exec() == QDialog::Accepted) {
+    	QPainter painter(&printer);
+     	painter.setRenderHint(QPainter::SmoothPixmapTransform);
+		if(scene->isBackground())
+     		scene->render(&painter);
+		else
+		{
+			QPixmap white(scene->width(),scene->height());
+			white.fill();
+			scene->setBackground(white);
+			scene->render(&painter);
+			scene->setBackground(NULL);
+		}
+	}
 }
 
 void QueryFrame::doPrintAll()
