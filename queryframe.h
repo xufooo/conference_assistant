@@ -37,6 +37,7 @@ class QPushButton;
 class QTableView;
 class QSqlError;
 class QSqlTableModel;
+class QSortFilterProxyModel;
 
 class QueryFrame:public QWidget
 {
@@ -49,7 +50,7 @@ public:
 		void setTextItem(GraphicsTextItem *const newtx);
 
 public slots:
-		void doSearch();
+		void doSearch(const QString &string);
 		void doLoad();
 		void doConnect();
 		void doSignin();
@@ -77,6 +78,7 @@ private:
 
 		QTableView *table;
 		QSqlTableModel *model;
+		QSortFilterProxyModel *proxy;
 };
 
 #endif

@@ -39,6 +39,21 @@
 	"bWbwbWbWb","bwbWbWbWb",\
 	"bWbwBwBwb"};
 
+bool BC_GEN::verify(const QString &input)
+{
+	int sum=0;
+	int index=0;
+	for(int i=0;i<input.size()-1;++i){
+		if((index=findPos(input.at(i)))!=-1){
+			sum+=index;
+			break;
+			}
+	}
+	if(findPos(input.at(input.size()-1))==sum%CODE39_SIZE)
+		return true;
+	return false;
+}
+
 BC_GEN::BC_GEN(QWidget* parent,int x,int y):QWidget(parent),chksum(0),global_Xposition(MARGIN),global_Yposition(MARGIN),start_Xposition((x+MARGIN)>WIDE_BAR_LEN_R3?(start_Xposition+MARGIN):WIDE_BAR_LEN_R3),start_Yposition((y+MARGIN)>WIDE_BAR_LEN_R3?(start_Xposition+MARGIN):WIDE_BAR_LEN_R3),global_height(MARGIN),encode_buf(new QVector<QLine>),bc_pix(new QPixmap){
 //	start_Xposition=(start_Xposition+MARGIN)>WIDE_BAR_LEN_R3?(start_Xposition+MARGIN):WIDE_BAR_LEN_R3;//fix position
 //	start_Yposition=(start_Yposition+MARGIN)>WIDE_BAR_LEN_R3?(start_Yposition+MARGIN):WIDE_BAR_LEN_R3;
@@ -86,6 +101,13 @@ int BC_GEN::insertbuf(const QChar & bc)
 	return -3;//not found char
 }
 
+int BC_GEN::findPos(const QChar &bc)
+{
+	for(int index=0;index<(CODE39_SIZE);++index)
+		if(bc.toUpper().toAscii()==code39_table[index])
+			return index;
+	return -1;
+}
 						
 int BC_GEN::encode(const QString& input){
 	if(input.size() < LEAST_CHAR){

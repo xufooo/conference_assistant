@@ -43,6 +43,7 @@
 #include <QSqlError>
 #include <QDataWidgetMapper>
 #include <QSqlTableModel>
+#include <QSortFilterProxyModel>
 #include <QMessageBox>
 #include <QTimer>
 #include <QDebug>
@@ -75,7 +76,7 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent)
 
 	QLabel *searchlabel=new QLabel(tr("Search :"));
 	searchbar=new QLineEdit;
-	connect(searchbar,SIGNAL(textChanged(const QString&)),this,SLOT(doSearch()));
+	connect(searchbar,SIGNAL(textChanged(const QString&)),this,SLOT(doSearch(const QString&)));
 	clear=new QPushButton(tr("Clear"));
 	connect(clear,SIGNAL(clicked()),searchbar,SLOT(clear()));
 	connect(clear,SIGNAL(clicked()),searchbar,SLOT(setFocus()));
@@ -106,6 +107,7 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent)
 	
 	/*middle*/
 	table=new QTableView(this);
+	proxy=new QSortFilterProxyModel;
 	
 	mainlayout->addWidget(view);
 	mainlayout->addWidget(table);
@@ -115,8 +117,30 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent)
 	QTimer::singleShot(0,searchbar,SLOT(setFocus()));
 }	
 
-void QueryFrame::doSearch()
+void QueryFrame::doSearch(const QString& string)
 {
+	QString input;
+	if(string.endsWith("\n")||string.endsWith("\t")||string.endsWith("\r")){
+		input=string.trimmed();
+		if(BC_GEN::verify(input))
+			input.chop(1);	
+	}
+	else
+		input=string;
+	proxy->setFilterFixedString(input);
+	proxy->setFilterKeyColumn(1);
+	QModelIndex matchingIndex=proxy->mapToSource(proxy->index(0,0));
+	qDebug()<<"index:"<<matchingIndex.isValid()<<" "<<matchingIndex;
+	if(matchingIndex.isValid()){
+		table->setCurrentIndex(matchingIndex);
+		return;
+	}
+	QSortFilterProxyModel pro;
+	pro.setSourceModel(model);
+	pro.setFilterFixedString(input);
+	QModelIndex mi=pro.mapToSource(pro.index(0,0));
+	if(mi.isValid())
+		table->setCurrentIndex(mi);
 }
 										
 void QueryFrame::doLoad()
@@ -169,6 +193,8 @@ void QueryFrame::doConnect()
 	connect(table->selectionModel(),SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),mapper,SLOT(setCurrentModelIndex(QModelIndex)));
 
 	table->setCurrentIndex(model->index(0,0));
+
+	proxy->setSourceModel(model);
 }
 
 void QueryFrame::doPrint()

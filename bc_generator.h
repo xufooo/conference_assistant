@@ -70,12 +70,15 @@ public:
 
 public slots:
 	int encode(const QString& input);
+public:
+	static bool verify(const QString& input);
 
 protected:
 	virtual void paintEvent(QPaintEvent *event);
 
 private:
 	int insertbuf(const QChar & bc);
+	static int findPos(const QChar &bc);
 
 	static char code39_table[CODE39_SIZE+1];//44 char include '*'
 	static char code39_code_table[CODE39_SIZE+1][CODE39_CODE_LEN+1];//'\0'
