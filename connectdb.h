@@ -16,50 +16,35 @@
 #
 #
 # Description: 
-# This Project is aimed for conference holding.
+# Small class, help to connect database.
 #
-# Last modified: 2013-07-07 12:23
+# Last modified: 2013-08-05 11:57
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
+#ifndef CONNECTDIALOG_H
+#define CONNECTDIALOG_H
 
-#include <QApplication>
-#include "mainframe.h"
-#include "bc_generator.h"
-#include <QWidget>
-#include <QPixmap>
-#include "designframe.h"
-#include "bc_graphicsitem.h"
-#include "queryframe.h"
+#include <QDialog>
+class QSqlDatabase;
+class QLineEdit;
 
-int main(int argc, char** argv)
+class ConnectDialog:public QDialog
 {
-	QApplication app(argc, argv);
-//	BC_GEN bcg;
-//	bcg.encode(QString("abcdefGHIJK012345"));
-//	bcg.show();
-	MainFrame mainframe;
-	mainframe.show();
-	
-//	QWidget main;
-//	ArthurFrame a;
-//	BC_GEN bcg(&a,true);
-//	bcg.encode(QString("abcdefGHIJK012345"));
-//	HoverPoints point(&a,HoverPoints::RectangleShape);
-//	a.show();
-//	main.show();
+	Q_OBJECT
+public:
+	ConnectDialog(QSqlDatabase *const db, QWidget *parent=0);
 
-//	XFormWidget *xfw=new XFormWidget(0);
-//	xfw->show();
+	void accept();
 
-//	DesignFrame df;
-//	df.show();
+private:
+	QSqlDatabase *database;
 
-//	QueryFrame qf;
-//	qf.show();
+	QLineEdit *host_edit;
+	QLineEdit *db_edit;
+	QLineEdit *username_edit;
+	QLineEdit *password_edit;
+};
 
-	return app.exec();
-//	return 0;
-}	
-	
+#endif

@@ -67,20 +67,3 @@ private:
 	QSqlTableModel *model;
 };
 
-class ConnectDialog:public QDialog
-{
-	Q_OBJECT
-public:
-	ConnectDialog(QSqlDatabase *const db, QWidget *parent=0);
-
-	void accept();
-
-private:
-	QSqlDatabase *database;
-
-	QLineEdit *host_edit;
-	QLineEdit *db_edit;
-	QLineEdit *username_edit;
-	QLineEdit *password_edit;
-};
-

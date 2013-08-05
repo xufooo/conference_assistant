@@ -40,52 +40,9 @@
 
 #include "bc_generator.h"
 #include "create_info.h"
+#include "connectdb.h"
 
 #include <QDebug>
-
-ConnectDialog::ConnectDialog(QSqlDatabase *const db, QWidget *parent):QDialog(parent,Qt::Dialog),database(db)
-{
-	setWindowTitle(tr("SQL Database Info"));
-
-	QLabel *host_label=new QLabel("HostName:");
-	host_edit=new QLineEdit("192.168.1.103");
-	QLabel *db_label=new QLabel("DatabaseName:");
-	db_edit=new QLineEdit("cookbook");
-	QLabel *username_label=new QLabel("UserName:");
-	username_edit=new QLineEdit("bcuser");
-	QLabel *password_label=new QLabel("PassWord:");
-	password_edit=new QLineEdit("bcpass");
-	
-	QGridLayout *layout=new QGridLayout(this);
-	layout->addWidget(host_label,0,0);
-	layout->addWidget(host_edit,0,1);
-	layout->addWidget(db_label,1,0);
-	layout->addWidget(db_edit,1,1);
-	layout->addWidget(username_label,2,0);
-	layout->addWidget(username_edit,2,1);
-	layout->addWidget(password_label,3,0);
-	layout->addWidget(password_edit,3,1);
-
-	QPushButton *cancel=new QPushButton("Cancel");
-	QPushButton *ok=new QPushButton("OK");
-	ok->setDefault(true);
-	connect(cancel,SIGNAL(clicked()),this,SLOT(reject()));
-	connect(ok,SIGNAL(clicked()),this,SLOT(accept()));
-
-	layout->addWidget(cancel,4,0);
-	layout->addWidget(ok,4,1);
-
-	setLayout(layout);
-}
-
-void ConnectDialog::accept()
-{
-	database->setHostName(host_edit->text());
-	database->setDatabaseName(db_edit->text());
-	database->setUserName(username_edit->text());
-	database->setPassword(password_edit->text());
-	QDialog::accept();
-}
 
 CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
 
@@ -154,13 +111,14 @@ void CreateInfo::doConnect()
 	model=new QSqlTableModel(this);
 	model->setEditStrategy(QSqlTableModel::OnManualSubmit);
 	QSqlQuery query;
-	query.exec("CREATE TABLE IF NOT EXISTS test (name VARCHAR(20), number VARCHAR(20));");
+	query.exec("CREATE TABLE IF NOT EXISTS test (name VARCHAR(20), number VARCHAR(20)), signin BOOL;");
 	if(query.lastError().type()!=QSqlError::NoError)
 		showError(query.lastError());
 	model->setTable("test");
 	
 	model->setHeaderData(model->fieldIndex("name"),Qt::Horizontal,tr("Name"));
 	model->setHeaderData(model->fieldIndex("number"),Qt::Horizontal,tr("NO."));
+	model->setHeaderData(model->fieldIndex("signin"),Qt::Horizontal,tr("Sign In"));
 
 	if(!model->select()){
 		showError(model->lastError());

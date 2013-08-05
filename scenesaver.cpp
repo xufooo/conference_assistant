@@ -29,6 +29,7 @@
 #include "designscene.h"
 #include "bc_graphicsitem.h"
 #include "graphicstextitem.h"
+#include "queryframe.h"
 #include <QFileDialog>
 #include <QDataStream>
 #include <QDebug>
@@ -206,6 +207,56 @@ int SceneSaver::restore(DesignFrame* const frame, QString filename)
 			GraphicsTextItem *item=new GraphicsTextItem;
 			scene->addItem(item);
 			item->setPlainText(loader.value(QString("Item/%1/Context").arg(i)).toString());
+			item->setPos(loader.value(QString("Item/%1/Pos").arg(i)).toPointF());
+			item->setScale(loader.value(QString("Item/%1/Scale").arg(i)).toDouble());
+			scene->setFont(item, loader.value("Scene/Font").value<QFont>());//set Font
+		}
+	}
+
+	return 1;
+}
+
+int SceneSaver::restore(QueryFrame * const frame, QString filename)
+{
+	if(frame->getScene()==NULL)
+		return 0;
+	DesignScene *scene=frame->getScene();
+	QFile file(filename);
+	if(!file.open(QIODevice::ReadOnly))
+		return 0;
+	QDataStream in(&file);
+	QMap<QString,QVariant> loader;
+
+	quint32 magic;
+	in >> magic;
+	if(magic != 0xDE5190)
+		return 0;
+	in >> loader;
+
+	scene->clear();
+
+	scene->setSceneRect(loader.value("Scene/Rect").toRectF());//set RectF
+//	if(loader.value("Scene/Background").type()!=QVariant::Bool)
+		scene->setBackground(loader.value("Scene/Background").value<QPixmap>());//set Background
+
+	for(int i=0;i<loader.value("Scene/ItemNumber").toInt();++i)
+	{
+		if(loader.value(QString("Item/%1/Type").arg(i)).toInt()==BC_GraphicsItem::Type)
+		{
+			BC_GraphicsItem *item=new BC_GraphicsItem;
+			scene->addItem(item);
+			frame->setBC(item);
+
+//			item->encode(loader.value(QString("Item/%1/BarCode").arg(i)).toString());
+			item->setPos(loader.value(QString("Item/%1/Pos").arg(i)).toPointF());
+			item->setScale(loader.value(QString("Item/%1/Scale").arg(i)).toDouble());
+		}
+		else if(loader.value(QString("Item/%1/Type").arg(i)).toInt()==GraphicsTextItem::Type)
+		{
+			GraphicsTextItem *item=new GraphicsTextItem;
+			scene->addItem(item);
+			frame->setTextItem(item);
+//			item->setPlainText(loader.value(QString("Item/%1/Context").arg(i)).toString());
 			item->setPos(loader.value(QString("Item/%1/Pos").arg(i)).toPointF());
 			item->setScale(loader.value(QString("Item/%1/Scale").arg(i)).toDouble());
 			scene->setFont(item, loader.value("Scene/Font").value<QFont>());//set Font

@@ -16,50 +16,59 @@
 #
 #
 # Description: 
-# This Project is aimed for conference holding.
+# Used for querying sql etc.
 #
-# Last modified: 2013-07-07 12:23
+# Last modified: 2013-07-31 22:21
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
 =============================================================================*/
 
-#include <QApplication>
-#include "mainframe.h"
-#include "bc_generator.h"
+#ifndef QUERYFRAME_H
+#define QUERYFRAME_H
+
 #include <QWidget>
-#include <QPixmap>
-#include "designframe.h"
-#include "bc_graphicsitem.h"
-#include "queryframe.h"
+class DesignScene;
+class QGraphicsView;
+class BC_GraphicsItem;
+class GraphicsTextItem;
+class QLineEdit;
+class QPushButton;
+class QTableView;
 
-int main(int argc, char** argv)
+class QueryFrame:public QWidget
 {
-	QApplication app(argc, argv);
-//	BC_GEN bcg;
-//	bcg.encode(QString("abcdefGHIJK012345"));
-//	bcg.show();
-	MainFrame mainframe;
-	mainframe.show();
-	
-//	QWidget main;
-//	ArthurFrame a;
-//	BC_GEN bcg(&a,true);
-//	bcg.encode(QString("abcdefGHIJK012345"));
-//	HoverPoints point(&a,HoverPoints::RectangleShape);
-//	a.show();
-//	main.show();
+	Q_OBJECT
 
-//	XFormWidget *xfw=new XFormWidget(0);
-//	xfw->show();
+public:
+		QueryFrame(QWidget *parent=0);
+		DesignScene * getScene() const{return scene;}
+		void setBC(BC_GraphicsItem *const newbc);
+		void setTextItem(GraphicsTextItem *const newtx);
 
-//	DesignFrame df;
-//	df.show();
+public slots:
+		void doLoad();
+		void doConnect();
+		void doSignin();
+		void doPrint();
+		void doPrintAll();
 
-//	QueryFrame qf;
-//	qf.show();
+private:
+		DesignScene *scene;
+		QGraphicsView *view;
+		GraphicsTextItem *tx;
+		BC_GraphicsItem *bc;
 
-	return app.exec();
-//	return 0;
-}	
-	
+		QLineEdit *name;
+		QLineEdit *number;
+
+		QPushButton *loaddesign;
+		QPushButton *connectdb;
+		QPushButton *signin;
+		QPushButton *print;
+		QPushButton *printall;
+
+		QTableView *table;
+};
+
+#endif

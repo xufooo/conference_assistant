@@ -27,15 +27,17 @@
 #include <QTabWidget>
 #include <QVBoxLayout>
 
+#include "mainframe.h"
 #include "create_info.h"
 #include "designframe.h"
-#include "mainframe.h"
+#include "queryframe.h"
 
 MainFrame::MainFrame(QWidget* parent,Qt::WindowFlags f):QMainWindow(parent,f){
 
 	tab = new QTabWidget;
 	tab->addTab(new CreateInfo(this),tr("Create"));
 	tab->addTab(new DesignFrame(this),tr("Design"));
+	tab->addTab(new QueryFrame(this),tr("Query"));
 	
 	setCentralWidget(tab);
 }

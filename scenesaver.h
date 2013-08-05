@@ -33,6 +33,7 @@
 #include <QVariant>
 class DesignScene;
 class DesignFrame;
+class QueryFrame;
 
 class SceneSaver:public QObject
 {
@@ -49,6 +50,7 @@ public:
 //		int restore(DesignScene* const scene);
 		static int restore(DesignScene *const scene, QString filename=QDir::currentPath()+"/design.sav");
 		static int restore(DesignFrame *const frame, QString filename=QDir::currentPath()+"/design.sav");
+		static int restore(QueryFrame *const frame, QString filename=QDir::currentPath()+"/design.sav");
 
 private:
 		DesignScene *savescene;

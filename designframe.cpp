@@ -84,7 +84,7 @@ DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 	
 	QHBoxLayout *bclayout=new QHBoxLayout;
 	bc_label=new QLabel(tr("Input BarCode: "));
-	bc_line=new QLineEdit();
+	bc_line=new QLineEdit;
 	connect(bc_line,SIGNAL(textChanged(const QString&)),bc,SLOT(encode(const QString&)));
 	connect(bc_line,SIGNAL(textChanged(const QString&)),scene,SLOT(update()));
 	QTimer::singleShot(0,bc_line,SLOT(setFocus()));//focus on bc_line

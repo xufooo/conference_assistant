@@ -44,6 +44,9 @@ public:
 
 		GraphicsTextItem(QGraphicsItem *parent=0,QGraphicsScene *scene=0);
 
+public slots:
+		void setText(const QString& string){setPlainText(string);}
+
 signals:
 		void lostFocus(GraphicsTextItem *item);
 		void selectedChange(QGraphicsItem *item);
