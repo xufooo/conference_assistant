@@ -124,13 +124,14 @@ void QueryFrame::doSearch(const QString& string)
 		input=string.trimmed();
 		if(BC_GEN::verify(input))
 			input.chop(1);	
+		else
+			return;
 	}
 	else
 		input=string;
 	proxy->setFilterFixedString(input);
 	proxy->setFilterKeyColumn(1);
 	QModelIndex matchingIndex=proxy->mapToSource(proxy->index(0,0));
-	qDebug()<<"index:"<<matchingIndex.isValid()<<" "<<matchingIndex;
 	if(matchingIndex.isValid()){
 		table->setCurrentIndex(matchingIndex);
 		return;
@@ -167,7 +168,7 @@ void QueryFrame::doConnect()
 	}
 
 	model=new QSqlTableModel(this);
-//	model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+	model->setEditStrategy(QSqlTableModel::OnFieldChange);
 	model->setTable("test");
 	
 	model->setHeaderData(model->fieldIndex("name"),Qt::Horizontal,tr("Name"));
@@ -207,6 +208,8 @@ void QueryFrame::doPrintAll()
 
 void QueryFrame::doSignin()
 {
+	if(!model->setData(model->index(table->currentIndex().row(),model->fieldIndex("signin")),true))
+		showError(model->lastError());
 }
 
 void QueryFrame::setBC(BC_GraphicsItem *newbc)
