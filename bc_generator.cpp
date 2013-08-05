@@ -153,7 +153,7 @@ int BC_GEN::encode(const QString& input){
 void BC_GEN::paintEvent(QPaintEvent *event){
 	QPainter painter;
 	painter.begin(this);
-	painter.setRenderHint(QPainter::HighQualityAntialiasing);
+	painter.setRenderHint(QPainter::Antialiasing);
 	painter.drawPixmap(rect(),*bc_pix);
 	painter.end();
 }
