@@ -38,6 +38,13 @@
 #include "scenesaver.h"
 #include "bc_graphicsitem.h"
 #include "graphicstextitem.h"
+#include <QSqlDatabase>
+#include "connectdb.h"
+#include <QSqlError>
+#include <QDataWidgetMapper>
+#include <QSqlTableModel>
+#include <QMessageBox>
+#include <QTimer>
 #include <QDebug>
 
 QueryFrame::QueryFrame(QWidget *parent):QWidget(parent)
@@ -54,15 +61,27 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent)
 	/*right*/
 	QLabel *namelabel=new QLabel(tr("Name :"));
 	name=new QLineEdit;
+	name->setReadOnly(true);
 	connect(name,SIGNAL(textChanged(const QString&)),scene,SLOT(update()));
 	QLabel *numberlabel=new QLabel(tr("NO. :"));
 	number=new QLineEdit;
+	number->setReadOnly(true);
 	connect(number,SIGNAL(textChanged(const QString&)),scene,SLOT(update()));
 	QGridLayout *editlayout=new QGridLayout;
-	editlayout->addWidget(namelabel,0,0);
-	editlayout->addWidget(name,0,1);
-	editlayout->addWidget(numberlabel,1,0);
-	editlayout->addWidget(number,1,1);
+	editlayout->addWidget(namelabel,0,0,1,1);
+	editlayout->addWidget(name,0,1,1,3);
+	editlayout->addWidget(numberlabel,1,0,1,1);
+	editlayout->addWidget(number,1,1,1,3);
+
+	QLabel *searchlabel=new QLabel(tr("Search :"));
+	searchbar=new QLineEdit;
+	connect(searchbar,SIGNAL(textChanged(const QString&)),this,SLOT(doSearch()));
+	clear=new QPushButton(tr("Clear"));
+	connect(clear,SIGNAL(clicked()),searchbar,SLOT(clear()));
+	connect(clear,SIGNAL(clicked()),searchbar,SLOT(setFocus()));
+	editlayout->addWidget(searchlabel,2,0,1,1);
+	editlayout->addWidget(searchbar,2,1,1,3);
+	editlayout->addWidget(clear,3,3);
 
 	loaddesign=new QPushButton(tr("Load Design"));
 	connect(loaddesign,SIGNAL(clicked()),this,SLOT(doLoad()));
@@ -92,7 +111,13 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent)
 	mainlayout->addWidget(table);
 	mainlayout->addLayout(ctrllayout);
 	setLayout(mainlayout);
+
+	QTimer::singleShot(0,searchbar,SLOT(setFocus()));
 }	
+
+void QueryFrame::doSearch()
+{
+}
 										
 void QueryFrame::doLoad()
 {
@@ -106,6 +131,44 @@ void QueryFrame::doLoad()
 
 void QueryFrame::doConnect()
 {
+	QSqlDatabase db=QSqlDatabase::addDatabase("QMYSQL");
+	ConnectDialog cd(&db);
+	if(!cd.exec())
+		return;//reject
+
+	db.open();
+	if(db.lastError().type()!=QSqlError::NoError){
+		showError(db.lastError());
+		return;
+	}
+
+	model=new QSqlTableModel(this);
+//	model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+	model->setTable("test");
+	
+	model->setHeaderData(model->fieldIndex("name"),Qt::Horizontal,tr("Name"));
+	model->setHeaderData(model->fieldIndex("number"),Qt::Horizontal,tr("NO."));
+	model->setHeaderData(model->fieldIndex("signin"),Qt::Horizontal,tr("Sign In"));
+
+	if(!model->select()){
+		showError(model->lastError());
+		return;
+	}
+
+	table->setModel(model);
+	table->setSelectionMode(QAbstractItemView::SingleSelection);
+	table->setSelectionBehavior(QAbstractItemView::SelectRows);
+	table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+//	view->horizontalHeader()->setStretchLastSection(true);
+
+	QDataWidgetMapper *mapper=new QDataWidgetMapper(this);
+	mapper->setModel(model);
+	mapper->addMapping(name,model->fieldIndex("name"));
+	mapper->addMapping(number,model->fieldIndex("number"));
+
+	connect(table->selectionModel(),SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),mapper,SLOT(setCurrentModelIndex(QModelIndex)));
+
+	table->setCurrentIndex(model->index(0,0));
 }
 
 void QueryFrame::doPrint()
@@ -132,3 +195,7 @@ void QueryFrame::setTextItem(GraphicsTextItem *newtx)
 	connect(name,SIGNAL(textChanged(const QString&)),tx,SLOT(setText(const QString&)));
 }
 
+void QueryFrame::showError(const QSqlError &err)
+{
+	QMessageBox::critical(this, tr("An Error Occur"), tr("Error: ")+err.text());
+}

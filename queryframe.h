@@ -35,6 +35,8 @@ class GraphicsTextItem;
 class QLineEdit;
 class QPushButton;
 class QTableView;
+class QSqlError;
+class QSqlTableModel;
 
 class QueryFrame:public QWidget
 {
@@ -47,6 +49,7 @@ public:
 		void setTextItem(GraphicsTextItem *const newtx);
 
 public slots:
+		void doSearch();
 		void doLoad();
 		void doConnect();
 		void doSignin();
@@ -54,6 +57,8 @@ public slots:
 		void doPrintAll();
 
 private:
+		void showError(const QSqlError &err);
+
 		DesignScene *scene;
 		QGraphicsView *view;
 		GraphicsTextItem *tx;
@@ -61,7 +66,9 @@ private:
 
 		QLineEdit *name;
 		QLineEdit *number;
+		QLineEdit *searchbar;
 
+		QPushButton *clear;
 		QPushButton *loaddesign;
 		QPushButton *connectdb;
 		QPushButton *signin;
@@ -69,6 +76,7 @@ private:
 		QPushButton *printall;
 
 		QTableView *table;
+		QSqlTableModel *model;
 };
 
 #endif

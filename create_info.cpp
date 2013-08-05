@@ -88,7 +88,7 @@ CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
 	mainLayout->addWidget(view);
 	setLayout(mainLayout);
 
-	QTimer::singleShot(5,number,SLOT(setFocus()));//focus on number
+	QTimer::singleShot(1,number,SLOT(setFocus()));//focus on number
 	
 	/*setup db*/
 	if(!QSqlDatabase::drivers().contains("QMYSQL"))
@@ -111,7 +111,7 @@ void CreateInfo::doConnect()
 	model=new QSqlTableModel(this);
 	model->setEditStrategy(QSqlTableModel::OnManualSubmit);
 	QSqlQuery query;
-	query.exec("CREATE TABLE IF NOT EXISTS test (name VARCHAR(20), number VARCHAR(20)), signin BOOL;");
+	query.exec("CREATE TABLE IF NOT EXISTS test (name VARCHAR(20), number VARCHAR(20), signin BOOL);");
 	if(query.lastError().type()!=QSqlError::NoError)
 		showError(query.lastError());
 	model->setTable("test");
@@ -127,7 +127,7 @@ void CreateInfo::doConnect()
 
 	view->setModel(model);
 	view->setSelectionMode(QAbstractItemView::SingleSelection);
-	view->horizontalHeader()->setStretchLastSection(true);
+//	view->horizontalHeader()->setStretchLastSection(true);
 
 	QDataWidgetMapper *mapper=new QDataWidgetMapper(this);
 	mapper->setModel(model);
