@@ -50,7 +50,7 @@
 #include <QPrintDialog>
 #include <QDebug>
 
-QueryFrame::QueryFrame(QWidget *parent):QWidget(parent)
+QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 {
 	/*setup ui*/
 	/*left*/
@@ -79,6 +79,7 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent)
 	QLabel *searchlabel=new QLabel(tr("Search :"));
 	searchbar=new QLineEdit;
 	connect(searchbar,SIGNAL(textChanged(const QString&)),this,SLOT(doSearch(const QString&)));
+	connect(searchbar,SIGNAL(returnPressed()),this,SLOT(doChop()));
 	clear=new QPushButton(tr("Clear"));
 	connect(clear,SIGNAL(clicked()),searchbar,SLOT(clear()));
 	connect(clear,SIGNAL(clicked()),searchbar,SLOT(setFocus()));
@@ -119,21 +120,23 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent)
 	QTimer::singleShot(0,searchbar,SLOT(setFocus()));
 }	
 
-void QueryFrame::doSearch(const QString& string)
+void QueryFrame::doChop()
 {
-	QString input=string.trimmed();
-	if(string.endsWith("\n")||string.endsWith("\t")||string.endsWith("\r")){
-		input=string.trimmed();
-		if(BC_GEN::verify(input)){
-			input.chop(0);	
-			searchbar->setText(input);
-			qDebug()<<"choped";
-		}
-		else
-			return;
+	if(BC_GEN::verify(searchbar->text())){
+		QString input=searchbar->text();
+		input.chop(1);	
+		searchbar->setText(input);
 	}
 	else
-		input=string;
+		return;
+}
+
+void QueryFrame::doSearch(const QString &string)
+{
+	if(model==NULL)
+		return;
+
+	QString input=string;
 	proxy->setFilterFixedString(input);
 	proxy->setFilterKeyColumn(1);
 	QModelIndex matchingIndex=proxy->mapToSource(proxy->index(0,0));

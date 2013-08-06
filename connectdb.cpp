@@ -40,9 +40,9 @@ ConnectDialog::ConnectDialog(QSqlDatabase *const db, QWidget *parent):QDialog(pa
 	QLabel *db_label=new QLabel("DatabaseName:");
 	db_edit=new QLineEdit("cookbook");
 	QLabel *username_label=new QLabel("UserName:");
-	username_edit=new QLineEdit("bcuser");
+	username_edit=new QLineEdit("cbuser");
 	QLabel *password_label=new QLabel("PassWord:");
-	password_edit=new QLineEdit("bcpass");
+	password_edit=new QLineEdit("cbpass");
 	
 	QGridLayout *layout=new QGridLayout(this);
 	layout->addWidget(host_label,0,0);

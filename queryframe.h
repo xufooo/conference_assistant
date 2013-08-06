@@ -51,6 +51,7 @@ public:
 
 public slots:
 		void doSearch(const QString &string);
+		void doChop();
 		void doLoad();
 		void doConnect();
 		void doSignin();
