@@ -121,11 +121,14 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent)
 
 void QueryFrame::doSearch(const QString& string)
 {
-	QString input;
+	QString input=string.trimmed();
 	if(string.endsWith("\n")||string.endsWith("\t")||string.endsWith("\r")){
 		input=string.trimmed();
-		if(BC_GEN::verify(input))
-			input.chop(1);	
+		if(BC_GEN::verify(input)){
+			input.chop(0);	
+			searchbar->setText(input);
+			qDebug()<<"choped";
+		}
 		else
 			return;
 	}

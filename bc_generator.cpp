@@ -18,7 +18,7 @@
 # Description: 
 # This module is used to generate barcode.
 #
-# Last modified: 2013-07-18 14:58
+# Last modified: 2013-08-06 12:59
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
@@ -44,10 +44,8 @@ bool BC_GEN::verify(const QString &input)
 	int sum=0;
 	int index=0;
 	for(int i=0;i<input.size()-1;++i){
-		if((index=findPos(input.at(i)))!=-1){
+		if((index=findPos(input.at(i)))!=-1)
 			sum+=index;
-			break;
-			}
 	}
 	if(findPos(input.at(input.size()-1))==sum%CODE39_SIZE)
 		return true;
