@@ -31,7 +31,6 @@
 #include <QTimer>
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QDebug>
 
 DesignScene::DesignScene(QObject *parent):QGraphicsScene(parent),m_bg(false)
 {

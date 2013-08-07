@@ -42,8 +42,6 @@
 #include "create_info.h"
 #include "connectdb.h"
 
-#include <QDebug>
-
 CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
 
 	/*setup ui*/

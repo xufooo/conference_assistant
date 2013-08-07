@@ -26,40 +26,13 @@
 
 #include <QApplication>
 #include "mainframe.h"
-#include "bc_generator.h"
-#include <QWidget>
-#include <QPixmap>
-#include "designframe.h"
-#include "bc_graphicsitem.h"
-#include "queryframe.h"
 
 int main(int argc, char** argv)
 {
 	QApplication app(argc, argv);
-//	BC_GEN bcg;
-//	bcg.encode(QString("abcdefGHIJK012345"));
-//	bcg.show();
 	MainFrame mainframe;
 	mainframe.show();
 	
-//	QWidget main;
-//	ArthurFrame a;
-//	BC_GEN bcg(&a,true);
-//	bcg.encode(QString("abcdefGHIJK012345"));
-//	HoverPoints point(&a,HoverPoints::RectangleShape);
-//	a.show();
-//	main.show();
-
-//	XFormWidget *xfw=new XFormWidget(0);
-//	xfw->show();
-
-//	DesignFrame df;
-//	df.show();
-
-//	QueryFrame qf;
-//	qf.show();
-
 	return app.exec();
-//	return 0;
 }	
 	

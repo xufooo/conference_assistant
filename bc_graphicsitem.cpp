@@ -27,8 +27,6 @@
 #include "bc_graphicsitem.h"
 #include <QGraphicsSceneWheelEvent>
 
-#include <QDebug>
-
 BC_GraphicsItem::BC_GraphicsItem(QGraphicsItem *parent):QGraphicsItem(parent),m_scale(1)
 {
 	setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
@@ -39,7 +37,7 @@ QRectF BC_GraphicsItem::boundingRect() const
 	return rect();
 }
 
-void BC_GraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void BC_GraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
 	painter->drawPixmap(rect(),*(getPixmap()));
 	if(isSelected())

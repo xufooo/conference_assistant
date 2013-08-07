@@ -48,18 +48,19 @@
 #include <QTimer>
 #include <QPrinter>
 #include <QPrintDialog>
-#include <QDebug>
 
 QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 {
 	/*setup ui*/
+	QHBoxLayout *mainlayout=new QHBoxLayout;
+
 	/*left*/
 	scene=new DesignScene;
 	bc=new BC_GraphicsItem;
 	scene->addItem(bc);
+	connect(scene,SIGNAL(sendFixedSize(bool)),this,SLOT(receiveFixedSize(bool)));
 	view=new QGraphicsView;
 	view->setScene(scene);
-	QHBoxLayout *mainlayout=new QHBoxLayout;
 
 	/*right*/
 	QLabel *namelabel=new QLabel(tr("Name :"));
@@ -275,4 +276,12 @@ void QueryFrame::setTextItem(GraphicsTextItem *newtx)
 void QueryFrame::showError(const QSqlError &err)
 {
 	QMessageBox::critical(this, tr("An Error Occur"), tr("Error: ")+err.text());
+}
+
+void QueryFrame::receiveFixedSize(bool fixed)
+{
+	if(fixed)
+		view->setFixedSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
+	else
+		view->setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
 }

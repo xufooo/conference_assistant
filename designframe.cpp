@@ -44,7 +44,6 @@
 #include <QFileDialog>
 #include <QDir>
 #include <QMessageBox>
-#include <QDebug>
 #include "scenesaver.h"
 
 DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
@@ -118,7 +117,6 @@ void DesignFrame::receiveFixedSize(bool fixed)
 	if(fixed){
 		view->setFixedSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
 		emit toResize(view->size());
-		qDebug()<<view->size();
 	}
 	else
 		view->setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));

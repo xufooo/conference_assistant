@@ -18,7 +18,7 @@
 # Description: 
 # This module is used to generate barcode.
 #
-# Last modified: 2013-08-06 12:59
+# Last modified: 2013-08-07 13:59
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
@@ -52,12 +52,8 @@ bool BC_GEN::verify(const QString &input)
 	return false;
 }
 
-BC_GEN::BC_GEN(QWidget* parent,int x,int y):QWidget(parent),chksum(0),global_Xposition(MARGIN),global_Yposition(MARGIN),start_Xposition((x+MARGIN)>WIDE_BAR_LEN_R3?(start_Xposition+MARGIN):WIDE_BAR_LEN_R3),start_Yposition((y+MARGIN)>WIDE_BAR_LEN_R3?(start_Xposition+MARGIN):WIDE_BAR_LEN_R3),global_height(MARGIN),encode_buf(new QVector<QLine>),bc_pix(new QPixmap){
-//	start_Xposition=(start_Xposition+MARGIN)>WIDE_BAR_LEN_R3?(start_Xposition+MARGIN):WIDE_BAR_LEN_R3;//fix position
-//	start_Yposition=(start_Yposition+MARGIN)>WIDE_BAR_LEN_R3?(start_Yposition+MARGIN):WIDE_BAR_LEN_R3;
-
-//	encode_buf = new QVector<QLine>();
-//	bc_pix = new QPixmap();
+BC_GEN::BC_GEN(QWidget* parent,int x,int y):QWidget(parent),chksum(0),global_Xposition(MARGIN),global_Yposition(MARGIN),start_Xposition((x+MARGIN)>WIDE_BAR_LEN_R3?(start_Xposition+MARGIN):WIDE_BAR_LEN_R3),start_Yposition((y+MARGIN)>WIDE_BAR_LEN_R3?(start_Xposition+MARGIN):WIDE_BAR_LEN_R3),global_height(MARGIN),encode_buf(new QVector<QLine>),bc_pix(new QPixmap)
+{
 }
 
 BC_GEN::~BC_GEN(){
@@ -153,4 +149,5 @@ void BC_GEN::paintEvent(QPaintEvent *event){
 	painter.begin(this);
 	painter.drawPixmap(rect(),*bc_pix);
 	painter.end();
+	QWidget::paintEvent(event);
 }
