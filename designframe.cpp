@@ -115,7 +115,8 @@ DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 void DesignFrame::receiveFixedSize(bool fixed)
 {
 	if(fixed){
-		view->setFixedSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
+//		view->setFixedSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
+		view->setMaximumSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
 		emit toResize(view->size());
 	}
 	else

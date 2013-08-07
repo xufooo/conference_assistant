@@ -48,11 +48,13 @@
 #include <QTimer>
 #include <QPrinter>
 #include <QPrintDialog>
+#include <QSplitter>
 
 QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 {
 	/*setup ui*/
-	QHBoxLayout *mainlayout=new QHBoxLayout;
+	QHBoxLayout *mainlayout=new QHBoxLayout(this);
+	QSplitter *splitter=new QSplitter;
 
 	/*left*/
 	scene=new DesignScene;
@@ -63,6 +65,8 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 	view->setScene(scene);
 
 	/*right*/
+	QWidget *rightSide=new QWidget;
+
 	QLabel *namelabel=new QLabel(tr("Name :"));
 	name=new QLineEdit;
 	name->setReadOnly(true);
@@ -108,14 +112,19 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 	QVBoxLayout *ctrllayout=new QVBoxLayout;
 	ctrllayout->addLayout(editlayout);
 	ctrllayout->addLayout(buttonlayout);
+	rightSide->setLayout(ctrllayout);
 	
 	/*middle*/
 	table=new QTableView(this);
 	proxy=new QSortFilterProxyModel;
+
+	splitter->addWidget(view);
+	splitter->addWidget(table);
+	splitter->addWidget(rightSide);
 	
-	mainlayout->addWidget(view);
-	mainlayout->addWidget(table);
-	mainlayout->addLayout(ctrllayout);
+	mainlayout->addWidget(splitter);
+//	mainlayout->addWidget(table);
+//	mainlayout->addLayout(ctrllayout);
 	setLayout(mainlayout);
 
 	QTimer::singleShot(0,searchbar,SLOT(setFocus()));
@@ -265,12 +274,14 @@ void QueryFrame::setBC(BC_GraphicsItem *newbc)
 {
 	bc=newbc;
 	connect(number,SIGNAL(textChanged(const QString&)),bc,SLOT(encode(const QString&)));
+	bc->encode(number->text());
 }
 
 void QueryFrame::setTextItem(GraphicsTextItem *newtx)
 {
 	tx=newtx;
 	connect(name,SIGNAL(textChanged(const QString&)),tx,SLOT(setText(const QString&)));
+	tx->setText(name->text());
 }
 
 void QueryFrame::showError(const QSqlError &err)
@@ -281,7 +292,8 @@ void QueryFrame::showError(const QSqlError &err)
 void QueryFrame::receiveFixedSize(bool fixed)
 {
 	if(fixed)
-		view->setFixedSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
+//		view->setFixedSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
+		view->setMaximumSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
 	else
 		view->setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
 }
