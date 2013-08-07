@@ -227,6 +227,31 @@ void QueryFrame::doPrint()
 
 void QueryFrame::doPrintAll()
 {
+	QPrinter printer;
+	if (QPrintDialog(&printer).exec() == QDialog::Accepted) {
+		QPainter painter(&printer);
+		painter.setRenderHint(QPainter::SmoothPixmapTransform);
+		QModelIndex currentindex=table->currentIndex();
+		int rowcount=model->rowCount();
+		for(int i=0;i<rowcount;++i)
+		{
+			table->selectRow(i);
+			if(scene->isBackground())
+     			scene->render(&painter);
+			else
+			{
+				QPixmap white(scene->width(),scene->height());
+				white.fill();
+				scene->setBackground(white);
+				scene->render(&painter);
+				scene->setBackground(NULL);
+			}
+			if(i!=rowcount-1)
+				printer.newPage();
+		}
+		table->setCurrentIndex(currentindex);
+		QMessageBox::information(this, tr("Print All"), tr("Print All Complete."));
+	}
 }
 
 void QueryFrame::doSignin()
