@@ -42,7 +42,7 @@ public:
 		enum {Type = UserType + 12};
 		int type() const {return Type;}
 
-		GraphicsTextItem(QGraphicsItem *parent=0,QGraphicsScene *scene=0);
+		GraphicsTextItem(QGraphicsItem *parent=0);
 
 public slots:
 		void setText(const QString& string){setPlainText(string);}

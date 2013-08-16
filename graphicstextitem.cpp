@@ -26,7 +26,7 @@
 
 #include "graphicstextitem.h"
 
-GraphicsTextItem::GraphicsTextItem(QGraphicsItem  *parent, QGraphicsScene *scene):QGraphicsTextItem(parent, scene)
+GraphicsTextItem::GraphicsTextItem(QGraphicsItem  *parent):QGraphicsTextItem(parent)
 {
 	setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
 }
