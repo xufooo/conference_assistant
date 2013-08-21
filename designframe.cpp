@@ -164,7 +164,7 @@ void DesignFrame::printScene()
 			white.fill();
 			scene->setBackground(white);
 			scene->render(&painter);
-			scene->setBackground(NULL);
+			scene->setBackground(QPixmap());
 		}
  }
 }
@@ -189,7 +189,7 @@ void DesignFrame::doPreview(QPrinter *printer)
 		white.fill();
 		scene->setBackground(white);
 		scene->render(&painter);
-		scene->setBackground(NULL);
+		scene->setBackground(QPixmap());
 	}
 }
 
