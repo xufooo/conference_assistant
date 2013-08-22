@@ -25,11 +25,15 @@
 =============================================================================*/
 
 #include <QApplication>
+#include <QTextCodec>
 #include "mainframe.h"
 
 int main(int argc, char** argv)
 {
 	QApplication app(argc, argv);
+	QTextCodec *codec=QTextCodec::codecForName("UTF-8");
+	QTextCodec::setCodecForCStrings(codec);
+	QTextCodec::setCodecForTr(codec);
 	MainFrame mainframe;
 	mainframe.show();
 	

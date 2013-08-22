@@ -43,6 +43,7 @@
 #include <QSqlError>
 #include <QDataWidgetMapper>
 #include <QSqlTableModel>
+#include <QSqlQuery>
 #include <QSortFilterProxyModel>
 #include <QMessageBox>
 #include <QTimer>
@@ -184,6 +185,8 @@ void QueryFrame::doConnect()
 		showError(db.lastError());
 		return;
 	}
+
+	db.exec("SET NAMES 'Latin1'");//to avoid Chinese Char "??"
 
 	model=new QSqlTableModel(this);
 	model->setEditStrategy(QSqlTableModel::OnFieldChange);

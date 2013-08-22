@@ -105,6 +105,7 @@ void CreateInfo::doConnect()
 		showError(db.lastError());
 		return;
 	}
+	db.exec("SET NAMES 'Latin1'");
 
 	model=new QSqlTableModel(this);
 	model->setEditStrategy(QSqlTableModel::OnManualSubmit);
