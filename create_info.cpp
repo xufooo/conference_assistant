@@ -105,19 +105,19 @@ void CreateInfo::doConnect()
 		showError(db.lastError());
 		return;
 	}
-	db.exec("SET NAMES 'Latin1'");
+	db.exec("SET NAMES 'UTF8'");
 
 	model=new QSqlTableModel(this);
 	model->setEditStrategy(QSqlTableModel::OnManualSubmit);
 	QSqlQuery query;
-	query.exec("CREATE TABLE IF NOT EXISTS test (name VARCHAR(20), number VARCHAR(20), signin BOOL);");
+	query.exec("CREATE TABLE IF NOT EXISTS test (name VARCHAR(20), number VARCHAR(20), signin BOOL) DEFAULT CHARSET utf8 COLLATE utf8_general_ci;");
 	if(query.lastError().type()!=QSqlError::NoError)
 		showError(query.lastError());
-	model->setTable("test");
+	model->setTable(tr("test"));
 	
-	model->setHeaderData(model->fieldIndex("name"),Qt::Horizontal,tr("Name"));
-	model->setHeaderData(model->fieldIndex("number"),Qt::Horizontal,tr("NO."));
-	model->setHeaderData(model->fieldIndex("signin"),Qt::Horizontal,tr("Sign In"));
+	model->setHeaderData(model->fieldIndex(tr("name")),Qt::Horizontal,tr("Name"));
+	model->setHeaderData(model->fieldIndex(tr("number")),Qt::Horizontal,tr("NO."));
+	model->setHeaderData(model->fieldIndex(tr("signin")),Qt::Horizontal,tr("Sign In"));
 
 	if(!model->select()){
 		showError(model->lastError());
@@ -130,8 +130,8 @@ void CreateInfo::doConnect()
 
 	QDataWidgetMapper *mapper=new QDataWidgetMapper(this);
 	mapper->setModel(model);
-	mapper->addMapping(name,model->fieldIndex("name"));
-	mapper->addMapping(number,model->fieldIndex("number"));
+	mapper->addMapping(name,model->fieldIndex(tr("name")));
+	mapper->addMapping(number,model->fieldIndex(tr("number")));
 
 	connect(view->selectionModel(),SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),mapper,SLOT(setCurrentModelIndex(QModelIndex)));
 
