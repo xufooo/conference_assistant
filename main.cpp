@@ -31,9 +31,9 @@
 int main(int argc, char** argv)
 {
 	QApplication app(argc, argv);
-	QTextCodec *codec=QTextCodec::codecForName("UTF-8");
-	QTextCodec::setCodecForCStrings(codec);
-	QTextCodec::setCodecForTr(codec);
+//	QTextCodec *codec=QTextCodec::codecForName("UTF-8");
+//	QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+//	QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
 	MainFrame mainframe;
 	mainframe.show();
 	

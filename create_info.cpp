@@ -105,7 +105,7 @@ void CreateInfo::doConnect()
 		showError(db.lastError());
 		return;
 	}
-	db.exec("SET NAMES 'UTF8'");
+//	db.exec("SET NAMES 'UTF8'");
 
 	model=new QSqlTableModel(this);
 	model->setEditStrategy(QSqlTableModel::OnManualSubmit);

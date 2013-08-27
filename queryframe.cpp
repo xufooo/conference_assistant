@@ -186,7 +186,7 @@ void QueryFrame::doConnect()
 		return;
 	}
 
-	db.exec("SET NAMES 'UTF8'");//to avoid Chinese Char "??"
+//	db.exec("SET NAMES 'UTF8'");//to avoid Chinese Char "??"
 
 	model=new QSqlTableModel(this);
 	model->setEditStrategy(QSqlTableModel::OnFieldChange);
