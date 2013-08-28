@@ -4,9 +4,11 @@
 *.a
 *.la
 *.pro
-*.swp
-*.sav
 moc*.*
 Makefile
+#others#
+*.swp
+*.sav
+*.db
 Qt_conference-assistant
 conference-assistant

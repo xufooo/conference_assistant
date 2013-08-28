@@ -89,13 +89,13 @@ CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
 	QTimer::singleShot(1,number,SLOT(setFocus()));//focus on number
 	
 	/*setup db*/
-	if(!QSqlDatabase::drivers().contains("QMYSQL"))
+	if(!QSqlDatabase::drivers().contains("QSQLITE"))
 		QMessageBox::critical(this, tr("Unable to load database"), tr("No QMYSQL driver"));
 }
 
 void CreateInfo::doConnect()
 {
-	QSqlDatabase db=QSqlDatabase::addDatabase("QMYSQL");
+	QSqlDatabase db=QSqlDatabase::addDatabase("QSQLITE");
 	ConnectDialog cd(&db);
 	if(!cd.exec())
 		return;//reject
@@ -110,7 +110,7 @@ void CreateInfo::doConnect()
 	model=new QSqlTableModel(this);
 	model->setEditStrategy(QSqlTableModel::OnManualSubmit);
 	QSqlQuery query;
-	query.exec("CREATE TABLE IF NOT EXISTS test (name VARCHAR(20), number VARCHAR(20), signin BOOL) DEFAULT CHARSET utf8 COLLATE utf8_general_ci;");
+	query.exec("CREATE TABLE IF NOT EXISTS test (name text NOT NULL, number text NOT NULL UNIQUE, signin integer NOT NULL DEFAULT 0);");
 	if(query.lastError().type()!=QSqlError::NoError)
 		showError(query.lastError());
 	model->setTable(tr("test"));

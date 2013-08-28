@@ -175,7 +175,7 @@ void QueryFrame::doLoad()
 
 void QueryFrame::doConnect()
 {
-	QSqlDatabase db=QSqlDatabase::addDatabase("QMYSQL");
+	QSqlDatabase db=QSqlDatabase::addDatabase("QSQLITE");
 	ConnectDialog cd(&db);
 	if(!cd.exec())
 		return;//reject
@@ -269,7 +269,7 @@ void QueryFrame::doPrintAll()
 
 void QueryFrame::doSignin()
 {
-	if(!model->setData(model->index(table->currentIndex().row(),model->fieldIndex("signin")),true))
+	if(!model->setData(model->index(table->currentIndex().row(),model->fieldIndex("signin")),model->index(table->currentIndex().row(),model->fieldIndex("signin")).data().toInt()+1))
 		showError(model->lastError());
 }
 

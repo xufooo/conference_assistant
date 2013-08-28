@@ -41,10 +41,10 @@ public:
 private:
 	QSqlDatabase *database;
 
-	QLineEdit *host_edit;
+//	QLineEdit *host_edit;
 	QLineEdit *db_edit;
-	QLineEdit *username_edit;
-	QLineEdit *password_edit;
+//	QLineEdit *username_edit;
+//	QLineEdit *password_edit;
 };
 
 #endif

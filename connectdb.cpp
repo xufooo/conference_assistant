@@ -35,24 +35,24 @@ ConnectDialog::ConnectDialog(QSqlDatabase *const db, QWidget *parent):QDialog(pa
 {
 	setWindowTitle(tr("SQL Database Info"));
 
-	QLabel *host_label=new QLabel("HostName:");
-	host_edit=new QLineEdit("192.168.1.103");
+//	QLabel *host_label=new QLabel("HostName:");
+//	host_edit=new QLineEdit("192.168.1.103");
 	QLabel *db_label=new QLabel("DatabaseName:");
-	db_edit=new QLineEdit("cookbook");
-	QLabel *username_label=new QLabel("UserName:");
-	username_edit=new QLineEdit("cbuser");
-	QLabel *password_label=new QLabel("PassWord:");
-	password_edit=new QLineEdit("cbpass");
+	db_edit=new QLineEdit("cookbook.db");
+//	QLabel *username_label=new QLabel("UserName:");
+//	username_edit=new QLineEdit("cbuser");
+//	QLabel *password_label=new QLabel("PassWord:");
+//	password_edit=new QLineEdit("cbpass");
 	
 	QGridLayout *layout=new QGridLayout(this);
-	layout->addWidget(host_label,0,0);
-	layout->addWidget(host_edit,0,1);
+//	layout->addWidget(host_label,0,0);
+//	layout->addWidget(host_edit,0,1);
 	layout->addWidget(db_label,1,0);
 	layout->addWidget(db_edit,1,1);
-	layout->addWidget(username_label,2,0);
-	layout->addWidget(username_edit,2,1);
-	layout->addWidget(password_label,3,0);
-	layout->addWidget(password_edit,3,1);
+//	layout->addWidget(username_label,2,0);
+//	layout->addWidget(username_edit,2,1);
+//	layout->addWidget(password_label,3,0);
+//	layout->addWidget(password_edit,3,1);
 
 	QPushButton *cancel=new QPushButton("Cancel");
 	QPushButton *ok=new QPushButton("OK");
@@ -68,10 +68,10 @@ ConnectDialog::ConnectDialog(QSqlDatabase *const db, QWidget *parent):QDialog(pa
 
 void ConnectDialog::accept()
 {
-	database->setHostName(host_edit->text());
+//	database->setHostName(host_edit->text());
 	database->setDatabaseName(db_edit->text());
-	database->setUserName(username_edit->text());
-	database->setPassword(password_edit->text());
+//	database->setUserName(username_edit->text());
+//	database->setPassword(password_edit->text());
 	QDialog::accept();
 }
 
