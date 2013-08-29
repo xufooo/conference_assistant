@@ -110,14 +110,18 @@ void CreateInfo::doConnect()
 	model=new QSqlTableModel(this);
 	model->setEditStrategy(QSqlTableModel::OnManualSubmit);
 	QSqlQuery query;
-	query.exec("CREATE TABLE IF NOT EXISTS test (name text NOT NULL, number text NOT NULL UNIQUE, signin integer NOT NULL DEFAULT 0);");
+//	query.exec("CREATE TABLE IF NOT EXISTS test (name text NOT NULL, number text NOT NULL UNIQUE, signin integer NOT NULL DEFAULT 0);");
 	if(query.lastError().type()!=QSqlError::NoError)
 		showError(query.lastError());
-	model->setTable(tr("test"));
+	model->setTable(tr("pre_regusers"));
 	
-	model->setHeaderData(model->fieldIndex(tr("name")),Qt::Horizontal,tr("Name"));
-	model->setHeaderData(model->fieldIndex(tr("number")),Qt::Horizontal,tr("NO."));
-	model->setHeaderData(model->fieldIndex(tr("signin")),Qt::Horizontal,tr("Sign In"));
+	model->setHeaderData(model->fieldIndex("title"),Qt::Horizontal,tr("Title"));
+	model->setHeaderData(model->fieldIndex("regnumber"),Qt::Horizontal,tr("Reg. NO."));
+	model->setHeaderData(model->fieldIndex("firstname"),Qt::Horizontal,tr("First Name"));
+	model->setHeaderData(model->fieldIndex("middlename"),Qt::Horizontal,tr("Middle Name"));
+	model->setHeaderData(model->fieldIndex("lastname"),Qt::Horizontal,tr("Last Name"));
+	model->setHeaderData(model->fieldIndex("phone"),Qt::Horizontal,tr("Phone"));
+//	model->setHeaderData(model->fieldIndex(tr("signin")),Qt::Horizontal,tr("Sign In"));
 
 	if(!model->select()){
 		showError(model->lastError());
@@ -130,8 +134,8 @@ void CreateInfo::doConnect()
 
 	QDataWidgetMapper *mapper=new QDataWidgetMapper(this);
 	mapper->setModel(model);
-	mapper->addMapping(name,model->fieldIndex(tr("name")));
-	mapper->addMapping(number,model->fieldIndex(tr("number")));
+//	mapper->addMapping(name,model->fieldIndex(tr("name")));
+	mapper->addMapping(number,model->fieldIndex("regnumber"));
 
 	connect(view->selectionModel(),SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),mapper,SLOT(setCurrentModelIndex(QModelIndex)));
 
