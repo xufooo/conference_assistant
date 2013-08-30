@@ -58,6 +58,7 @@ public slots:
 		void doPrint();
 		void doPrintAll();
 		void receiveFixedSize(bool fixed);
+		void setName();
 
 private:
 		void showError(const QSqlError &err);

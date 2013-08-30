@@ -75,6 +75,7 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 	QLabel *numberlabel=new QLabel(tr("NO. :"));
 	number=new QLineEdit;
 	number->setReadOnly(true);
+	connect(number,SIGNAL(textChanged(const QString&)),this,SLOT(setName()));
 	connect(number,SIGNAL(textChanged(const QString&)),scene,SLOT(update()));
 	QGridLayout *editlayout=new QGridLayout;
 	editlayout->addWidget(namelabel,0,0,1,1);
@@ -149,18 +150,28 @@ void QueryFrame::doSearch(const QString &string)
 
 	QString input=string;
 	proxy->setFilterFixedString(input);
-	proxy->setFilterKeyColumn(1);
+	proxy->setFilterKeyColumn(2);//regnumber
 	QModelIndex matchingIndex=proxy->mapToSource(proxy->index(0,0));
 	if(matchingIndex.isValid()){
 		table->setCurrentIndex(matchingIndex);
 		return;
 	}
-	QSortFilterProxyModel pro;
-	pro.setSourceModel(model);
-	pro.setFilterFixedString(input);
-	QModelIndex mi=pro.mapToSource(pro.index(0,0));
-	if(mi.isValid())
-		table->setCurrentIndex(mi);
+	QSortFilterProxyModel ln;
+	ln.setSourceModel(model);
+	ln.setFilterFixedString(input);
+	ln.setFilterKeyColumn(5);//firstname
+	QModelIndex ln_mi=ln.mapToSource(ln.index(0,0));
+	if(ln_mi.isValid()){
+		table->setCurrentIndex(ln_mi);
+		return;
+	}
+	QSortFilterProxyModel ph;
+	ph.setSourceModel(model);
+	ph.setFilterFixedString(input);
+	ph.setFilterKeyColumn(7);//phone
+	QModelIndex ph_mi=ph.mapToSource(ph.index(0,0));
+	if(ph_mi.isValid())
+		table->setCurrentIndex(ph_mi);
 }
 										
 void QueryFrame::doLoad()
@@ -190,18 +201,29 @@ void QueryFrame::doConnect()
 
 	model=new QSqlTableModel(this);
 	model->setEditStrategy(QSqlTableModel::OnFieldChange);
-	model->setTable("test");
+	model->setTable("pre_regusers");
 	
-	model->setHeaderData(model->fieldIndex("name"),Qt::Horizontal,tr("Name"));
-	model->setHeaderData(model->fieldIndex("number"),Qt::Horizontal,tr("NO."));
-	model->setHeaderData(model->fieldIndex("signin"),Qt::Horizontal,tr("Sign In"));
-
+	model->setHeaderData(model->fieldIndex("regnumber"),Qt::Horizontal,tr("Reg. NO."));
+	model->setHeaderData(model->fieldIndex("firstname"),Qt::Horizontal,tr("First Name"));
+	model->setHeaderData(model->fieldIndex("middlename"),Qt::Horizontal,tr("Middle Name"));
+	model->setHeaderData(model->fieldIndex("lastname"),Qt::Horizontal,tr("Last Name"));
+	model->setHeaderData(model->fieldIndex("fax"),Qt::Horizontal,tr("Phone"));
+	model->setHeaderData(model->fieldIndex("company"),Qt::Horizontal,tr("Affiliation"));
+//	model->setHeaderData(model->fieldIndex(tr("signin")),Qt::Horizontal,tr("Sign In"));
+	
 	if(!model->select()){
 		showError(model->lastError());
 		return;
 	}
 
 	table->setModel(model);
+	for(int i=0;i<model->columnCount();++i)
+	{
+		if((i==2)|(i==3)|(i==4)|(i==5)|(i==9)|(i==10))
+			continue;
+		table->hideColumn(i);
+	}
+
 	table->setSelectionMode(QAbstractItemView::SingleSelection);
 	table->setSelectionBehavior(QAbstractItemView::SelectRows);
 	table->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -209,8 +231,8 @@ void QueryFrame::doConnect()
 
 	QDataWidgetMapper *mapper=new QDataWidgetMapper(this);
 	mapper->setModel(model);
-	mapper->addMapping(name,model->fieldIndex("name"));
-	mapper->addMapping(number,model->fieldIndex("number"));
+//	mapper->addMapping(name,model->fieldIndex("name"));
+	mapper->addMapping(number,model->fieldIndex("regnumber"));
 
 	connect(table->selectionModel(),SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),mapper,SLOT(setCurrentModelIndex(QModelIndex)));
 
@@ -299,4 +321,9 @@ void QueryFrame::receiveFixedSize(bool fixed)
 		view->setMaximumSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
 	else
 		view->setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
+}
+
+void QueryFrame::setName()
+{
+	name->setText(model->index(table->currentIndex().row(),model->fieldIndex("firstname")).data().toString()+" "+model->index(table->currentIndex().row(),model->fieldIndex("middlename")).data().toString()+" "+model->index(table->currentIndex().row(),model->fieldIndex("lastname")).data().toString());
 }

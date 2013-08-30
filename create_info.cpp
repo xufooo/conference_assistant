@@ -41,6 +41,7 @@
 #include "bc_generator.h"
 #include "create_info.h"
 #include "connectdb.h"
+#include <QDebug>
 
 CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
 
@@ -115,12 +116,12 @@ void CreateInfo::doConnect()
 		showError(query.lastError());
 	model->setTable(tr("pre_regusers"));
 	
-	model->setHeaderData(model->fieldIndex("title"),Qt::Horizontal,tr("Title"));
 	model->setHeaderData(model->fieldIndex("regnumber"),Qt::Horizontal,tr("Reg. NO."));
 	model->setHeaderData(model->fieldIndex("firstname"),Qt::Horizontal,tr("First Name"));
 	model->setHeaderData(model->fieldIndex("middlename"),Qt::Horizontal,tr("Middle Name"));
 	model->setHeaderData(model->fieldIndex("lastname"),Qt::Horizontal,tr("Last Name"));
-	model->setHeaderData(model->fieldIndex("phone"),Qt::Horizontal,tr("Phone"));
+	model->setHeaderData(model->fieldIndex("fax"),Qt::Horizontal,tr("Phone"));
+	model->setHeaderData(model->fieldIndex("company"),Qt::Horizontal,tr("Affiliation"));
 //	model->setHeaderData(model->fieldIndex(tr("signin")),Qt::Horizontal,tr("Sign In"));
 
 	if(!model->select()){
@@ -129,6 +130,13 @@ void CreateInfo::doConnect()
 	}
 
 	view->setModel(model);
+	for(int i=0;i<model->columnCount();++i)
+	{
+		if((i==2)|(i==3)|(i==4)|(i==5)|(i==9)|(i==10))
+			continue;
+		view->hideColumn(i);
+	}
+
 	view->setSelectionMode(QAbstractItemView::SingleSelection);
 //	view->horizontalHeader()->setStretchLastSection(true);
 
