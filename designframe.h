@@ -32,6 +32,7 @@ class QGraphicsItem;
 class QGraphicsView;
 class DesignScene;
 class BC_GraphicsItem;
+class QGraphicsTextItem;
 class QComboBox;
 class QFontComboBox;
 class QLabel;
@@ -70,6 +71,7 @@ private:
 	DesignScene *scene;
 	QGraphicsView *view;
 	BC_GraphicsItem *bc;
+	QGraphicsTextItem *regnumber;
 
 	QComboBox *fontSizeCombo;
 	QFontComboBox *fontCombo;

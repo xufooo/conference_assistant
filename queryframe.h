@@ -47,7 +47,7 @@ public:
 		QueryFrame(QWidget *parent=0);
 		DesignScene * getScene() const{return scene;}
 		void setBC(BC_GraphicsItem *const newbc);
-		void setTextItem(GraphicsTextItem *const newtx);
+		void setTextItem(GraphicsTextItem *const newtx, QString objectname="");
 
 public slots:
 		void doSearch(const QString &string);
@@ -65,7 +65,8 @@ private:
 
 		DesignScene *scene;
 		QGraphicsView *view;
-		GraphicsTextItem *tx;
+		GraphicsTextItem *nameitem;
+		GraphicsTextItem *regnumber;
 		BC_GraphicsItem *bc;
 
 		QLineEdit *name;

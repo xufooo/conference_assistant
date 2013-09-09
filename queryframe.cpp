@@ -50,6 +50,7 @@
 #include <QPrinter>
 #include <QPrintDialog>
 #include <QSplitter>
+#include <QDebug>
 
 QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 {
@@ -181,6 +182,8 @@ void QueryFrame::doLoad()
 	if(fileName.isEmpty())
 		return;
 
+//	delete name;
+//	delete regnumber;
 	SceneSaver::restore(this,fileName);
 }
 
@@ -302,11 +305,21 @@ void QueryFrame::setBC(BC_GraphicsItem *newbc)
 	bc->encode(number->text());
 }
 
-void QueryFrame::setTextItem(GraphicsTextItem *newtx)
+void QueryFrame::setTextItem(GraphicsTextItem *newtx, QString objectname)
 {
-	tx=newtx;
-	connect(name,SIGNAL(textChanged(const QString&)),tx,SLOT(setText(const QString&)));
-	tx->setText(name->text());
+	qDebug()<<"objectname:"<<objectname;
+	if(objectname=="name")
+	{
+	nameitem=newtx;
+	connect(name,SIGNAL(textChanged(const QString&)),nameitem,SLOT(setText(const QString&)));
+	nameitem->setText(name->text());
+	}
+	else if(objectname=="regnumber")
+	{
+	regnumber=newtx;
+	connect(number,SIGNAL(textChanged(const QString&)),regnumber,SLOT(setText(const QString&)));
+	regnumber->setText(number->text());
+	}
 }
 
 void QueryFrame::showError(const QSqlError &err)

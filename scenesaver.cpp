@@ -60,6 +60,8 @@ int SceneSaver::save(DesignScene* const scene, QString filename)
 		else if(type==GraphicsTextItem::Type)
 		{
 			GraphicsTextItem *item=qgraphicsitem_cast<GraphicsTextItem*>(scene->items().at(i));
+			qDebug()<<"ObjectName:"<<item->objectName();//ooo
+			saver.insert(Item+"ObjectName",item->objectName());
 			saver.insert(Item+"Context",item->toPlainText());
 		}
 		saver.insert(Item+"Pos",scene->items().at(i)->pos());
@@ -150,6 +152,8 @@ int SceneSaver::save(DesignFrame* const frame, QString filename)
 		else if(type==GraphicsTextItem::Type)
 		{
 			GraphicsTextItem *item=qgraphicsitem_cast<GraphicsTextItem*>(scene->items().at(i));
+			qDebug()<<"ObjectName:"<<item->objectName();//ooo
+			saver.insert(Item+"ObjectName",item->objectName());
 			saver.insert(Item+"Context",item->toPlainText());
 		}
 		saver.insert(Item+"Pos",scene->items().at(i)->pos());
@@ -255,7 +259,7 @@ int SceneSaver::restore(QueryFrame * const frame, QString filename)
 		{
 			GraphicsTextItem *item=new GraphicsTextItem;
 			scene->addItem(item);
-			frame->setTextItem(item);
+			frame->setTextItem(item, loader.value(QString("Item/%1/ObjectName").arg(i)).toString());
 //			item->setPlainText(loader.value(QString("Item/%1/Context").arg(i)).toString());
 			item->setPos(loader.value(QString("Item/%1/Pos").arg(i)).toPointF());
 			item->setScale(loader.value(QString("Item/%1/Scale").arg(i)).toDouble());

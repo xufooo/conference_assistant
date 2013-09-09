@@ -55,9 +55,14 @@ DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 	setLayout(mainlayout);
 	bc = new BC_GraphicsItem;
 	GraphicsTextItem *name = new GraphicsTextItem;
-	name->setPlainText("Name");
+	name->setObjectName(tr("name"));
+	name->setPlainText(tr("Name"));
+	regnumber= new GraphicsTextItem;
+	regnumber->setObjectName(tr("regnumber"));
+	regnumber->setPlainText(tr("000000"));
 	scene->addItem(bc);
 	scene->addItem(name);
+	scene->addItem(regnumber);
 	view->setScene(scene);
 	connect(scene,SIGNAL(sendFixedSize(bool)),this,SLOT(receiveFixedSize(bool)));
 	connect(scene,SIGNAL(itemSelected(QGraphicsItem*)),this,SLOT(itemSelected(QGraphicsItem*)));
@@ -85,6 +90,7 @@ DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 	bc_label=new QLabel(tr("Input BarCode: "));
 	bc_line=new QLineEdit;
 	connect(bc_line,SIGNAL(textChanged(const QString&)),bc,SLOT(encode(const QString&)));
+	connect(bc_line,SIGNAL(textChanged(const QString&)),regnumber,SLOT(setText(const QString&)));
 	connect(bc_line,SIGNAL(textChanged(const QString&)),scene,SLOT(update()));
 	QTimer::singleShot(0,bc_line,SLOT(setFocus()));//focus on bc_line
 	bclayout->addWidget(bc_label);
