@@ -258,7 +258,7 @@ void QueryFrame::doPrint()
 			white.fill();
 			scene->setBackground(white);
 			scene->render(&painter);
-			scene->setBackground(NULL);
+			scene->setBackground(QPixmap());
 		}
 	}
 }
@@ -282,7 +282,7 @@ void QueryFrame::doPrintAll()
 				white.fill();
 				scene->setBackground(white);
 				scene->render(&painter);
-				scene->setBackground(NULL);
+				scene->setBackground(QPixmap());
 			}
 			if(i!=rowcount-1)
 				printer.newPage();
