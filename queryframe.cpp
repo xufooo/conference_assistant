@@ -338,5 +338,17 @@ void QueryFrame::receiveFixedSize(bool fixed)
 
 void QueryFrame::setName()
 {
-	name->setText(model->index(table->currentIndex().row(),model->fieldIndex("firstname")).data().toString()+" "+model->index(table->currentIndex().row(),model->fieldIndex("middlename")).data().toString()+" "+model->index(table->currentIndex().row(),model->fieldIndex("lastname")).data().toString());
+	QString string2upper=model->index(table->currentIndex().row(),model->fieldIndex("firstname")).data().toString();
+	QString fname;
+	if(!string2upper.isEmpty())
+		fname+=string2upper.replace(0,1,string2upper.at(0).toUpper());
+	string2upper=model->index(table->currentIndex().row(),model->fieldIndex("middlename")).data().toString();
+	if(!string2upper.isEmpty())
+		fname+="  "+string2upper.replace(0,1,string2upper.at(0).toUpper());
+	string2upper=model->index(table->currentIndex().row(),model->fieldIndex("lastname")).data().toString();
+	if(!string2upper.isEmpty())
+		fname+="  "+string2upper.replace(0,1,string2upper.at(0).toUpper());
+
+	name->setText(fname);
+
 }
