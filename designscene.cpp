@@ -76,6 +76,8 @@ void DesignScene::setBackground(const QPixmap &pixmap)
 
 void DesignScene::setFont(const QFont &font)
 {
+	if(myFont==font)
+		return;
 	myFont=font;
 	if(isItemChange(GraphicsTextItem::Type)){
 		GraphicsTextItem *item=qgraphicsitem_cast<GraphicsTextItem *>(selectedItems().first());
