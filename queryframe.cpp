@@ -99,7 +99,7 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 	connect(loaddesign,SIGNAL(clicked()),this,SLOT(doLoad()));
 	connectdb=new QPushButton(tr("Connect DB"));
 	connect(connectdb,SIGNAL(clicked()),this,SLOT(doConnect()));
-	signin=new QPushButton(tr("Sign In"));
+	signin=new QPushButton(tr("Register"));
 	connect(signin,SIGNAL(clicked()),this,SLOT(doSignin()));
 	print=new QPushButton(tr("Print"));
 	connect(print,SIGNAL(clicked()),this,SLOT(doPrint()));
@@ -212,7 +212,7 @@ void QueryFrame::doConnect()
 	model->setHeaderData(model->fieldIndex("lastname"),Qt::Horizontal,tr("Last Name"));
 	model->setHeaderData(model->fieldIndex("fax"),Qt::Horizontal,tr("Phone"));
 	model->setHeaderData(model->fieldIndex("company"),Qt::Horizontal,tr("Affiliation"));
-//	model->setHeaderData(model->fieldIndex(tr("signin")),Qt::Horizontal,tr("Sign In"));
+	model->setHeaderData(model->fieldIndex(tr("picurl")),Qt::Horizontal,tr("Registration"));
 	
 	if(!model->select()){
 		showError(model->lastError());
@@ -222,7 +222,7 @@ void QueryFrame::doConnect()
 	table->setModel(model);
 	for(int i=0;i<model->columnCount();++i)
 	{
-		if((i==2)|(i==3)|(i==4)|(i==5)|(i==9)|(i==10))
+		if((i==2)|(i==3)|(i==4)|(i==5)|(i==9)|(i==10)|(i==21))
 			continue;
 		table->hideColumn(i);
 	}
@@ -250,16 +250,17 @@ void QueryFrame::doPrint()
 	if (QPrintDialog(&printer).exec() == QDialog::Accepted) {
     	QPainter painter(&printer);
      	painter.setRenderHint(QPainter::SmoothPixmapTransform);
-		if(scene->isBackground())
-     		scene->render(&painter);
-		else
-		{
+		//print without background
+//		if(scene->isBackground())
+//     		scene->render(&painter);
+//		else
+//		{
 			QPixmap white(scene->width(),scene->height());
 			white.fill();
 			scene->setBackground(white);
 			scene->render(&painter);
 			scene->setBackground(QPixmap());
-		}
+//		}
 	}
 }
 
@@ -274,16 +275,17 @@ void QueryFrame::doPrintAll()
 		for(int i=0;i<rowcount;++i)
 		{
 			table->selectRow(i);
-			if(scene->isBackground())
-     			scene->render(&painter);
-			else
-			{
+			//print without background
+//			if(scene->isBackground())
+//     			scene->render(&painter);
+//			else
+//			{
 				QPixmap white(scene->width(),scene->height());
 				white.fill();
 				scene->setBackground(white);
 				scene->render(&painter);
 				scene->setBackground(QPixmap());
-			}
+//			}
 			if(i!=rowcount-1)
 				printer.newPage();
 		}
@@ -294,7 +296,7 @@ void QueryFrame::doPrintAll()
 
 void QueryFrame::doSignin()
 {
-	if(!model->setData(model->index(table->currentIndex().row(),model->fieldIndex("signin")),model->index(table->currentIndex().row(),model->fieldIndex("signin")).data().toInt()+1))
+	if(!model->setData(model->index(table->currentIndex().row(),model->fieldIndex("picurl")),tr("Registered")))
 		showError(model->lastError());
 }
 

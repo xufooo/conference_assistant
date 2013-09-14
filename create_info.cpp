@@ -122,7 +122,7 @@ void CreateInfo::doConnect()
 	model->setHeaderData(model->fieldIndex("lastname"),Qt::Horizontal,tr("Last Name"));
 	model->setHeaderData(model->fieldIndex("fax"),Qt::Horizontal,tr("Phone"));
 	model->setHeaderData(model->fieldIndex("company"),Qt::Horizontal,tr("Affiliation"));
-//	model->setHeaderData(model->fieldIndex(tr("signin")),Qt::Horizontal,tr("Sign In"));
+	model->setHeaderData(model->fieldIndex(tr("picurl")),Qt::Horizontal,tr("Registration"));
 
 	if(!model->select()){
 		showError(model->lastError());
@@ -132,7 +132,7 @@ void CreateInfo::doConnect()
 	view->setModel(model);
 	for(int i=0;i<model->columnCount();++i)
 	{
-		if((i==2)|(i==3)|(i==4)|(i==5)|(i==9)|(i==10))
+		if((i==2)|(i==3)|(i==4)|(i==5)|(i==9)|(i==10)|(i==21))
 			continue;
 		view->hideColumn(i);
 	}
