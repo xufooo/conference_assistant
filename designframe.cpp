@@ -154,9 +154,9 @@ void DesignFrame::itemSelected(QGraphicsItem *item)
 	QFont font=textitem->font();
 	fontCombo->blockSignals(true);
 	fontCombo->setCurrentFont(font);
+	fontCombo->blockSignals(false);
 	fontSizeCombo->blockSignals(true);
 	fontSizeCombo->setEditText(QString().setNum(font.pointSize()));
-	fontCombo->blockSignals(false);
 	fontSizeCombo->blockSignals(false);
 }
 

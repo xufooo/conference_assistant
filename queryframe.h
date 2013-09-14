@@ -47,7 +47,7 @@ public:
 		QueryFrame(QWidget *parent=0);
 		DesignScene * getScene() const{return scene;}
 		void setBC(BC_GraphicsItem *const newbc);
-		void setTextItem(GraphicsTextItem *const newtx, QString objectname="");
+		void setTextItem(GraphicsTextItem *const newtx);
 
 public slots:
 		void doSearch(const QString &string);

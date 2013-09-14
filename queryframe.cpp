@@ -305,8 +305,9 @@ void QueryFrame::setBC(BC_GraphicsItem *newbc)
 	bc->encode(number->text());
 }
 
-void QueryFrame::setTextItem(GraphicsTextItem *newtx, QString objectname)
+void QueryFrame::setTextItem(GraphicsTextItem *newtx)
 {
+	QString objectname=newtx->objectName();
 	qDebug()<<"objectname:"<<objectname;
 	if(objectname=="name")
 	{

@@ -45,7 +45,7 @@ int SceneSaver::save(DesignScene* const scene, QString filename)
 	else
 		saver.insert("Scene/Background",scene->isBackground());
 	saver.insert("Scene/Rect",scene->sceneRect());
-	saver.insert("Scene/Font",scene->font());
+//	saver.insert("Scene/Font",scene->font());
 	saver.insert("Scene/ItemNumber",scene->items().size());
 
 	for(int i=0;i<scene->items().size();++i){
@@ -63,6 +63,7 @@ int SceneSaver::save(DesignScene* const scene, QString filename)
 			qDebug()<<"ObjectName:"<<item->objectName();//ooo
 			saver.insert(Item+"ObjectName",item->objectName());
 			saver.insert(Item+"Context",item->toPlainText());
+			saver.insert(Item+"Font",item->font());
 		}
 		saver.insert(Item+"Pos",scene->items().at(i)->pos());
 		saver.insert(Item+"Scale",scene->items().at(i)->scale());
@@ -116,11 +117,12 @@ int SceneSaver::restore(DesignScene* const scene, QString filename)
 			GraphicsTextItem *item=new GraphicsTextItem;
 			scene->addItem(item);
 			item->setPlainText(loader.value(QString("Item/%1/Context").arg(i)).toString());
+			item->setFont(loader.value(QString("Item/%1/Font").arg(i)).value<QFont>());
 			item->setPos(loader.value(QString("Item/%1/Pos").arg(i)).toPointF());
 			item->setScale(loader.value(QString("Item/%1/Scale").arg(i)).toDouble());
 		}
 	}
-	scene->setFont(loader.value("Scene/Font").value<QFont>());//set Background
+//	scene->setFont(loader.value("Scene/Font").value<QFont>());//set Background
 
 	return 1;
 }
@@ -137,7 +139,7 @@ int SceneSaver::save(DesignFrame* const frame, QString filename)
 	else
 		saver.insert("Scene/Background",scene->isBackground());
 	saver.insert("Scene/Rect",scene->sceneRect());
-	saver.insert("Scene/Font",scene->font());
+//	saver.insert("Scene/Font",scene->font());
 	saver.insert("Scene/ItemNumber",scene->items().size());
 
 	for(int i=0;i<scene->items().size();++i){
@@ -155,6 +157,7 @@ int SceneSaver::save(DesignFrame* const frame, QString filename)
 			qDebug()<<"ObjectName:"<<item->objectName();//ooo
 			saver.insert(Item+"ObjectName",item->objectName());
 			saver.insert(Item+"Context",item->toPlainText());
+			saver.insert(Item+"Font",item->font());
 		}
 		saver.insert(Item+"Pos",scene->items().at(i)->pos());
 		saver.insert(Item+"Scale",scene->items().at(i)->scale());
@@ -209,11 +212,13 @@ int SceneSaver::restore(DesignFrame* const frame, QString filename)
 		else if(loader.value(QString("Item/%1/Type").arg(i)).toInt()==GraphicsTextItem::Type)
 		{
 			GraphicsTextItem *item=new GraphicsTextItem;
+			item->setObjectName(loader.value(QString("Item/%1/ObjectName").arg(i)).toString());
 			scene->addItem(item);
 			item->setPlainText(loader.value(QString("Item/%1/Context").arg(i)).toString());
+			item->setFont(loader.value(QString("Item/%1/Font").arg(i)).value<QFont>());
 			item->setPos(loader.value(QString("Item/%1/Pos").arg(i)).toPointF());
 			item->setScale(loader.value(QString("Item/%1/Scale").arg(i)).toDouble());
-			scene->setFont(item, loader.value("Scene/Font").value<QFont>());//set Font
+//			scene->setFont(item, loader.value("Scene/Font").value<QFont>());//set Font
 		}
 	}
 
@@ -258,12 +263,14 @@ int SceneSaver::restore(QueryFrame * const frame, QString filename)
 		else if(loader.value(QString("Item/%1/Type").arg(i)).toInt()==GraphicsTextItem::Type)
 		{
 			GraphicsTextItem *item=new GraphicsTextItem;
+			item->setObjectName(loader.value(QString("Item/%1/ObjectName").arg(i)).toString());
 			scene->addItem(item);
-			frame->setTextItem(item, loader.value(QString("Item/%1/ObjectName").arg(i)).toString());
+			frame->setTextItem(item);
+			item->setFont(loader.value(QString("Item/%1/Font").arg(i)).value<QFont>());
 //			item->setPlainText(loader.value(QString("Item/%1/Context").arg(i)).toString());
 			item->setPos(loader.value(QString("Item/%1/Pos").arg(i)).toPointF());
 			item->setScale(loader.value(QString("Item/%1/Scale").arg(i)).toDouble());
-			scene->setFont(item, loader.value("Scene/Font").value<QFont>());//set Font
+//			scene->setFont(item, loader.value("Scene/Font").value<QFont>());//set Font
 		}
 	}
 
