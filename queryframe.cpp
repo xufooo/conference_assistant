@@ -49,6 +49,7 @@
 #include <QTimer>
 #include <QPrinter>
 #include <QPrintDialog>
+#include <QPrintPreviewWidget>
 #include <QSplitter>
 #include <QDebug>
 
@@ -101,6 +102,8 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 	connect(connectdb,SIGNAL(clicked()),this,SLOT(doConnect()));
 	signin=new QPushButton(tr("Register"));
 	connect(signin,SIGNAL(clicked()),this,SLOT(doSignin()));
+	preview=new QPushButton(tr("Preview"));
+	connect(preview,SIGNAL(clicked()),this,SLOT(previewScene()));
 	print=new QPushButton(tr("Print"));
 	connect(print,SIGNAL(clicked()),this,SLOT(doPrint()));
 	printall=new QPushButton(tr("Print All"));
@@ -108,9 +111,10 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 	QGridLayout *buttonlayout=new QGridLayout;
 	buttonlayout->addWidget(loaddesign,0,0);
 	buttonlayout->addWidget(connectdb,0,1);
-	buttonlayout->addWidget(print,1,0);
-	buttonlayout->addWidget(printall,1,1);
-	buttonlayout->addWidget(signin,2,0,1,2);
+	buttonlayout->addWidget(preview,1,0);
+	buttonlayout->addWidget(print,1,1);
+	buttonlayout->addWidget(printall,2,0);
+	buttonlayout->addWidget(signin,2,1);
 
 	QVBoxLayout *ctrllayout=new QVBoxLayout;
 	ctrllayout->addLayout(editlayout);
@@ -242,6 +246,30 @@ void QueryFrame::doConnect()
 	table->setCurrentIndex(model->index(0,0));
 
 	proxy->setSourceModel(model);
+}
+
+void QueryFrame::previewScene()
+{
+	QPrintPreviewWidget *preview=new QPrintPreviewWidget;
+	preview->setZoomMode(QPrintPreviewWidget::FitInView);
+	connect(preview,SIGNAL(paintRequested(QPrinter*)),this,SLOT(doPreview(QPrinter*)));
+	preview->show();
+}
+
+void QueryFrame::doPreview(QPrinter *printer)
+{
+   	QPainter painter(printer);
+   	painter.setRenderHint(QPainter::SmoothPixmapTransform);
+	if(scene->isBackground())
+   		scene->render(&painter);
+	else
+	{
+		QPixmap white(scene->width(),scene->height());
+		white.fill();
+		scene->setBackground(white);
+		scene->render(&painter);
+		scene->setBackground(QPixmap());
+	}
 }
 
 void QueryFrame::doPrint()

@@ -55,6 +55,8 @@ public slots:
 		void doLoad();
 		void doConnect();
 		void doSignin();
+		void previewScene();
+		void doPreview(QPrinter *printer);
 		void doPrint();
 		void doPrintAll();
 		void receiveFixedSize(bool fixed);
@@ -77,6 +79,7 @@ private:
 		QPushButton *loaddesign;
 		QPushButton *connectdb;
 		QPushButton *signin;
+		QPushButton *preview;
 		QPushButton *print;
 		QPushButton *printall;
 
