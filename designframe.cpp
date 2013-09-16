@@ -45,14 +45,15 @@
 #include <QDir>
 #include <QMessageBox>
 #include "scenesaver.h"
+#include <QDebug>
 
 DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 {
+	QHBoxLayout *mainlayout=new QHBoxLayout;
+	setLayout(mainlayout);
+
 	scene = new DesignScene;
 	view = new QGraphicsView;
-	QHBoxLayout *mainlayout=new QHBoxLayout;
-	mainlayout->addWidget(view);
-	setLayout(mainlayout);
 	bc = new BC_GraphicsItem;
 	GraphicsTextItem *name = new GraphicsTextItem;
 	name->setObjectName(tr("name"));
@@ -66,6 +67,25 @@ DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 	view->setScene(scene);
 	connect(scene,SIGNAL(sendFixedSize(bool)),this,SLOT(receiveFixedSize(bool)));
 	connect(scene,SIGNAL(itemSelected(QGraphicsItem*)),this,SLOT(itemSelected(QGraphicsItem*)));
+	QVBoxLayout *viewlayout=new QVBoxLayout;
+	QHBoxLayout *scalelayout=new QHBoxLayout;
+	QPushButton *zoomin=new QPushButton(tr("+"));
+	zoomin->setFixedSize(20,20);
+	QPushButton *zoomout=new QPushButton(tr("-"));
+	zoomout->setFixedSize(20,20);
+	QPushButton *resetview=new QPushButton(tr("Reset"));
+	resetview->setFixedSize(60,20);
+	scalelayout->addWidget(zoomout);
+	scalelayout->addWidget(resetview);
+	scalelayout->addWidget(zoomin);
+	connect(zoomin,SIGNAL(clicked()),this,SLOT(zoomIn()));
+	connect(zoomout,SIGNAL(clicked()),this,SLOT(zoomOut()));
+	connect(resetview,SIGNAL(clicked()),this,SLOT(resetView()));
+
+	viewlayout->addWidget(view);
+	viewlayout->addLayout(scalelayout);
+
+	mainlayout->addLayout(viewlayout);
 
 
 	/*createCtrlPanel*/
@@ -124,9 +144,13 @@ void DesignFrame::receiveFixedSize(bool fixed)
 //		view->setFixedSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
 		view->setMaximumSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
 		emit toResize(view->size());
+		nomore_zoomout=true;
 	}
 	else
+	{
 		view->setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
+		nomore_zoomout=false;
+	}	
 }
 
 void DesignFrame::currentFontChanged(const QFont &)
@@ -174,7 +198,7 @@ void DesignFrame::printScene()
 			white.fill();
 			scene->setBackground(white);
 			scene->render(&painter);
-			scene->setBackground(NULL);
+			scene->setBackground(QPixmap());
 		}
 	 }
 }
@@ -199,7 +223,7 @@ void DesignFrame::doPreview(QPrinter *printer)
 		white.fill();
 		scene->setBackground(white);
 		scene->render(&painter);
-		scene->setBackground(NULL);
+		scene->setBackground(QPixmap());
 	}
 }
 
@@ -230,4 +254,18 @@ void DesignFrame::setBC(BC_GraphicsItem *newbc)
 {
 	bc=newbc;
 	connect(bc_line,SIGNAL(textChanged(const QString&)),bc,SLOT(encode(const QString&)));
+}
+
+void DesignFrame::zoomIn()
+{
+	view->scale(1.2, 1.2);
+}
+
+void DesignFrame::zoomOut()
+{
+	view->scale(1/1.2, 1/1.2);
+}
+
+void DesignFrame::resetView()
+{
 }

@@ -57,6 +57,9 @@ public slots:
 	void printScene();
 	void previewScene();
 	void doPreview(QPrinter *printer);
+	void zoomIn();
+	void zoomOut();
+	void resetView();
 
 private slots:
 	void currentFontChanged(const QFont &font);
@@ -83,6 +86,8 @@ private:
 	QPushButton *savebutton;
 	QPushButton *previewbutton;
 	QPushButton *printbutton;
+
+	bool nomore_zoomout;
 };
 
 #endif
