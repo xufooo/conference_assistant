@@ -38,6 +38,7 @@ class QTableView;
 class QSqlError;
 class QSqlTableModel;
 class QSortFilterProxyModel;
+class QPrinter;
 
 class QueryFrame:public QWidget
 {

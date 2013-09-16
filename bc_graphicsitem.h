@@ -33,6 +33,7 @@
 class BC_GraphicsItem:public BC_GEN,public QGraphicsItem
 {
 	Q_OBJECT
+	Q_INTERFACES(QGraphicsItem)
 
 public:
 	enum {Type = UserType + 11};
