@@ -283,11 +283,12 @@ void QueryFrame::doPrint()
 //     		scene->render(&painter);
 //		else
 //		{
+			QPixmap pre_background=scene->background();
 			QPixmap white(scene->width(),scene->height());
 			white.fill();
 			scene->setBackground(white);
 			scene->render(&painter);
-			scene->setBackground(QPixmap());
+			scene->setBackground(pre_background);
 //		}
 	}
 }
@@ -308,11 +309,12 @@ void QueryFrame::doPrintAll()
 //     			scene->render(&painter);
 //			else
 //			{
+				QPixmap pre_background=scene->background();
 				QPixmap white(scene->width(),scene->height());
 				white.fill();
 				scene->setBackground(white);
 				scene->render(&painter);
-				scene->setBackground(QPixmap());
+				scene->setBackground(pre_background);
 //			}
 			if(i!=rowcount-1)
 				printer.newPage();
