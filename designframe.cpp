@@ -152,8 +152,12 @@ void DesignFrame::itemSelected(QGraphicsItem *item)
 	QGraphicsTextItem *textitem=(QGraphicsTextItem*)item;
 
 	QFont font=textitem->font();
+	fontCombo->blockSignals(true);
 	fontCombo->setCurrentFont(font);
+	fontCombo->blockSignals(false);
+	fontSizeCombo->blockSignals(true);
 	fontSizeCombo->setEditText(QString().setNum(font.pointSize()));
+	fontSizeCombo->blockSignals(false);
 }
 
 void DesignFrame::printScene()
@@ -172,7 +176,7 @@ void DesignFrame::printScene()
 			scene->render(&painter);
 			scene->setBackground(QPixmap());
 		}
- }
+	 }
 }
 
 void DesignFrame::previewScene()

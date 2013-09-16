@@ -49,6 +49,7 @@
 #include <QTimer>
 #include <QPrinter>
 #include <QPrintDialog>
+#include <QPrintPreviewWidget>
 #include <QSplitter>
 #include <QDebug>
 
@@ -99,8 +100,10 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 	connect(loaddesign,SIGNAL(clicked()),this,SLOT(doLoad()));
 	connectdb=new QPushButton(tr("Connect DB"));
 	connect(connectdb,SIGNAL(clicked()),this,SLOT(doConnect()));
-	signin=new QPushButton(tr("Sign In"));
+	signin=new QPushButton(tr("Register"));
 	connect(signin,SIGNAL(clicked()),this,SLOT(doSignin()));
+	preview=new QPushButton(tr("Preview"));
+	connect(preview,SIGNAL(clicked()),this,SLOT(previewScene()));
 	print=new QPushButton(tr("Print"));
 	connect(print,SIGNAL(clicked()),this,SLOT(doPrint()));
 	printall=new QPushButton(tr("Print All"));
@@ -108,9 +111,10 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 	QGridLayout *buttonlayout=new QGridLayout;
 	buttonlayout->addWidget(loaddesign,0,0);
 	buttonlayout->addWidget(connectdb,0,1);
-	buttonlayout->addWidget(print,1,0);
-	buttonlayout->addWidget(printall,1,1);
-	buttonlayout->addWidget(signin,2,0,1,2);
+	buttonlayout->addWidget(preview,1,0);
+	buttonlayout->addWidget(print,1,1);
+	buttonlayout->addWidget(printall,2,0);
+	buttonlayout->addWidget(signin,2,1);
 
 	QVBoxLayout *ctrllayout=new QVBoxLayout;
 	ctrllayout->addLayout(editlayout);
@@ -212,7 +216,7 @@ void QueryFrame::doConnect()
 	model->setHeaderData(model->fieldIndex("lastname"),Qt::Horizontal,tr("Last Name"));
 	model->setHeaderData(model->fieldIndex("fax"),Qt::Horizontal,tr("Phone"));
 	model->setHeaderData(model->fieldIndex("company"),Qt::Horizontal,tr("Affiliation"));
-//	model->setHeaderData(model->fieldIndex(tr("signin")),Qt::Horizontal,tr("Sign In"));
+	model->setHeaderData(model->fieldIndex(tr("picurl")),Qt::Horizontal,tr("Registration"));
 	
 	if(!model->select()){
 		showError(model->lastError());
@@ -222,7 +226,7 @@ void QueryFrame::doConnect()
 	table->setModel(model);
 	for(int i=0;i<model->columnCount();++i)
 	{
-		if((i==2)|(i==3)|(i==4)|(i==5)|(i==9)|(i==10))
+		if((i==2)|(i==3)|(i==4)|(i==5)|(i==9)|(i==10)|(i==21))
 			continue;
 		table->hideColumn(i);
 	}
@@ -244,22 +248,47 @@ void QueryFrame::doConnect()
 	proxy->setSourceModel(model);
 }
 
+void QueryFrame::previewScene()
+{
+	QPrintPreviewWidget *preview=new QPrintPreviewWidget;
+	preview->setZoomMode(QPrintPreviewWidget::FitInView);
+	connect(preview,SIGNAL(paintRequested(QPrinter*)),this,SLOT(doPreview(QPrinter*)));
+	preview->show();
+}
+
+void QueryFrame::doPreview(QPrinter *printer)
+{
+   	QPainter painter(printer);
+   	painter.setRenderHint(QPainter::SmoothPixmapTransform);
+	if(scene->isBackground())
+   		scene->render(&painter);
+	else
+	{
+		QPixmap white(scene->width(),scene->height());
+		white.fill();
+		scene->setBackground(white);
+		scene->render(&painter);
+		scene->setBackground(QPixmap());
+	}
+}
+
 void QueryFrame::doPrint()
 {
 	QPrinter printer;
 	if (QPrintDialog(&printer).exec() == QDialog::Accepted) {
     	QPainter painter(&printer);
      	painter.setRenderHint(QPainter::SmoothPixmapTransform);
-		if(scene->isBackground())
-     		scene->render(&painter);
-		else
-		{
+		//print without background
+//		if(scene->isBackground())
+//     		scene->render(&painter);
+//		else
+//		{
 			QPixmap white(scene->width(),scene->height());
 			white.fill();
 			scene->setBackground(white);
 			scene->render(&painter);
 			scene->setBackground(QPixmap());
-		}
+//		}
 	}
 }
 
@@ -274,16 +303,17 @@ void QueryFrame::doPrintAll()
 		for(int i=0;i<rowcount;++i)
 		{
 			table->selectRow(i);
-			if(scene->isBackground())
-     			scene->render(&painter);
-			else
-			{
+			//print without background
+//			if(scene->isBackground())
+//     			scene->render(&painter);
+//			else
+//			{
 				QPixmap white(scene->width(),scene->height());
 				white.fill();
 				scene->setBackground(white);
 				scene->render(&painter);
 				scene->setBackground(QPixmap());
-			}
+//			}
 			if(i!=rowcount-1)
 				printer.newPage();
 		}
@@ -294,7 +324,7 @@ void QueryFrame::doPrintAll()
 
 void QueryFrame::doSignin()
 {
-	if(!model->setData(model->index(table->currentIndex().row(),model->fieldIndex("signin")),model->index(table->currentIndex().row(),model->fieldIndex("signin")).data().toInt()+1))
+	if(!model->setData(model->index(table->currentIndex().row(),model->fieldIndex("picurl")),tr("Registered")))
 		showError(model->lastError());
 }
 
@@ -305,8 +335,9 @@ void QueryFrame::setBC(BC_GraphicsItem *newbc)
 	bc->encode(number->text());
 }
 
-void QueryFrame::setTextItem(GraphicsTextItem *newtx, QString objectname)
+void QueryFrame::setTextItem(GraphicsTextItem *newtx)
 {
+	QString objectname=newtx->objectName();
 	qDebug()<<"objectname:"<<objectname;
 	if(objectname=="name")
 	{

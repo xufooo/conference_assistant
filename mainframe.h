@@ -26,6 +26,8 @@
 
 #include <QMainWindow>
 class QTabWidget;
+class QMenu;
+class QAction;
 
 class MainFrame:public QMainWindow
 {
@@ -34,6 +36,13 @@ class MainFrame:public QMainWindow
 public:
 	MainFrame(QWidget* parent=0,Qt::WindowFlags f=0);
 
+private slots:
+	void about();
+
+private:
 	QTabWidget *tab;
+	QMenu *helpMenu;
+	QAction *aboutAct;
+
 };
 
