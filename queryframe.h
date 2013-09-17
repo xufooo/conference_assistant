@@ -28,6 +28,7 @@
 #define QUERYFRAME_H
 
 #include <QWidget>
+#define SCALE_RATIO 1.2
 class DesignScene;
 class QGraphicsView;
 class BC_GraphicsItem;
@@ -63,6 +64,10 @@ public slots:
 		void receiveFixedSize(bool fixed);
 		void setName();
 
+		void zoomIn();
+		void zoomOut();
+		void resetView();
+
 private:
 		void showError(const QSqlError &err);
 
@@ -87,6 +92,9 @@ private:
 		QTableView *table;
 		QSqlTableModel *model;
 		QSortFilterProxyModel *proxy;
+
+		int zoomout_count;
+		int init_zoomout_count;
 };
 
 #endif

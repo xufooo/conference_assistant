@@ -45,14 +45,15 @@
 #include <QDir>
 #include <QMessageBox>
 #include "scenesaver.h"
+#include <QDebug>
 
-DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
+DesignFrame::DesignFrame(QWidget *parent):QWidget(parent),zoomout_count(0),init_zoomout_count(0)
 {
+	QHBoxLayout *mainlayout=new QHBoxLayout;
+	setLayout(mainlayout);
+
 	scene = new DesignScene;
 	view = new QGraphicsView;
-	QHBoxLayout *mainlayout=new QHBoxLayout;
-	mainlayout->addWidget(view);
-	setLayout(mainlayout);
 	bc = new BC_GraphicsItem;
 	GraphicsTextItem *name = new GraphicsTextItem;
 	name->setObjectName(tr("name"));
@@ -66,6 +67,25 @@ DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
 	view->setScene(scene);
 	connect(scene,SIGNAL(sendFixedSize(bool)),this,SLOT(receiveFixedSize(bool)));
 	connect(scene,SIGNAL(itemSelected(QGraphicsItem*)),this,SLOT(itemSelected(QGraphicsItem*)));
+	QVBoxLayout *viewlayout=new QVBoxLayout;
+	QHBoxLayout *scalelayout=new QHBoxLayout;
+	QPushButton *zoomin=new QPushButton(tr("+"));
+	zoomin->setFixedSize(20,20);
+	QPushButton *zoomout=new QPushButton(tr("-"));
+	zoomout->setFixedSize(20,20);
+	QPushButton *resetview=new QPushButton(tr("Reset"));
+	resetview->setFixedSize(60,20);
+	scalelayout->addWidget(zoomout);
+	scalelayout->addWidget(resetview);
+	scalelayout->addWidget(zoomin);
+	connect(zoomin,SIGNAL(clicked()),this,SLOT(zoomIn()));
+	connect(zoomout,SIGNAL(clicked()),this,SLOT(zoomOut()));
+	connect(resetview,SIGNAL(clicked()),this,SLOT(resetView()));
+
+	viewlayout->addWidget(view);
+	viewlayout->addLayout(scalelayout);
+
+	mainlayout->addLayout(viewlayout);
 
 
 	/*createCtrlPanel*/
@@ -123,10 +143,16 @@ void DesignFrame::receiveFixedSize(bool fixed)
 	if(fixed){
 //		view->setFixedSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
 		view->setMaximumSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
-		emit toResize(view->size());
+//		emit toResize(view->size());
+		init_zoomout_count=0;
+		resetView();
 	}
 	else
+	{
 		view->setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
+		init_zoomout_count=(view->sceneRect().width()/view->size().width())<(view->sceneRect().height()/view->size().height()) ? (view->sceneRect().width()/view->size().width())/SCALE_RATIO : (view->sceneRect().height()/view->size().height())/SCALE_RATIO;
+		resetView();
+	}	
 }
 
 void DesignFrame::currentFontChanged(const QFont &)
@@ -215,7 +241,9 @@ int DesignFrame::open()
 			QMessageBox::information(this,tr("Failure"),tr("Cannot load %1.").arg(fileName));
 			return 0;
 		}
-	scene->setBackground(image);
+		foreach(QGraphicsItem *item,scene->items())
+			item->setPos(0,0);
+		scene->setBackground(image);
 	}
 	return 1;
 }
@@ -230,4 +258,25 @@ void DesignFrame::setBC(BC_GraphicsItem *newbc)
 {
 	bc=newbc;
 	connect(bc_line,SIGNAL(textChanged(const QString&)),bc,SLOT(encode(const QString&)));
+}
+
+void DesignFrame::zoomIn()
+{
+	view->scale(SCALE_RATIO, SCALE_RATIO);
+	zoomout_count+=1;
+}
+
+void DesignFrame::zoomOut()
+{
+	if(zoomout_count)
+	{
+		view->scale(1/SCALE_RATIO, 1/SCALE_RATIO);
+		zoomout_count-=1;
+	}
+}
+
+void DesignFrame::resetView()
+{
+	view->resetMatrix();
+	zoomout_count=init_zoomout_count;
 }
