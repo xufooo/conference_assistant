@@ -50,8 +50,8 @@ public:
 	DesignScene * getScene() const {return scene;}
 	void setBC(BC_GraphicsItem* const newbc);
 
-signals:
-	void toResize(const QSize &size);
+//signals:
+//	void toResize(const QSize &size);
 
 public slots:
 	void receiveFixedSize(bool fixed);

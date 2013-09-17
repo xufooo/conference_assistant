@@ -143,7 +143,7 @@ void DesignFrame::receiveFixedSize(bool fixed)
 	if(fixed){
 //		view->setFixedSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
 		view->setMaximumSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
-		emit toResize(view->size());
+//		emit toResize(view->size());
 		init_zoomout_count=0;
 		resetView();
 	}
@@ -241,7 +241,9 @@ int DesignFrame::open()
 			QMessageBox::information(this,tr("Failure"),tr("Cannot load %1.").arg(fileName));
 			return 0;
 		}
-	scene->setBackground(image);
+		foreach(QGraphicsItem *item,scene->items())
+			item->setPos(0,0);
+		scene->setBackground(image);
 	}
 	return 1;
 }
