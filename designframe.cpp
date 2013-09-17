@@ -144,7 +144,8 @@ void DesignFrame::receiveFixedSize(bool fixed)
 //		view->setFixedSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
 		view->setMaximumSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
 		emit toResize(view->size());
-		zoomout_count=0;
+		init_zoomout_count=0;
+		resetView();
 	}
 	else
 	{
