@@ -359,7 +359,8 @@ void QueryFrame::doPrintAll()
 
 void QueryFrame::doSignin()
 {
-	if(!model->setData(model->index(table->currentIndex().row(),model->fieldIndex("picurl")),tr("Registered")))
+//	if(!model->setData(model->index(table->currentIndex().row(),model->fieldIndex("picurl")),tr("Registered")))
+	if(!model->setData(model->index(table->currentIndex().row(),model->fieldIndex("picurl")),model->index(table->currentIndex().row(),model->fieldIndex("picurl")).data().toInt()+1))
 		showError(model->lastError());
 }
 
