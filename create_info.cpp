@@ -52,15 +52,15 @@ CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
 	QVBoxLayout *panellayout = new QVBoxLayout;
 
 	QGridLayout *editlayout = new QGridLayout;
-	namelabel = new QLabel(tr("Name :"));
-	name = new QLineEdit;
+//	namelabel = new QLabel(tr("Name :"));
+//	name = new QLineEdit;
 
 	numberlabel = new QLabel(tr("NO. :"));
 	number = new QLineEdit(this);
-	editlayout->addWidget(namelabel,0,0);
-	editlayout->addWidget(name,0,1);
-	editlayout->addWidget(numberlabel,1,0);
-	editlayout->addWidget(number,1,1);
+//	editlayout->addWidget(namelabel,0,0);
+//	editlayout->addWidget(name,0,1);
+	editlayout->addWidget(numberlabel,0,0);
+	editlayout->addWidget(number,0,1);
 	connect(number,SIGNAL(textChanged(const QString&)),barcode,SLOT(encode(const QString&)));
 	panellayout->addLayout(editlayout);
 
@@ -91,7 +91,7 @@ CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
 	
 	/*setup db*/
 	if(!QSqlDatabase::drivers().contains("QSQLITE"))
-		QMessageBox::critical(this, tr("Unable to load database"), tr("No QMYSQL driver"));
+		QMessageBox::critical(this, tr("Unable to load database"), tr("No QSQLITE driver"));
 }
 
 void CreateInfo::doConnect()

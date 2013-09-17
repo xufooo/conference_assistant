@@ -28,6 +28,7 @@
 #define DESIGNFRAME_H
 
 #include <QWidget>
+#define SCALE_RATIO 1.2
 class QGraphicsItem;
 class QGraphicsView;
 class DesignScene;
@@ -49,14 +50,17 @@ public:
 	DesignScene * getScene() const {return scene;}
 	void setBC(BC_GraphicsItem* const newbc);
 
-signals:
-	void toResize(const QSize &size);
+//signals:
+//	void toResize(const QSize &size);
 
 public slots:
 	void receiveFixedSize(bool fixed);
 	void printScene();
 	void previewScene();
 	void doPreview(QPrinter *printer);
+	void zoomIn();
+	void zoomOut();
+	void resetView();
 
 private slots:
 	void currentFontChanged(const QFont &font);
@@ -83,6 +87,9 @@ private:
 	QPushButton *savebutton;
 	QPushButton *previewbutton;
 	QPushButton *printbutton;
+
+	int zoomout_count;
+	int init_zoomout_count;
 };
 
 #endif

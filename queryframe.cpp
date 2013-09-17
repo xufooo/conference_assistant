@@ -56,16 +56,37 @@
 QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 {
 	/*setup ui*/
-	QHBoxLayout *mainlayout=new QHBoxLayout(this);
+	QHBoxLayout *mainlayout=new QHBoxLayout;
 	QSplitter *splitter=new QSplitter;
 
 	/*left*/
+	QVBoxLayout *viewlayout=new QVBoxLayout;
+	QWidget *leftSide=new QWidget;
 	scene=new DesignScene;
 	bc=new BC_GraphicsItem;
 	scene->addItem(bc);
 	connect(scene,SIGNAL(sendFixedSize(bool)),this,SLOT(receiveFixedSize(bool)));
 	view=new QGraphicsView;
 	view->setScene(scene);
+
+	QHBoxLayout *scalelayout=new QHBoxLayout;
+	QPushButton *zoomin=new QPushButton(tr("+"));
+	zoomin->setFixedSize(20,20);
+	QPushButton *zoomout=new QPushButton(tr("-"));
+	zoomout->setFixedSize(20,20);
+	QPushButton *resetview=new QPushButton(tr("Reset"));
+	resetview->setFixedSize(60,20);
+	scalelayout->addWidget(zoomout);
+	scalelayout->addWidget(resetview);
+	scalelayout->addWidget(zoomin);
+	connect(zoomin,SIGNAL(clicked()),this,SLOT(zoomIn()));
+	connect(zoomout,SIGNAL(clicked()),this,SLOT(zoomOut()));
+	connect(resetview,SIGNAL(clicked()),this,SLOT(resetView()));
+
+	viewlayout->addWidget(view);
+	viewlayout->addLayout(scalelayout);
+
+	leftSide->setLayout(viewlayout);
 
 	/*right*/
 	QWidget *rightSide=new QWidget;
@@ -122,10 +143,10 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 	rightSide->setLayout(ctrllayout);
 	
 	/*middle*/
-	table=new QTableView(this);
+	table=new QTableView;
 	proxy=new QSortFilterProxyModel;
 
-	splitter->addWidget(view);
+	splitter->addWidget(leftSide);
 	splitter->addWidget(table);
 	splitter->addWidget(rightSide);
 	
@@ -161,19 +182,31 @@ void QueryFrame::doSearch(const QString &string)
 		table->setCurrentIndex(matchingIndex);
 		return;
 	}
+
+	QSortFilterProxyModel fn;
+	fn.setSourceModel(model);
+	fn.setFilterFixedString(input);
+	fn.setFilterKeyColumn(5);//firstname
+	QModelIndex fn_mi=fn.mapToSource(fn.index(0,0));
+	if(fn_mi.isValid()){
+		table->setCurrentIndex(fn_mi);
+		return;
+	}
+
 	QSortFilterProxyModel ln;
 	ln.setSourceModel(model);
 	ln.setFilterFixedString(input);
-	ln.setFilterKeyColumn(5);//firstname
+	ln.setFilterKeyColumn(3);//lastname
 	QModelIndex ln_mi=ln.mapToSource(ln.index(0,0));
 	if(ln_mi.isValid()){
 		table->setCurrentIndex(ln_mi);
 		return;
 	}
+
 	QSortFilterProxyModel ph;
 	ph.setSourceModel(model);
 	ph.setFilterFixedString(input);
-	ph.setFilterKeyColumn(7);//phone
+	ph.setFilterKeyColumn(9);//phone
 	QModelIndex ph_mi=ph.mapToSource(ph.index(0,0));
 	if(ph_mi.isValid())
 		table->setCurrentIndex(ph_mi);
@@ -283,11 +316,12 @@ void QueryFrame::doPrint()
 //     		scene->render(&painter);
 //		else
 //		{
+			QPixmap pre_background=scene->background();
 			QPixmap white(scene->width(),scene->height());
 			white.fill();
 			scene->setBackground(white);
 			scene->render(&painter);
-			scene->setBackground(QPixmap());
+			scene->setBackground(pre_background);
 //		}
 	}
 }
@@ -308,11 +342,12 @@ void QueryFrame::doPrintAll()
 //     			scene->render(&painter);
 //			else
 //			{
+				QPixmap pre_background=scene->background();
 				QPixmap white(scene->width(),scene->height());
 				white.fill();
 				scene->setBackground(white);
 				scene->render(&painter);
-				scene->setBackground(QPixmap());
+				scene->setBackground(pre_background);
 //			}
 			if(i!=rowcount-1)
 				printer.newPage();
@@ -324,7 +359,8 @@ void QueryFrame::doPrintAll()
 
 void QueryFrame::doSignin()
 {
-	if(!model->setData(model->index(table->currentIndex().row(),model->fieldIndex("picurl")),tr("Registered")))
+//	if(!model->setData(model->index(table->currentIndex().row(),model->fieldIndex("picurl")),tr("Registered")))
+	if(!model->setData(model->index(table->currentIndex().row(),model->fieldIndex("picurl")),model->index(table->currentIndex().row(),model->fieldIndex("picurl")).data().toInt()+1))
 		showError(model->lastError());
 }
 
@@ -360,11 +396,17 @@ void QueryFrame::showError(const QSqlError &err)
 
 void QueryFrame::receiveFixedSize(bool fixed)
 {
-	if(fixed)
+	if(fixed){
 //		view->setFixedSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
 		view->setMaximumSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
-	else
+		init_zoomout_count=0;
+		resetView();
+	}
+	else{
 		view->setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
+		init_zoomout_count=(view->sceneRect().width()/view->size().width())<(view->sceneRect().height()/view->size().height()) ? (view->sceneRect().width()/view->size().width())/SCALE_RATIO : (view->sceneRect().height()/view->size().height())/SCALE_RATIO;
+		resetView();
+	}
 }
 
 void QueryFrame::setName()
@@ -382,4 +424,25 @@ void QueryFrame::setName()
 
 	name->setText(fname);
 
+}
+
+void QueryFrame::zoomIn()
+{
+	view->scale(SCALE_RATIO, SCALE_RATIO);
+	zoomout_count+=1;
+}
+
+void QueryFrame::zoomOut()
+{
+	if(zoomout_count)
+	{
+		view->scale(1/SCALE_RATIO, 1/SCALE_RATIO);
+		zoomout_count-=1;
+	}
+}
+
+void QueryFrame::resetView()
+{
+	view->resetMatrix();
+	zoomout_count=init_zoomout_count;
 }
