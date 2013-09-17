@@ -91,7 +91,7 @@ CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
 	
 	/*setup db*/
 	if(!QSqlDatabase::drivers().contains("QSQLITE"))
-		QMessageBox::critical(this, tr("Unable to load database"), tr("No QMYSQL driver"));
+		QMessageBox::critical(this, tr("Unable to load database"), tr("No QSQLITE driver"));
 }
 
 void CreateInfo::doConnect()
