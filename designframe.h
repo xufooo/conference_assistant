@@ -28,6 +28,7 @@
 #define DESIGNFRAME_H
 
 #include <QWidget>
+#define SCALE_RATIO 1.2
 class QGraphicsItem;
 class QGraphicsView;
 class DesignScene;
@@ -87,7 +88,8 @@ private:
 	QPushButton *previewbutton;
 	QPushButton *printbutton;
 
-	bool nomore_zoomout;
+	int zoomout_count;
+	int init_zoomout_count;
 };
 
 #endif

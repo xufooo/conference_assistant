@@ -47,7 +47,7 @@
 #include "scenesaver.h"
 #include <QDebug>
 
-DesignFrame::DesignFrame(QWidget *parent):QWidget(parent)
+DesignFrame::DesignFrame(QWidget *parent):QWidget(parent),zoomout_count(0),init_zoomout_count(0)
 {
 	QHBoxLayout *mainlayout=new QHBoxLayout;
 	setLayout(mainlayout);
@@ -144,12 +144,13 @@ void DesignFrame::receiveFixedSize(bool fixed)
 //		view->setFixedSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
 		view->setMaximumSize(view->sceneRect().width()+2,view->sceneRect().height()+2);
 		emit toResize(view->size());
-		nomore_zoomout=true;
+		zoomout_count=0;
 	}
 	else
 	{
 		view->setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
-		nomore_zoomout=false;
+		init_zoomout_count=(view->sceneRect().width()/view->size().width())<(view->sceneRect().height()/view->size().height()) ? (view->sceneRect().width()/view->size().width())/SCALE_RATIO : (view->sceneRect().height()/view->size().height())/SCALE_RATIO;
+		resetView();
 	}	
 }
 
@@ -258,14 +259,21 @@ void DesignFrame::setBC(BC_GraphicsItem *newbc)
 
 void DesignFrame::zoomIn()
 {
-	view->scale(1.2, 1.2);
+	view->scale(SCALE_RATIO, SCALE_RATIO);
+	zoomout_count+=1;
 }
 
 void DesignFrame::zoomOut()
 {
-	view->scale(1/1.2, 1/1.2);
+	if(zoomout_count)
+	{
+		view->scale(1/SCALE_RATIO, 1/SCALE_RATIO);
+		zoomout_count-=1;
+	}
 }
 
 void DesignFrame::resetView()
 {
+	view->resetMatrix();
+	zoomout_count=init_zoomout_count;
 }
