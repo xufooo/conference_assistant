@@ -182,19 +182,31 @@ void QueryFrame::doSearch(const QString &string)
 		table->setCurrentIndex(matchingIndex);
 		return;
 	}
+
+	QSortFilterProxyModel fn;
+	fn.setSourceModel(model);
+	fn.setFilterFixedString(input);
+	fn.setFilterKeyColumn(5);//firstname
+	QModelIndex fn_mi=fn.mapToSource(fn.index(0,0));
+	if(fn_mi.isValid()){
+		table->setCurrentIndex(fn_mi);
+		return;
+	}
+
 	QSortFilterProxyModel ln;
 	ln.setSourceModel(model);
 	ln.setFilterFixedString(input);
-	ln.setFilterKeyColumn(5);//firstname
+	ln.setFilterKeyColumn(3);//lastname
 	QModelIndex ln_mi=ln.mapToSource(ln.index(0,0));
 	if(ln_mi.isValid()){
 		table->setCurrentIndex(ln_mi);
 		return;
 	}
+
 	QSortFilterProxyModel ph;
 	ph.setSourceModel(model);
 	ph.setFilterFixedString(input);
-	ph.setFilterKeyColumn(7);//phone
+	ph.setFilterKeyColumn(9);//phone
 	QModelIndex ph_mi=ph.mapToSource(ph.index(0,0));
 	if(ph_mi.isValid())
 		table->setCurrentIndex(ph_mi);
