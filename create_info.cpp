@@ -152,6 +152,9 @@ void CreateInfo::doConnect()
 
 void CreateInfo::doInsert()
 {
+	if(model==NULL)
+		return;
+
 	if(!model->insertRow(model->rowCount())){
 		showError(model->lastError());
 			return;
@@ -161,12 +164,18 @@ void CreateInfo::doInsert()
 
 void CreateInfo::doDelete()
 {
+	if(model==NULL)
+		return;
+
 	if(!model->removeRow(view->currentIndex().row()))
 		showError(model->lastError());
 }
 
 void CreateInfo::doSave()
 {
+	if(model==NULL)
+		return;
+
 	model->database().transaction();
 	if(model->submitAll()){
 		model->database().commit();
