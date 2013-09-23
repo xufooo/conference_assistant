@@ -43,7 +43,7 @@
 #include "connectdb.h"
 #include <QDebug>
 
-CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
+CreateInfo::CreateInfo(QWidget *parent):QWidget(parent),model(NULL){
 
 	/*setup ui*/
 	QHBoxLayout *mainLayout = new QHBoxLayout(this);
