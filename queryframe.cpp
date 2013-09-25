@@ -415,14 +415,19 @@ void QueryFrame::setName()
 {
 	QString string2upper=model->index(table->currentIndex().row(),model->fieldIndex("firstname")).data().toString();
 	QString fname;
-	if(!string2upper.isEmpty())
-		fname+=string2upper.replace(0,1,string2upper.at(0).toUpper());
-	string2upper=model->index(table->currentIndex().row(),model->fieldIndex("middlename")).data().toString();
-	if(!string2upper.isEmpty())
-		fname+="  "+string2upper.replace(0,1,string2upper.at(0).toUpper());
-	string2upper=model->index(table->currentIndex().row(),model->fieldIndex("lastname")).data().toString();
-	if(!string2upper.isEmpty())
-		fname+="  "+string2upper.replace(0,1,string2upper.at(0).toUpper());
+	if(string2upper.contains(QRegExp("[\\x4e00-\\x9fa5]+"))){
+		fname=model->index(table->currentIndex().row(),model->fieldIndex("lastname")).data().toString()+model->index(table->currentIndex().row(),model->fieldIndex("middlename")).data().toString()+model->index(table->currentIndex().row(),model->fieldIndex("firstname")).data().toString();
+	}
+	else{
+		if(!string2upper.isEmpty())
+			fname+=string2upper.replace(0,1,string2upper.at(0).toUpper());
+		string2upper=model->index(table->currentIndex().row(),model->fieldIndex("middlename")).data().toString();
+		if(!string2upper.isEmpty())
+			fname+="  "+string2upper.replace(0,1,string2upper.at(0).toUpper());
+		string2upper=model->index(table->currentIndex().row(),model->fieldIndex("lastname")).data().toString();
+		if(!string2upper.isEmpty())
+			fname+="  "+string2upper.replace(0,1,string2upper.at(0).toUpper());
+	}
 
 	name->setText(fname);
 
