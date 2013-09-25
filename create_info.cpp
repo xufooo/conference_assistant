@@ -43,7 +43,7 @@
 #include "connectdb.h"
 #include <QDebug>
 
-CreateInfo::CreateInfo(QWidget *parent):QWidget(parent){
+CreateInfo::CreateInfo(QWidget *parent):QWidget(parent),model(NULL){
 
 	/*setup ui*/
 	QHBoxLayout *mainLayout = new QHBoxLayout(this);
@@ -152,6 +152,9 @@ void CreateInfo::doConnect()
 
 void CreateInfo::doInsert()
 {
+	if(model==NULL)
+		return;
+
 	if(!model->insertRow(model->rowCount())){
 		showError(model->lastError());
 			return;
@@ -161,12 +164,18 @@ void CreateInfo::doInsert()
 
 void CreateInfo::doDelete()
 {
+	if(model==NULL)
+		return;
+
 	if(!model->removeRow(view->currentIndex().row()))
 		showError(model->lastError());
 }
 
 void CreateInfo::doSave()
 {
+	if(model==NULL)
+		return;
+
 	model->database().transaction();
 	if(model->submitAll()){
 		model->database().commit();
