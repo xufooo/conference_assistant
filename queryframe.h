@@ -74,10 +74,12 @@ private:
 		QGraphicsView *view;
 		GraphicsTextItem *nameitem;
 		GraphicsTextItem *regnumber;
+		GraphicsTextItem *affitem;
 		BC_GraphicsItem *bc;
 
 		QLineEdit *name;
 		QLineEdit *number;
+		QLineEdit *affiliation;
 		QLineEdit *searchbar;
 
 		QPushButton *clear;

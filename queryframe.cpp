@@ -94,10 +94,13 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 	QLabel *namelabel=new QLabel(tr("Name :"));
 	name=new QLineEdit;
 	name->setReadOnly(true);
-	connect(name,SIGNAL(textChanged(const QString&)),scene,SLOT(update()));
+//	connect(name,SIGNAL(textChanged(const QString&)),scene,SLOT(update()));
 	QLabel *numberlabel=new QLabel(tr("NO. :"));
 	number=new QLineEdit;
 	number->setReadOnly(true);
+	QLabel *afflabel=new QLabel(tr("Affiliation:"));
+	affiliation=new QLineEdit;
+	affiliation->setReadOnly(true);
 	connect(number,SIGNAL(textChanged(const QString&)),this,SLOT(setName()));
 	connect(number,SIGNAL(textChanged(const QString&)),scene,SLOT(update()));
 	QGridLayout *editlayout=new QGridLayout;
@@ -105,6 +108,8 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 	editlayout->addWidget(name,0,1,1,3);
 	editlayout->addWidget(numberlabel,1,0,1,1);
 	editlayout->addWidget(number,1,1,1,3);
+	editlayout->addWidget(afflabel,2,0,1,1);
+	editlayout->addWidget(affiliation,2,1,1,3);
 
 	QLabel *searchlabel=new QLabel(tr("Search :"));
 	searchbar=new QLineEdit;
@@ -113,9 +118,9 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 	clear=new QPushButton(tr("Clear"));
 	connect(clear,SIGNAL(clicked()),searchbar,SLOT(clear()));
 	connect(clear,SIGNAL(clicked()),searchbar,SLOT(setFocus()));
-	editlayout->addWidget(searchlabel,2,0,1,1);
-	editlayout->addWidget(searchbar,2,1,1,3);
-	editlayout->addWidget(clear,3,3);
+	editlayout->addWidget(searchlabel,3,0,1,1);
+	editlayout->addWidget(searchbar,3,1,1,3);
+	editlayout->addWidget(clear,4,3);
 
 	loaddesign=new QPushButton(tr("Load Design"));
 	connect(loaddesign,SIGNAL(clicked()),this,SLOT(doLoad()));
@@ -273,6 +278,7 @@ void QueryFrame::doConnect()
 	mapper->setModel(model);
 //	mapper->addMapping(name,model->fieldIndex("name"));
 	mapper->addMapping(number,model->fieldIndex("regnumber"));
+	mapper->addMapping(affiliation,model->fieldIndex("company"));
 
 	connect(table->selectionModel(),SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),mapper,SLOT(setCurrentModelIndex(QModelIndex)));
 
@@ -383,11 +389,17 @@ void QueryFrame::setTextItem(GraphicsTextItem *newtx)
 	connect(name,SIGNAL(textChanged(const QString&)),nameitem,SLOT(setText(const QString&)));
 	nameitem->setText(name->text());
 	}
-	else if(objectname=="regnumber")
+/*	else if(objectname=="regnumber")
 	{
 	regnumber=newtx;
 	connect(number,SIGNAL(textChanged(const QString&)),regnumber,SLOT(setText(const QString&)));
 	regnumber->setText(number->text());
+	}*/
+	else if(objectname=="affiliation")
+	{
+	affitem=newtx;
+	connect(affiliation,SIGNAL(textChanged(const QString&)),affitem,SLOT(setText(const QString&)));
+	affitem->setText(affiliation->text());
 	}
 }
 
