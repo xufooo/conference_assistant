@@ -75,7 +75,7 @@ private:
 	DesignScene *scene;
 	QGraphicsView *view;
 	BC_GraphicsItem *bc;
-	QGraphicsTextItem *regnumber;
+//	QGraphicsTextItem *regnumber;
 
 	QComboBox *fontSizeCombo;
 	QFontComboBox *fontCombo;

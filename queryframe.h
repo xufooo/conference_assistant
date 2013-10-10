@@ -74,11 +74,13 @@ private:
 		DesignScene *scene;
 		QGraphicsView *view;
 		GraphicsTextItem *nameitem;
-		GraphicsTextItem *regnumber;
+//		GraphicsTextItem *regnumber;
+		GraphicsTextItem *affitem;
 		BC_GraphicsItem *bc;
 
 		QLineEdit *name;
 		QLineEdit *number;
+		QLineEdit *affiliation;
 		QLineEdit *searchbar;
 
 		QPushButton *clear;
