@@ -10,5 +10,7 @@ Makefile
 *.swp
 *.sav
 *.db
+*.pdf
+*.xls
 Qt_conference-assistant
 conference-assistant
