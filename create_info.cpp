@@ -18,7 +18,7 @@
 # Description: 
 # This module is used for creating information.
 #
-# Last modified: 2013-11-29 21:06
+# Last modified: 2013-11-30 21:21
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
@@ -42,7 +42,7 @@
 #include "bc_generator.h"
 #include "create_info.h"
 #include "connectdb.h"
-#include "xlslib.h"
+#include "BasicExcel.hpp"
 #include <QDebug>
 
 #define REGNUMBER_POS 2
@@ -205,33 +205,44 @@ void CreateInfo::doExport()
 		return;
 
 	/* add export function below */
-	xlslib_core::workbook *wb_obj=new xlslib_core::workbook;
-	xlslib_core::worksheet *ws_obj=wb_obj->sheet("export");
-
-	ws_obj->label(0,0,"Regnumber");
-	ws_obj->label(0,1,"Lastname");
-	ws_obj->label(0,2,"Middlename");
-	ws_obj->label(0,3,"Firstname");
-	ws_obj->label(0,4,"Phone");
-	ws_obj->label(0,5,"Affiliation");
-	ws_obj->label(0,6,"Registration");
-	xlslib_core::range *range_obj=ws_obj->rangegroup(0,0,0,6);
-	range_obj->cellcolor(xlslib_core::CLR_BRITE_GREEN);
-
-	for(int j=0,k=0;j<model->columnCount();++j)
+	YExcel::BasicExcel e;
+	e.New();
+	YExcel::BasicExcelWorksheet *sheet=e.GetWorksheet("Sheet1");
+	YExcel::BasicExcelCell *cell;
+	if(sheet)
 	{
-		if((j!=REGNUMBER_POS)&(j!=LASTNAME_POS)&(j!=MIDDLENAME_POS)&(j!=FIRSTNAME_POS)&(j!=PHONE_POS)&(j!=AFFILIATION_POS)&(j!=REGISTRATION_POS))
-			continue;
-		for(int i=0;i<model->rowCount();++i)
-			ws_obj->label(i+1,k,model->index(i,j).data().toString().toStdString());
-		++k;
-	}
-	QString name=QFileDialog::getSaveFileName(0, "Export to *.xls", tr("export.xls"), tr("Excel Files(*.xls)"));
-	QFile file(name);
-	if(!file.open(QIODevice::WriteOnly))
-		return;
-	wb_obj->Dump(name.toStdString());
+		cell=sheet->Cell(0,0);
+		cell->SetString("Regnumber");
+		cell=sheet->Cell(0,1);
+		cell->SetString("Lastname");
+		cell=sheet->Cell(0,2);
+		cell->SetString("Middlename");
+		cell=sheet->Cell(0,3);
+		cell->SetString("Firstname");
+		cell=sheet->Cell(0,4);
+		cell->SetString("Phone");
+		cell=sheet->Cell(0,5);
+		cell->SetString("Affiliation");
+		cell=sheet->Cell(0,6);
+		cell->SetString("Registration");
 
+		for(int j=0,k=0;j<model->columnCount();++j)
+		{
+			if((j!=REGNUMBER_POS)&(j!=LASTNAME_POS)&(j!=MIDDLENAME_POS)&(j!=FIRSTNAME_POS)&(j!=PHONE_POS)&(j!=AFFILIATION_POS)&(j!=REGISTRATION_POS))
+				continue;
+			for(int i=0;i<model->rowCount();++i)
+			{
+				cell=sheet->Cell(i+1,k);
+				cell->SetWString(model->index(i,j).data().toString().toStdWString().c_str());
+			}
+			++k;
+		}
+		QString name=QFileDialog::getSaveFileName(0, "Export to *.xls", tr("export.xls"), tr("Excel Files(*.xls)"));
+		QFile file(name);
+		if(!file.open(QIODevice::WriteOnly))
+			return;
+		e.SaveAs(name.toStdString().c_str());
+	}
 }
 
 void CreateInfo::showError(const QSqlError &err)
