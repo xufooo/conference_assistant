@@ -18,7 +18,7 @@
 # Description: 
 # This module is used for creating information.
 #
-# Last modified: 2013-07-07 16:59
+# Last modified: 2013-11-29 21:06
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
@@ -37,11 +37,21 @@
 #include <QSqlQuery>
 #include <QDataWidgetMapper>
 #include <QHeaderView>
+#include <QFileDialog>
 
 #include "bc_generator.h"
 #include "create_info.h"
 #include "connectdb.h"
+#include "xlslib.h"
 #include <QDebug>
+
+#define REGNUMBER_POS 2
+#define LASTNAME_POS 3
+#define MIDDLENAME_POS 4
+#define FIRSTNAME_POS 5
+#define PHONE_POS 9
+#define AFFILIATION_POS 10
+#define REGISTRATION_POS 21
 
 CreateInfo::CreateInfo(QWidget *parent):QWidget(parent),model(NULL){
 
@@ -69,10 +79,12 @@ CreateInfo::CreateInfo(QWidget *parent):QWidget(parent),model(NULL){
 	p_insert = new QPushButton(tr("Insert"));
 	p_delete = new QPushButton(tr("Delete"));
 	p_save = new QPushButton(tr("Save"));
+	p_export = new QPushButton(tr("Export"));
 	buttonlayout->addWidget(p_connect);
 	buttonlayout->addWidget(p_insert);
 	buttonlayout->addWidget(p_delete);
 	buttonlayout->addWidget(p_save);
+	buttonlayout->addWidget(p_export);
 	panellayout->addLayout(buttonlayout);
 	panellayout->addWidget(barcode);
 
@@ -80,6 +92,7 @@ CreateInfo::CreateInfo(QWidget *parent):QWidget(parent),model(NULL){
 	connect(p_insert,SIGNAL(clicked()),this,SLOT(doInsert()));
 	connect(p_delete,SIGNAL(clicked()),this,SLOT(doDelete()));
 	connect(p_save,SIGNAL(clicked()),this,SLOT(doSave()));
+	connect(p_export,SIGNAL(clicked()),this,SLOT(doExport()));
 
 	view = new QTableView(this);
 
@@ -132,7 +145,7 @@ void CreateInfo::doConnect()
 	view->setModel(model);
 	for(int i=0;i<model->columnCount();++i)
 	{
-		if((i==2)|(i==3)|(i==4)|(i==5)|(i==9)|(i==10)|(i==21))
+		if((i==REGNUMBER_POS)|(i==LASTNAME_POS)|(i==MIDDLENAME_POS)|(i==FIRSTNAME_POS)|(i==PHONE_POS)|(i==AFFILIATION_POS)|(i==REGISTRATION_POS))
 			continue;
 		view->hideColumn(i);
 	}
@@ -184,6 +197,41 @@ void CreateInfo::doSave()
 		model->database().rollback();
 		showError(model->lastError());
 	}
+}
+
+void CreateInfo::doExport()
+{
+	if(model==NULL)
+		return;
+
+	/* add export function below */
+	xlslib_core::workbook *wb_obj=new xlslib_core::workbook;
+	xlslib_core::worksheet *ws_obj=wb_obj->sheet("export");
+
+	ws_obj->label(0,0,"Regnumber");
+	ws_obj->label(0,1,"Lastname");
+	ws_obj->label(0,2,"Middlename");
+	ws_obj->label(0,3,"Firstname");
+	ws_obj->label(0,4,"Phone");
+	ws_obj->label(0,5,"Affiliation");
+	ws_obj->label(0,6,"Registration");
+	xlslib_core::range *range_obj=ws_obj->rangegroup(0,0,0,6);
+	range_obj->cellcolor(xlslib_core::CLR_BRITE_GREEN);
+
+	for(int j=0,k=0;j<model->columnCount();++j)
+	{
+		if((j!=REGNUMBER_POS)&(j!=LASTNAME_POS)&(j!=MIDDLENAME_POS)&(j!=FIRSTNAME_POS)&(j!=PHONE_POS)&(j!=AFFILIATION_POS)&(j!=REGISTRATION_POS))
+			continue;
+		for(int i=0;i<model->rowCount();++i)
+			ws_obj->label(i+1,k,model->index(i,j).data().toString().toStdWString());
+		++k;
+	}
+	QString name=QFileDialog::getSaveFileName(0, "Export to *.xls", tr("export.xls"), tr("Excel Files(*.xls)"));
+	QFile file(name);
+	if(!file.open(QIODevice::WriteOnly))
+		return;
+	wb_obj->Dump(name.toStdString());
+
 }
 
 void CreateInfo::showError(const QSqlError &err)

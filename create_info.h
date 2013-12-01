@@ -18,7 +18,7 @@
 # Description: 
 # This module is used for creating information.
 #
-# Last modified: 2013-07-07 16:57
+# Last modified: 2013-11-29 21:07
 #
 # Should you need to contact me, you can do so by 
 # email - mail your message to <xufooo@gmail.com>.
@@ -47,6 +47,7 @@ public slots:
 	void doInsert();
 	void doDelete();
 	void doSave();
+	void doExport();
 
 private:
 	void showError(const QSqlError &err);
@@ -62,6 +63,7 @@ private:
 	QPushButton *p_insert;
 	QPushButton *p_delete;
 	QPushButton *p_save;
+	QPushButton *p_export;
 
 	QTableView *view;
 	QSqlTableModel *model;

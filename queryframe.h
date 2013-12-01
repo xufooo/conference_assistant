@@ -52,7 +52,8 @@ public:
 		void setTextItem(GraphicsTextItem *const newtx);
 
 public slots:
-		void doSearch(const QString &string);
+		void doSearch(const QString &string, int begin_index=0);
+		void searchNext();
 		void doChop();
 		void doLoad();
 		void doConnect();
@@ -84,6 +85,7 @@ private:
 		QLineEdit *searchbar;
 
 		QPushButton *clear;
+		QPushButton *next;
 		QPushButton *loaddesign;
 		QPushButton *connectdb;
 		QPushButton *signin;

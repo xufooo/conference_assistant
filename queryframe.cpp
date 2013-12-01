@@ -115,11 +115,14 @@ QueryFrame::QueryFrame(QWidget *parent):QWidget(parent),model(NULL)
 	searchbar=new QLineEdit;
 	connect(searchbar,SIGNAL(textChanged(const QString&)),this,SLOT(doSearch(const QString&)));
 	connect(searchbar,SIGNAL(returnPressed()),this,SLOT(doChop()));
+	next=new QPushButton(tr("Next"));
 	clear=new QPushButton(tr("Clear"));
+	connect(next,SIGNAL(clicked()),this,SLOT(searchNext()));
 	connect(clear,SIGNAL(clicked()),searchbar,SLOT(clear()));
 	connect(clear,SIGNAL(clicked()),searchbar,SLOT(setFocus()));
 	editlayout->addWidget(searchlabel,3,0,1,1);
 	editlayout->addWidget(searchbar,3,1,1,3);
+	editlayout->addWidget(next,4,1);
 	editlayout->addWidget(clear,4,3);
 
 	loaddesign=new QPushButton(tr("Load Design"));
@@ -174,7 +177,7 @@ void QueryFrame::doChop()
 		return;
 }
 
-void QueryFrame::doSearch(const QString &string)
+void QueryFrame::doSearch(const QString &string, int begin_index)
 {
 	if(model==NULL)
 		return;
@@ -182,7 +185,7 @@ void QueryFrame::doSearch(const QString &string)
 	QString input=string;
 	proxy->setFilterFixedString(input);
 	proxy->setFilterKeyColumn(2);//regnumber
-	QModelIndex matchingIndex=proxy->mapToSource(proxy->index(0,0));
+	QModelIndex matchingIndex=proxy->mapToSource(proxy->index(begin_index,0));
 	if(matchingIndex.isValid()){
 		table->setCurrentIndex(matchingIndex);
 		return;
@@ -192,7 +195,7 @@ void QueryFrame::doSearch(const QString &string)
 	fn.setSourceModel(model);
 	fn.setFilterFixedString(input);
 	fn.setFilterKeyColumn(5);//firstname
-	QModelIndex fn_mi=fn.mapToSource(fn.index(0,0));
+	QModelIndex fn_mi=fn.mapToSource(fn.index(begin_index,0));
 	if(fn_mi.isValid()){
 		table->setCurrentIndex(fn_mi);
 		return;
@@ -202,7 +205,7 @@ void QueryFrame::doSearch(const QString &string)
 	ln.setSourceModel(model);
 	ln.setFilterFixedString(input);
 	ln.setFilterKeyColumn(3);//lastname
-	QModelIndex ln_mi=ln.mapToSource(ln.index(0,0));
+	QModelIndex ln_mi=ln.mapToSource(ln.index(begin_index,0));
 	if(ln_mi.isValid()){
 		table->setCurrentIndex(ln_mi);
 		return;
@@ -212,7 +215,7 @@ void QueryFrame::doSearch(const QString &string)
 	ph.setSourceModel(model);
 	ph.setFilterFixedString(input);
 	ph.setFilterKeyColumn(9);//phone
-	QModelIndex ph_mi=ph.mapToSource(ph.index(0,0));
+	QModelIndex ph_mi=ph.mapToSource(ph.index(begin_index,0));
 	if(ph_mi.isValid())
 		table->setCurrentIndex(ph_mi);
 }
@@ -464,4 +467,9 @@ void QueryFrame::resetView()
 {
 	view->resetMatrix();
 	zoomout_count=init_zoomout_count;
+}
+
+void QueryFrame::searchNext()
+{
+	doSearch(searchbar->text(),table->currentIndex().row()+1);
 }
