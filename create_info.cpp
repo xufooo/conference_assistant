@@ -223,7 +223,7 @@ void CreateInfo::doExport()
 		if((j!=REGNUMBER_POS)&(j!=LASTNAME_POS)&(j!=MIDDLENAME_POS)&(j!=FIRSTNAME_POS)&(j!=PHONE_POS)&(j!=AFFILIATION_POS)&(j!=REGISTRATION_POS))
 			continue;
 		for(int i=0;i<model->rowCount();++i)
-			ws_obj->label(i+1,k,model->index(i,j).data().toString().toStdString());
+			ws_obj->label(i+1,k,model->index(i,j).data().toString().toStdWString());
 		++k;
 	}
 	QString name=QFileDialog::getSaveFileName(0, "Export to *.xls", tr("export.xls"), tr("Excel Files(*.xls)"));
