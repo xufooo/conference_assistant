@@ -216,7 +216,7 @@ void CreateInfo::doExport()
 	ws_obj->label(0,5,"Affiliation");
 	ws_obj->label(0,6,"Registration");
 	xlslib_core::range *range_obj=ws_obj->rangegroup(0,0,0,6);
-	range_obj->cellcolor(xlslib_core::CLR_BRITE_GREEN);
+	range_obj->cellcolor(xlslib_core::CLR_LITE_GREEN);
 
 	for(int j=0,k=0;j<model->columnCount();++j)
 	{
