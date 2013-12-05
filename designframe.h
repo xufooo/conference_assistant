@@ -79,6 +79,9 @@ private:
 
 	QComboBox *fontSizeCombo;
 	QFontComboBox *fontCombo;
+	QPushButton *boldbutton;
+	QPushButton *italicbutton;
+	QPushButton *underlinebutton;
 
 	QLabel *bc_label;
 	QLineEdit *bc_line;

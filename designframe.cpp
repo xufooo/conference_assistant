@@ -107,9 +107,21 @@ DesignFrame::DesignFrame(QWidget *parent):QWidget(parent),zoomout_count(0),init_
 	QIntValidator *validator=new QIntValidator(2,100,this);
 	fontSizeCombo->setValidator(validator);
 	connect(fontSizeCombo,SIGNAL(currentIndexChanged(QString)),this,SLOT(fontSizeChanged(QString)));
+	boldbutton=new QPushButton(tr("B"));
+	boldbutton->setCheckable(true);
+	connect(boldbutton,SIGNAL(clicked()),this,SLOT(handleFontChange()));
+	italicbutton=new QPushButton(tr("I"));
+	italicbutton->setCheckable(true);
+	connect(italicbutton,SIGNAL(clicked()),this,SLOT(handleFontChange()));
+	underlinebutton=new QPushButton(tr("U"));
+	underlinebutton->setCheckable(true);
+	connect(underlinebutton,SIGNAL(clicked()),this,SLOT(handleFontChange()));
 
 	fontlayout->addWidget(fontCombo);
 	fontlayout->addWidget(fontSizeCombo);
+	fontlayout->addWidget(boldbutton);
+	fontlayout->addWidget(italicbutton);
+	fontlayout->addWidget(underlinebutton);
 	
 	QHBoxLayout *bclayout=new QHBoxLayout;
 	bc_label=new QLabel(tr("Input BarCode: "));
@@ -174,6 +186,9 @@ void DesignFrame::handleFontChange()
 {
 	QFont font=fontCombo->currentFont();
 	font.setPointSize(fontSizeCombo->currentText().toInt());
+	font.setWeight(boldbutton->isChecked()?QFont::Bold:QFont::Normal);
+	font.setItalic(italicbutton->isChecked());
+	font.setUnderline(underlinebutton->isChecked());
 	
 	scene->setFont(font);
 }
@@ -189,6 +204,15 @@ void DesignFrame::itemSelected(QGraphicsItem *item)
 	fontSizeCombo->blockSignals(true);
 	fontSizeCombo->setEditText(QString().setNum(font.pointSize()));
 	fontSizeCombo->blockSignals(false);
+	boldbutton->blockSignals(true);
+	boldbutton->setChecked(font.weight()==QFont::Bold?true:false);
+	boldbutton->blockSignals(false);
+	italicbutton->blockSignals(true);
+	italicbutton->setChecked(font.italic());
+	italicbutton->blockSignals(false);
+	underlinebutton->blockSignals(true);
+	underlinebutton->setChecked(font.underline());
+	underlinebutton->blockSignals(false);
 }
 
 void DesignFrame::printScene()
