@@ -35,6 +35,7 @@
 #include "create_info.h"
 #include "designframe.h"
 #include "queryframe.h"
+#include "version.h"
 
 MainFrame::MainFrame(QWidget* parent,Qt::WindowFlags f):QMainWindow(parent,f){
 	aboutAct=new QAction(tr("&About"),this);
@@ -53,5 +54,5 @@ MainFrame::MainFrame(QWidget* parent,Qt::WindowFlags f):QMainWindow(parent,f){
 
 void MainFrame::about()
 {
-	QMessageBox::about(this,tr("About Conference Assistant"),tr("<p>You can find the source from <a href=\"https://github.com/xufooo/conference_assistant\">github</a></p><p>Copyright (C) &lt;2013&gt; &lt;OoO&gt;</p><p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.<br>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.<br>You should have received a copy of the GNU General Public License along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</p>"));
+	QMessageBox::about(this,tr("About Conference Assistant"),tr("version: "VERSION"<p>You can find the source from <a href=\"https://github.com/xufooo/conference_assistant\">github</a></p><p>Copyright (C) &lt;2013&gt; &lt;OoO&gt;</p><p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.<br>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.<br>You should have received a copy of the GNU General Public License along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</p>"));
 }
