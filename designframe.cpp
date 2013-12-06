@@ -108,12 +108,15 @@ DesignFrame::DesignFrame(QWidget *parent):QWidget(parent),zoomout_count(0),init_
 	fontSizeCombo->setValidator(validator);
 	connect(fontSizeCombo,SIGNAL(currentIndexChanged(QString)),this,SLOT(fontSizeChanged(QString)));
 	boldbutton=new QPushButton(tr("B"));
+	boldbutton->setFixedSize(24,24);
 	boldbutton->setCheckable(true);
 	connect(boldbutton,SIGNAL(clicked()),this,SLOT(handleFontChange()));
 	italicbutton=new QPushButton(tr("I"));
+	italicbutton->setFixedSize(24,24);
 	italicbutton->setCheckable(true);
 	connect(italicbutton,SIGNAL(clicked()),this,SLOT(handleFontChange()));
 	underlinebutton=new QPushButton(tr("U"));
+	underlinebutton->setFixedSize(24,24);
 	underlinebutton->setCheckable(true);
 	connect(underlinebutton,SIGNAL(clicked()),this,SLOT(handleFontChange()));
 
